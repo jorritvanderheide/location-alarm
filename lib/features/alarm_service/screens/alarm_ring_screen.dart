@@ -1,8 +1,10 @@
 import 'package:alarm/alarm.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:location_alarm/shared/providers/alarm_repository_provider.dart';
 
-class AlarmRingScreen extends StatefulWidget {
+class AlarmRingScreen extends ConsumerStatefulWidget {
   const AlarmRingScreen({
     super.key,
     required this.alarmSettings,
@@ -13,23 +15,33 @@ class AlarmRingScreen extends StatefulWidget {
   final VoidCallback? onDismissed;
 
   @override
-  State<AlarmRingScreen> createState() => _AlarmRingScreenState();
+  ConsumerState<AlarmRingScreen> createState() => _AlarmRingScreenState();
 }
 
-class _AlarmRingScreenState extends State<AlarmRingScreen> {
+class _AlarmRingScreenState extends ConsumerState<AlarmRingScreen>
+    with WidgetsBindingObserver {
   static const _channel = MethodChannel('nl.bw20.location_alarm/screen');
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _showOverLockScreen();
   }
 
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _clearLockScreenFlags();
     widget.onDismissed?.call();
     super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _showOverLockScreen();
+    }
   }
 
   Future<void> _showOverLockScreen() async {
@@ -50,6 +62,9 @@ class _AlarmRingScreenState extends State<AlarmRingScreen> {
 
   Future<void> _dismiss() async {
     await Alarm.stop(widget.alarmSettings.id);
+    await ref
+        .read(alarmRepositoryProvider)
+        .toggleActive(widget.alarmSettings.id, active: false);
     await _clearLockScreenFlags();
     if (mounted) {
       Navigator.of(context).pop();
@@ -84,8 +99,8 @@ class _AlarmRingScreenState extends State<AlarmRingScreen> {
               Text(
                 widget.alarmSettings.notificationSettings.body,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: colorScheme.onSurfaceVariant,
-                ),
+                      color: colorScheme.onSurfaceVariant,
+                    ),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 64),

@@ -12,6 +12,7 @@ class CenterOnLocationFab extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return FloatingActionButton.small(
+      heroTag: 'center_location',
       onPressed: () {
         final locationAsync = ref.read(locationProvider);
         locationAsync.whenData((position) {

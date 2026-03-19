@@ -21,6 +21,7 @@ class CompassButton extends StatelessWidget {
           child: IgnorePointer(
             ignoring: isNorth,
             child: FloatingActionButton.small(
+              heroTag: 'compass',
               onPressed: () {
                 mapController.rotate(0);
               },
