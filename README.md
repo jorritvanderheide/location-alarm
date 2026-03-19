@@ -1,17 +1,8 @@
-# location_alarm
+# Location Alarm
 
-A new Flutter project.
+Offline, FOSS location-based alarm app for Android and iOS.
 
-## Getting Started
+## Modes
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- **Proximity** — alarm when within range of a location
+- **Departure** — alarm when it's time to leave, based on travel mode (walk/cycle/drive) and a time buffer
