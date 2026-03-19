@@ -1,6 +1,6 @@
 name: location_alarm
 description: Location-based alarm app
-publish_to: 'none'
+publish_to: "none"
 version: 1.0.0+1
 
 environment:
