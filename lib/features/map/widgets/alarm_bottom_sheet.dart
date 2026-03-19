@@ -5,12 +5,20 @@ import 'package:location_alarm/features/map/providers/alarm_pin_provider.dart';
 import 'package:location_alarm/features/map/widgets/alarm_mode_selector.dart';
 import 'package:location_alarm/features/proximity_alarm/widgets/proximity_alarm_form.dart';
 import 'package:location_alarm/features/departure_alarm/widgets/departure_alarm_form.dart';
+import 'package:flutter_map/flutter_map.dart';
 import 'package:location_alarm/shared/data/models/alarm_mode.dart';
+import 'package:location_alarm/features/map/providers/save_alarm_provider.dart';
+import 'package:location_alarm/features/map/widgets/saved_alarms_list.dart';
 
 class AlarmBottomSheet extends ConsumerStatefulWidget {
-  const AlarmBottomSheet({super.key, this.onSheetHeightChanged});
+  const AlarmBottomSheet({
+    super.key,
+    this.onSheetHeightChanged,
+    this.mapController,
+  });
 
   final ValueChanged<double>? onSheetHeightChanged;
+  final MapController? mapController;
 
   @override
   ConsumerState<AlarmBottomSheet> createState() => _AlarmBottomSheetState();
@@ -97,15 +105,25 @@ class _AlarmBottomSheetState extends ConsumerState<AlarmBottomSheet> {
                 },
                 const SizedBox(height: 16),
                 FilledButton.icon(
-                  onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Alarm saved')),
-                    );
+                  onPressed: () async {
+                    final saved = await ref
+                        .read(saveAlarmProvider.notifier)
+                        .save();
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            saved ? 'Alarm saved' : 'Failed to save alarm',
+                          ),
+                        ),
+                      );
+                    }
                   },
                   icon: const Icon(Icons.alarm_add),
                   label: const Text('Save Alarm'),
                 ),
               ],
+              SavedAlarmsList(mapController: widget.mapController),
               const SizedBox(height: 8),
             ],
           ),

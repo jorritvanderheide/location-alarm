@@ -1,0 +1,87 @@
+import 'package:drift/drift.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:location_alarm/shared/data/database/app_database.dart' as db;
+import 'package:location_alarm/shared/data/models/alarm.dart';
+import 'package:location_alarm/shared/data/models/alarm_mode.dart';
+import 'package:location_alarm/shared/data/models/travel_mode.dart';
+
+class AlarmRepository {
+  AlarmRepository(this._db);
+
+  final db.AppDatabase _db;
+
+  Stream<List<AlarmData>> watchAll() {
+    final query = _db.select(_db.alarms)
+      ..orderBy([(t) => OrderingTerm.desc(t.createdAt)]);
+    return query.watch().map((rows) => rows.map(_rowToAlarm).toList());
+  }
+
+  Future<int> save(AlarmData alarm) {
+    final companion = _alarmToCompanion(alarm);
+    if (alarm.id != null) {
+      return (_db.update(_db.alarms)..where((t) => t.id.equals(alarm.id!)))
+          .write(companion)
+          .then((_) => alarm.id!);
+    }
+    return _db.into(_db.alarms).insert(companion);
+  }
+
+  Future<void> delete(int id) {
+    return (_db.delete(_db.alarms)..where((t) => t.id.equals(id))).go();
+  }
+
+  Future<void> toggleActive(int id, {required bool active}) {
+    return (_db.update(_db.alarms)..where((t) => t.id.equals(id))).write(
+      db.AlarmsCompanion(active: Value(active)),
+    );
+  }
+
+  AlarmData _rowToAlarm(db.Alarm row) {
+    final location = LatLng(row.latitude, row.longitude);
+    return switch (row.mode) {
+      AlarmMode.proximity => ProximityAlarmData(
+        id: row.id,
+        name: row.name,
+        location: location,
+        active: row.active,
+        createdAt: row.createdAt,
+        radius: row.radius ?? 500,
+      ),
+      AlarmMode.departure => DepartureAlarmData(
+        id: row.id,
+        name: row.name,
+        location: location,
+        active: row.active,
+        createdAt: row.createdAt,
+        travelMode: row.travelMode ?? TravelMode.walk,
+        bufferMinutes: row.bufferMinutes ?? 5,
+      ),
+    };
+  }
+
+  db.AlarmsCompanion _alarmToCompanion(AlarmData alarm) {
+    return db.AlarmsCompanion(
+      id: alarm.id != null ? Value(alarm.id!) : const Value.absent(),
+      name: Value(alarm.name),
+      latitude: Value(alarm.location.latitude),
+      longitude: Value(alarm.location.longitude),
+      active: Value(alarm.active),
+      mode: Value(switch (alarm) {
+        ProximityAlarmData() => AlarmMode.proximity,
+        DepartureAlarmData() => AlarmMode.departure,
+      }),
+      radius: Value(switch (alarm) {
+        ProximityAlarmData(:final radius) => radius,
+        DepartureAlarmData() => null,
+      }),
+      travelMode: Value(switch (alarm) {
+        ProximityAlarmData() => null,
+        DepartureAlarmData(:final travelMode) => travelMode,
+      }),
+      bufferMinutes: Value(switch (alarm) {
+        ProximityAlarmData() => null,
+        DepartureAlarmData(:final bufferMinutes) => bufferMinutes,
+      }),
+    );
+  }
+}

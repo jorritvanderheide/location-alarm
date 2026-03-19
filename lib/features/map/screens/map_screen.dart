@@ -13,6 +13,7 @@ import 'package:location_alarm/features/map/widgets/osm_attribution.dart';
 import 'package:location_alarm/features/map/widgets/permission_banner.dart';
 import 'package:location_alarm/features/map/widgets/radius_circle_layer.dart';
 import 'package:location_alarm/features/map/widgets/radius_drag_handle.dart';
+import 'package:location_alarm/features/map/widgets/saved_alarm_markers.dart';
 import 'package:location_alarm/shared/providers/location_permission_provider.dart';
 import 'package:location_alarm/shared/providers/location_provider.dart';
 
@@ -68,6 +69,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
               ref.read(alarmPinProvider.notifier).place(latLng);
             },
             children: const [
+              SavedAlarmMarkers(),
               RadiusCircleLayer(),
               CurrentLocationMarker(),
               DraggablePin(),
@@ -76,6 +78,7 @@ class _MapScreenState extends ConsumerState<MapScreen> {
           RadiusDragHandle(mapController: _mapController),
           OsmAttribution(bottomOffset: _sheetHeight),
           AlarmBottomSheet(
+            mapController: _mapController,
             onSheetHeightChanged: (height) {
               setState(() => _sheetHeight = height);
             },
