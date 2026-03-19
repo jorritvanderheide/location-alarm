@@ -16,6 +16,7 @@ class Alarms extends Table {
   RealColumn get radius => real().nullable()();
   IntColumn get travelMode => intEnum<TravelMode>().nullable()();
   IntColumn get bufferMinutes => integer().nullable()();
+  DateTimeColumn get arrivalTime => dateTime().nullable()();
   DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 }
 
@@ -24,5 +25,14 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase(super.e);
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+    onUpgrade: (migrator, from, to) async {
+      if (from < 2) {
+        await migrator.addColumn(alarms, alarms.arrivalTime);
+      }
+    },
+  );
 }

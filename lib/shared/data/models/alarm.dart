@@ -39,8 +39,10 @@ final class DepartureAlarmData extends AlarmData {
     super.createdAt,
     required this.travelMode,
     required this.bufferMinutes,
+    required this.arrivalTime,
   });
 
   final TravelMode travelMode;
   final int bufferMinutes;
+  final DateTime arrivalTime;
 }

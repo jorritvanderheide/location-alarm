@@ -104,6 +104,17 @@ class $AlarmsTable extends Alarms with TableInfo<$AlarmsTable, Alarm> {
     type: DriftSqlType.int,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _arrivalTimeMeta = const VerificationMeta(
+    'arrivalTime',
+  );
+  @override
+  late final GeneratedColumn<DateTime> arrivalTime = GeneratedColumn<DateTime>(
+    'arrival_time',
+    aliasedName,
+    true,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
   );
@@ -127,6 +138,7 @@ class $AlarmsTable extends Alarms with TableInfo<$AlarmsTable, Alarm> {
     radius,
     travelMode,
     bufferMinutes,
+    arrivalTime,
     createdAt,
   ];
   @override
@@ -187,6 +199,15 @@ class $AlarmsTable extends Alarms with TableInfo<$AlarmsTable, Alarm> {
         ),
       );
     }
+    if (data.containsKey('arrival_time')) {
+      context.handle(
+        _arrivalTimeMeta,
+        arrivalTime.isAcceptableOrUnknown(
+          data['arrival_time']!,
+          _arrivalTimeMeta,
+        ),
+      );
+    }
     if (data.containsKey('created_at')) {
       context.handle(
         _createdAtMeta,
@@ -242,6 +263,10 @@ class $AlarmsTable extends Alarms with TableInfo<$AlarmsTable, Alarm> {
         DriftSqlType.int,
         data['${effectivePrefix}buffer_minutes'],
       ),
+      arrivalTime: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}arrival_time'],
+      ),
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
@@ -272,6 +297,7 @@ class Alarm extends DataClass implements Insertable<Alarm> {
   final double? radius;
   final TravelMode? travelMode;
   final int? bufferMinutes;
+  final DateTime? arrivalTime;
   final DateTime createdAt;
   const Alarm({
     required this.id,
@@ -283,6 +309,7 @@ class Alarm extends DataClass implements Insertable<Alarm> {
     this.radius,
     this.travelMode,
     this.bufferMinutes,
+    this.arrivalTime,
     required this.createdAt,
   });
   @override
@@ -307,6 +334,9 @@ class Alarm extends DataClass implements Insertable<Alarm> {
     if (!nullToAbsent || bufferMinutes != null) {
       map['buffer_minutes'] = Variable<int>(bufferMinutes);
     }
+    if (!nullToAbsent || arrivalTime != null) {
+      map['arrival_time'] = Variable<DateTime>(arrivalTime);
+    }
     map['created_at'] = Variable<DateTime>(createdAt);
     return map;
   }
@@ -328,6 +358,9 @@ class Alarm extends DataClass implements Insertable<Alarm> {
       bufferMinutes: bufferMinutes == null && nullToAbsent
           ? const Value.absent()
           : Value(bufferMinutes),
+      arrivalTime: arrivalTime == null && nullToAbsent
+          ? const Value.absent()
+          : Value(arrivalTime),
       createdAt: Value(createdAt),
     );
   }
@@ -351,6 +384,7 @@ class Alarm extends DataClass implements Insertable<Alarm> {
         serializer.fromJson<int?>(json['travelMode']),
       ),
       bufferMinutes: serializer.fromJson<int?>(json['bufferMinutes']),
+      arrivalTime: serializer.fromJson<DateTime?>(json['arrivalTime']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
     );
   }
@@ -369,6 +403,7 @@ class Alarm extends DataClass implements Insertable<Alarm> {
         $AlarmsTable.$convertertravelModen.toJson(travelMode),
       ),
       'bufferMinutes': serializer.toJson<int?>(bufferMinutes),
+      'arrivalTime': serializer.toJson<DateTime?>(arrivalTime),
       'createdAt': serializer.toJson<DateTime>(createdAt),
     };
   }
@@ -383,6 +418,7 @@ class Alarm extends DataClass implements Insertable<Alarm> {
     Value<double?> radius = const Value.absent(),
     Value<TravelMode?> travelMode = const Value.absent(),
     Value<int?> bufferMinutes = const Value.absent(),
+    Value<DateTime?> arrivalTime = const Value.absent(),
     DateTime? createdAt,
   }) => Alarm(
     id: id ?? this.id,
@@ -396,6 +432,7 @@ class Alarm extends DataClass implements Insertable<Alarm> {
     bufferMinutes: bufferMinutes.present
         ? bufferMinutes.value
         : this.bufferMinutes,
+    arrivalTime: arrivalTime.present ? arrivalTime.value : this.arrivalTime,
     createdAt: createdAt ?? this.createdAt,
   );
   Alarm copyWithCompanion(AlarmsCompanion data) {
@@ -413,6 +450,9 @@ class Alarm extends DataClass implements Insertable<Alarm> {
       bufferMinutes: data.bufferMinutes.present
           ? data.bufferMinutes.value
           : this.bufferMinutes,
+      arrivalTime: data.arrivalTime.present
+          ? data.arrivalTime.value
+          : this.arrivalTime,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
     );
   }
@@ -429,6 +469,7 @@ class Alarm extends DataClass implements Insertable<Alarm> {
           ..write('radius: $radius, ')
           ..write('travelMode: $travelMode, ')
           ..write('bufferMinutes: $bufferMinutes, ')
+          ..write('arrivalTime: $arrivalTime, ')
           ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
@@ -445,6 +486,7 @@ class Alarm extends DataClass implements Insertable<Alarm> {
     radius,
     travelMode,
     bufferMinutes,
+    arrivalTime,
     createdAt,
   );
   @override
@@ -460,6 +502,7 @@ class Alarm extends DataClass implements Insertable<Alarm> {
           other.radius == this.radius &&
           other.travelMode == this.travelMode &&
           other.bufferMinutes == this.bufferMinutes &&
+          other.arrivalTime == this.arrivalTime &&
           other.createdAt == this.createdAt);
 }
 
@@ -473,6 +516,7 @@ class AlarmsCompanion extends UpdateCompanion<Alarm> {
   final Value<double?> radius;
   final Value<TravelMode?> travelMode;
   final Value<int?> bufferMinutes;
+  final Value<DateTime?> arrivalTime;
   final Value<DateTime> createdAt;
   const AlarmsCompanion({
     this.id = const Value.absent(),
@@ -484,6 +528,7 @@ class AlarmsCompanion extends UpdateCompanion<Alarm> {
     this.radius = const Value.absent(),
     this.travelMode = const Value.absent(),
     this.bufferMinutes = const Value.absent(),
+    this.arrivalTime = const Value.absent(),
     this.createdAt = const Value.absent(),
   });
   AlarmsCompanion.insert({
@@ -496,6 +541,7 @@ class AlarmsCompanion extends UpdateCompanion<Alarm> {
     this.radius = const Value.absent(),
     this.travelMode = const Value.absent(),
     this.bufferMinutes = const Value.absent(),
+    this.arrivalTime = const Value.absent(),
     this.createdAt = const Value.absent(),
   }) : mode = Value(mode),
        latitude = Value(latitude),
@@ -510,6 +556,7 @@ class AlarmsCompanion extends UpdateCompanion<Alarm> {
     Expression<double>? radius,
     Expression<int>? travelMode,
     Expression<int>? bufferMinutes,
+    Expression<DateTime>? arrivalTime,
     Expression<DateTime>? createdAt,
   }) {
     return RawValuesInsertable({
@@ -522,6 +569,7 @@ class AlarmsCompanion extends UpdateCompanion<Alarm> {
       if (radius != null) 'radius': radius,
       if (travelMode != null) 'travel_mode': travelMode,
       if (bufferMinutes != null) 'buffer_minutes': bufferMinutes,
+      if (arrivalTime != null) 'arrival_time': arrivalTime,
       if (createdAt != null) 'created_at': createdAt,
     });
   }
@@ -536,6 +584,7 @@ class AlarmsCompanion extends UpdateCompanion<Alarm> {
     Value<double?>? radius,
     Value<TravelMode?>? travelMode,
     Value<int?>? bufferMinutes,
+    Value<DateTime?>? arrivalTime,
     Value<DateTime>? createdAt,
   }) {
     return AlarmsCompanion(
@@ -548,6 +597,7 @@ class AlarmsCompanion extends UpdateCompanion<Alarm> {
       radius: radius ?? this.radius,
       travelMode: travelMode ?? this.travelMode,
       bufferMinutes: bufferMinutes ?? this.bufferMinutes,
+      arrivalTime: arrivalTime ?? this.arrivalTime,
       createdAt: createdAt ?? this.createdAt,
     );
   }
@@ -586,6 +636,9 @@ class AlarmsCompanion extends UpdateCompanion<Alarm> {
     if (bufferMinutes.present) {
       map['buffer_minutes'] = Variable<int>(bufferMinutes.value);
     }
+    if (arrivalTime.present) {
+      map['arrival_time'] = Variable<DateTime>(arrivalTime.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
@@ -604,6 +657,7 @@ class AlarmsCompanion extends UpdateCompanion<Alarm> {
           ..write('radius: $radius, ')
           ..write('travelMode: $travelMode, ')
           ..write('bufferMinutes: $bufferMinutes, ')
+          ..write('arrivalTime: $arrivalTime, ')
           ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
@@ -632,6 +686,7 @@ typedef $$AlarmsTableCreateCompanionBuilder =
       Value<double?> radius,
       Value<TravelMode?> travelMode,
       Value<int?> bufferMinutes,
+      Value<DateTime?> arrivalTime,
       Value<DateTime> createdAt,
     });
 typedef $$AlarmsTableUpdateCompanionBuilder =
@@ -645,6 +700,7 @@ typedef $$AlarmsTableUpdateCompanionBuilder =
       Value<double?> radius,
       Value<TravelMode?> travelMode,
       Value<int?> bufferMinutes,
+      Value<DateTime?> arrivalTime,
       Value<DateTime> createdAt,
     });
 
@@ -701,6 +757,11 @@ class $$AlarmsTableFilterComposer
 
   ColumnFilters<int> get bufferMinutes => $composableBuilder(
     column: $table.bufferMinutes,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get arrivalTime => $composableBuilder(
+    column: $table.arrivalTime,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -764,6 +825,11 @@ class $$AlarmsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<DateTime> get arrivalTime => $composableBuilder(
+    column: $table.arrivalTime,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
@@ -811,6 +877,11 @@ class $$AlarmsTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<DateTime> get arrivalTime => $composableBuilder(
+    column: $table.arrivalTime,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
 }
@@ -852,6 +923,7 @@ class $$AlarmsTableTableManager
                 Value<double?> radius = const Value.absent(),
                 Value<TravelMode?> travelMode = const Value.absent(),
                 Value<int?> bufferMinutes = const Value.absent(),
+                Value<DateTime?> arrivalTime = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
               }) => AlarmsCompanion(
                 id: id,
@@ -863,6 +935,7 @@ class $$AlarmsTableTableManager
                 radius: radius,
                 travelMode: travelMode,
                 bufferMinutes: bufferMinutes,
+                arrivalTime: arrivalTime,
                 createdAt: createdAt,
               ),
           createCompanionCallback:
@@ -876,6 +949,7 @@ class $$AlarmsTableTableManager
                 Value<double?> radius = const Value.absent(),
                 Value<TravelMode?> travelMode = const Value.absent(),
                 Value<int?> bufferMinutes = const Value.absent(),
+                Value<DateTime?> arrivalTime = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
               }) => AlarmsCompanion.insert(
                 id: id,
@@ -887,6 +961,7 @@ class $$AlarmsTableTableManager
                 radius: radius,
                 travelMode: travelMode,
                 bufferMinutes: bufferMinutes,
+                arrivalTime: arrivalTime,
                 createdAt: createdAt,
               ),
           withReferenceMapper: (p0) => p0

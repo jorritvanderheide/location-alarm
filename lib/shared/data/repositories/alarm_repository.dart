@@ -55,6 +55,7 @@ class AlarmRepository {
         createdAt: row.createdAt,
         travelMode: row.travelMode ?? TravelMode.walk,
         bufferMinutes: row.bufferMinutes ?? 5,
+        arrivalTime: row.arrivalTime ?? DateTime.now(),
       ),
     };
   }
@@ -81,6 +82,10 @@ class AlarmRepository {
       bufferMinutes: Value(switch (alarm) {
         ProximityAlarmData() => null,
         DepartureAlarmData(:final bufferMinutes) => bufferMinutes,
+      }),
+      arrivalTime: Value(switch (alarm) {
+        ProximityAlarmData() => null,
+        DepartureAlarmData(:final arrivalTime) => arrivalTime,
       }),
     );
   }

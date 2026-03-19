@@ -39,15 +39,6 @@ nix flake check
 ```sh
 flutter build apk --release
 ```
-
-## build-ios
-
-> Build release iOS bundle
-
-```sh
-flutter build ios --release
-```
-
 ## clean
 
 > Clean build artifacts

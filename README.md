@@ -1,6 +1,6 @@
 # Location Alarm
 
-Offline, FOSS location-based alarm app for Android and iOS.
+Offline, FOSS location-based alarm app for Android.
 
 ## Modes
 

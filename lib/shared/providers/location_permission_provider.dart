@@ -17,4 +17,17 @@ class LocationPermissionNotifier extends Notifier<PermissionStatus> {
   Future<void> request() async {
     state = await Permission.locationWhenInUse.request();
   }
+
+  Future<void> requestBackground() async {
+    final foreground = await Permission.locationWhenInUse.status;
+    if (!foreground.isGranted) {
+      state = await Permission.locationWhenInUse.request();
+      if (!state.isGranted) return;
+    }
+    await Permission.locationAlways.request();
+  }
+
+  Future<void> requestNotification() async {
+    await Permission.notification.request();
+  }
 }

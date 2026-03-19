@@ -28,6 +28,7 @@
         ndkVersions = [ "28.2.13676358" ];
 
         platformVersions = [
+          "34"
           "35"
           "36"
         ];

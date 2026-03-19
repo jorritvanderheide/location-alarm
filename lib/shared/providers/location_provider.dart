@@ -9,9 +9,10 @@ final locationProvider = StreamProvider<Position>((ref) {
     return const Stream.empty();
   }
   return Geolocator.getPositionStream(
-    locationSettings: const LocationSettings(
+    locationSettings: AndroidSettings(
       accuracy: LocationAccuracy.high,
       distanceFilter: 10,
+      forceLocationManager: true,
     ),
   );
 });

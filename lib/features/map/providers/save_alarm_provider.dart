@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:location_alarm/features/departure_alarm/providers/arrival_time_provider.dart';
 import 'package:location_alarm/features/departure_alarm/providers/buffer_minutes_provider.dart';
 import 'package:location_alarm/features/departure_alarm/providers/departure_alarm_form_provider.dart';
 import 'package:location_alarm/features/map/providers/alarm_mode_provider.dart';
@@ -39,6 +40,7 @@ class SaveAlarmNotifier extends Notifier<AsyncValue<void>> {
           active: true,
           travelMode: ref.read(travelModeProvider),
           bufferMinutes: ref.read(bufferMinutesProvider),
+          arrivalTime: ref.read(arrivalTimeProvider) ?? DateTime.now(),
         ),
       };
 
