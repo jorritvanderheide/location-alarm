@@ -29,9 +29,7 @@ class HomePage extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: const Text('Location Alarm'),
       ),
-      body: const Center(
-        child: Text('Location Alarm'),
-      ),
+      body: const Center(child: Text('Location Alarm')),
     );
   }
 }

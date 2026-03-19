@@ -3,10 +3,16 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    treefmt-nix.url = "github:numtide/treefmt-nix";
   };
 
   outputs =
-    { nixpkgs, ... }:
+    {
+      self,
+      nixpkgs,
+      treefmt-nix,
+      ...
+    }:
     let
       system = "x86_64-linux";
       pkgs = import nixpkgs {
@@ -27,8 +33,14 @@
       };
 
       androidSdk = androidComposition.androidsdk;
+
+      treefmtEval = treefmt-nix.lib.evalModule pkgs ./treefmt.nix;
     in
     {
+      formatter.${system} = treefmtEval.config.build.wrapper;
+
+      checks.${system}.formatting = treefmtEval.config.build.check self;
+
       devShells.${system}.default = pkgs.mkShell {
         buildInputs = with pkgs; [
           androidSdk
@@ -36,6 +48,7 @@
           flutter
           gradle
           jdk21
+          treefmtEval.config.build.wrapper
         ];
 
         ANDROID_HOME = "${androidSdk}/libexec/android-sdk";
