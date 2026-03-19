@@ -48,6 +48,7 @@
           flutter
           gradle
           jdk21
+          mask
           treefmtEval.config.build.wrapper
         ];
 
