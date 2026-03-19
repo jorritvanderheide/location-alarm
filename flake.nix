@@ -14,7 +14,25 @@
       ...
     }:
     let
+      androidSdk = androidComposition.androidsdk;
       system = "x86_64-linux";
+      treefmtEval = treefmt-nix.lib.evalModule pkgs ./treefmt.nix;
+
+      androidComposition = pkgs.androidenv.composeAndroidPackages {
+        buildToolsVersions = [ "35.0.0" ];
+        cmakeVersions = [ "3.22.1" ];
+        includeEmulator = false;
+        includeNDK = true;
+        includeSources = false;
+        includeSystemImages = false;
+        ndkVersions = [ "28.2.13676358" ];
+
+        platformVersions = [
+          "35"
+          "36"
+        ];
+      };
+
       pkgs = import nixpkgs {
         inherit system;
         config = {
@@ -22,26 +40,17 @@
           android_sdk.accept_license = true;
         };
       };
-
-      androidComposition = pkgs.androidenv.composeAndroidPackages {
-        platformVersions = [ "35" ];
-        buildToolsVersions = [ "35.0.0" ];
-        includeEmulator = false;
-        includeNDK = false;
-        includeSources = false;
-        includeSystemImages = false;
-      };
-
-      androidSdk = androidComposition.androidsdk;
-
-      treefmtEval = treefmt-nix.lib.evalModule pkgs ./treefmt.nix;
     in
     {
+      checks.${system}.formatting = treefmtEval.config.build.check self;
       formatter.${system} = treefmtEval.config.build.wrapper;
 
-      checks.${system}.formatting = treefmtEval.config.build.check self;
-
       devShells.${system}.default = pkgs.mkShell {
+        ANDROID_HOME = "${androidSdk}/libexec/android-sdk";
+        ANDROID_SDK_ROOT = "${androidSdk}/libexec/android-sdk";
+        GRADLE_OPTS = "-Dorg.gradle.project.android.aapt2FromMavenOverride=${androidSdk}/libexec/android-sdk/build-tools/35.0.0/aapt2";
+        JAVA_HOME = "${pkgs.jdk21}";
+
         buildInputs = with pkgs; [
           androidSdk
           dart
@@ -51,11 +60,6 @@
           mask
           treefmtEval.config.build.wrapper
         ];
-
-        ANDROID_HOME = "${androidSdk}/libexec/android-sdk";
-        ANDROID_SDK_ROOT = "${androidSdk}/libexec/android-sdk";
-        GRADLE_OPTS = "-Dorg.gradle.project.android.aapt2FromMavenOverride=${androidSdk}/libexec/android-sdk/build-tools/35.0.0/aapt2";
-        JAVA_HOME = "${pkgs.jdk21}";
 
         shellHook = ''
           echo "Location Alarm dev shell"
