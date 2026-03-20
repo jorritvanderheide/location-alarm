@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:location_alarm/shared/data/models/travel_mode.dart';
 
-class DepartureSettings extends StatelessWidget {
+class DepartureSettings extends StatefulWidget {
   const DepartureSettings({
     super.key,
     required this.travelMode,
@@ -20,15 +20,52 @@ class DepartureSettings extends StatelessWidget {
   final ValueChanged<DateTime> onArrivalTimeChanged;
 
   @override
+  State<DepartureSettings> createState() => _DepartureSettingsState();
+}
+
+class _DepartureSettingsState extends State<DepartureSettings> {
+  late TextEditingController _arrivalController;
+
+  @override
+  void initState() {
+    super.initState();
+    _arrivalController = TextEditingController();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _updateArrivalText();
+  }
+
+  @override
+  void didUpdateWidget(DepartureSettings oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.arrivalTime != widget.arrivalTime) {
+      _updateArrivalText();
+    }
+  }
+
+  void _updateArrivalText() {
+    _arrivalController.text = widget.arrivalTime != null
+        ? _formatDateTime(context, widget.arrivalTime!)
+        : '';
+  }
+
+  @override
+  void dispose() {
+    _arrivalController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         TextField(
           readOnly: true,
-          controller: TextEditingController(
-            text: arrivalTime != null ? _formatDateTime(arrivalTime!) : '',
-          ),
+          controller: _arrivalController,
           decoration: const InputDecoration(
             labelText: 'Arrive by',
             border: OutlineInputBorder(),
@@ -57,27 +94,31 @@ class DepartureSettings extends StatelessWidget {
               icon: Icon(Icons.directions_car),
             ),
           ],
-          selected: {travelMode},
-          onSelectionChanged: (s) => onTravelModeChanged(s.first),
+          selected: {widget.travelMode},
+          onSelectionChanged: (s) => widget.onTravelModeChanged(s.first),
         ),
         const SizedBox(height: 24),
         Row(
           children: [
-            Text('Buffer', style: Theme.of(context).textTheme.titleSmall),
+            Text(
+              'Arrive early by',
+              style: Theme.of(context).textTheme.titleSmall,
+            ),
             Expanded(
               child: Slider(
-                value: bufferMinutes.toDouble(),
+                value: widget.bufferMinutes.toDouble(),
                 min: 0,
                 max: 60,
-                divisions: 12,
-                label: '$bufferMinutes min',
-                onChanged: (v) => onBufferChanged(v.round()),
+                divisions: 60,
+                label: '${widget.bufferMinutes} min',
+                semanticFormatterCallback: (v) => '${v.round()} minutes early',
+                onChanged: (v) => widget.onBufferChanged(v.round()),
               ),
             ),
             SizedBox(
               width: 56,
               child: Text(
-                '$bufferMinutes min',
+                '${widget.bufferMinutes} min',
                 style: Theme.of(context).textTheme.bodyMedium,
                 textAlign: TextAlign.end,
               ),
@@ -92,38 +133,51 @@ class DepartureSettings extends StatelessWidget {
     final now = DateTime.now();
     final date = await showDatePicker(
       context: context,
-      initialDate: arrivalTime ?? now,
+      initialDate: widget.arrivalTime ?? now,
       firstDate: now,
       lastDate: now.add(const Duration(days: 365)),
     );
     if (date == null || !context.mounted) return;
     final time = await showTimePicker(
       context: context,
-      initialTime: arrivalTime != null
-          ? TimeOfDay.fromDateTime(arrivalTime!)
+      initialTime: widget.arrivalTime != null
+          ? TimeOfDay.fromDateTime(widget.arrivalTime!)
           : TimeOfDay.fromDateTime(now.add(const Duration(hours: 1))),
     );
     if (time == null) return;
-    onArrivalTimeChanged(
+    widget.onArrivalTimeChanged(
       DateTime(date.year, date.month, date.day, time.hour, time.minute),
     );
   }
 
-  String _formatDateTime(DateTime dt) {
-    final hour = dt.hour.toString().padLeft(2, '0');
-    final minute = dt.minute.toString().padLeft(2, '0');
+  String _formatDateTime(BuildContext context, DateTime dt) {
+    final timeStr = TimeOfDay.fromDateTime(dt).format(context);
     final today = DateTime.now();
     if (dt.year == today.year &&
         dt.month == today.month &&
         dt.day == today.day) {
-      return 'Today $hour:$minute';
+      return 'Today $timeStr';
     }
     final tomorrow = today.add(const Duration(days: 1));
     if (dt.year == tomorrow.year &&
         dt.month == tomorrow.month &&
         dt.day == tomorrow.day) {
-      return 'Tomorrow $hour:$minute';
+      return 'Tomorrow $timeStr';
     }
-    return '${dt.day}/${dt.month} $hour:$minute';
+    final monthNames = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
+    return '${dt.day} ${monthNames[dt.month - 1]} $timeStr';
   }
 }

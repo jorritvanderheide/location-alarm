@@ -1,37 +1,67 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:location_alarm/shared/data/alarm_thumbnail.dart';
+import 'package:location_alarm/shared/data/departure_calculator.dart';
 import 'package:location_alarm/shared/data/models/alarm.dart';
 import 'package:location_alarm/shared/data/models/travel_mode.dart';
+import 'package:location_alarm/shared/providers/location_provider.dart';
 
-class AlarmCard extends StatefulWidget {
+class AlarmCard extends ConsumerStatefulWidget {
   const AlarmCard({
     super.key,
     required this.alarm,
     required this.onTap,
     required this.onToggle,
+    this.onLongPress,
+    this.selected = false,
+    this.editMode = false,
+    this.activating = false,
   });
 
   final AlarmData alarm;
   final VoidCallback onTap;
   final ValueChanged<bool> onToggle;
+  final VoidCallback? onLongPress;
+  final bool selected;
+  final bool editMode;
+  final bool activating;
 
   @override
-  State<AlarmCard> createState() => _AlarmCardState();
+  ConsumerState<AlarmCard> createState() => _AlarmCardState();
 }
 
-class _AlarmCardState extends State<AlarmCard> {
-  late bool _active;
+class _AlarmCardState extends ConsumerState<AlarmCard> {
+  File? _thumbnailFile;
+  int _thumbnailVersion = 0;
 
   @override
   void initState() {
     super.initState();
-    _active = widget.alarm.active;
+    _loadThumbnail();
   }
 
   @override
   void didUpdateWidget(AlarmCard oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.alarm.active != widget.alarm.active) {
-      _active = widget.alarm.active;
+    if (oldWidget.alarm != widget.alarm) {
+      _loadThumbnail();
+    }
+  }
+
+  Future<void> _loadThumbnail() async {
+    if (widget.alarm.id == null) return;
+    final file = await AlarmThumbnail.get(widget.alarm.id!);
+    if (file != null) {
+      final provider = FileImage(file);
+      await provider.evict();
+    }
+    if (mounted) {
+      setState(() {
+        _thumbnailFile = file;
+        _thumbnailVersion++;
+      });
     }
   }
 
@@ -51,8 +81,15 @@ class _AlarmCardState extends State<AlarmCard> {
       ) =>
         (
           Icons.directions_walk,
-          _departureSubtitle(travelMode, bufferMinutes, arrivalTime),
+          _departureSubtitle(context, travelMode, bufferMinutes, arrivalTime),
         ),
+    };
+
+    final alarmTime = switch (widget.alarm) {
+      DepartureAlarmData() when widget.alarm.active => _departureTime(
+        widget.alarm as DepartureAlarmData,
+      ),
+      _ => null,
     };
 
     final title = widget.alarm.name.isEmpty
@@ -62,39 +99,156 @@ class _AlarmCardState extends State<AlarmCard> {
           }
         : widget.alarm.name;
 
-    return Card.filled(
-      clipBehavior: Clip.antiAlias,
-      child: ListTile(
-        leading: Icon(
-          icon,
-          color: _active ? colorScheme.primary : colorScheme.onSurfaceVariant,
-        ),
-        title: Text(
-          title,
-          style: TextStyle(
-            color: _active ? null : colorScheme.onSurfaceVariant,
+    final cardHeight = ((MediaQuery.of(context).size.width - 32) / 2).clamp(
+      140.0,
+      200.0,
+    );
+
+    return SizedBox(
+      height: cardHeight,
+      child: Card.outlined(
+        clipBehavior: Clip.antiAlias,
+        margin: EdgeInsets.zero,
+        color: widget.selected ? colorScheme.primaryContainer : null,
+        child: InkWell(
+          onTap: widget.onTap,
+          onLongPress: widget.onLongPress,
+          child: Row(
+            children: [
+              AspectRatio(
+                aspectRatio: 1,
+                child: _thumbnailFile != null
+                    ? Opacity(
+                        opacity: widget.alarm.active ? 1.0 : 0.5,
+                        child: Stack(
+                          fit: StackFit.expand,
+                          children: [
+                            Image.file(
+                              _thumbnailFile!,
+                              key: ValueKey(_thumbnailVersion),
+                              fit: BoxFit.cover,
+                            ),
+                            Center(
+                              child: Container(
+                                padding: const EdgeInsets.all(6),
+                                decoration: BoxDecoration(
+                                  color: colorScheme.surface.withValues(
+                                    alpha: 0.7,
+                                  ),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: Icon(
+                                  widget.alarm is ProximityAlarmData
+                                      ? Icons.notifications
+                                      : Icons.place,
+                                  size: 24,
+                                  color: colorScheme.primary,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    : Icon(
+                        icon,
+                        color: widget.alarm.active
+                            ? colorScheme.primary
+                            : colorScheme.onSurfaceVariant,
+                      ),
+              ),
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        title,
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(
+                              color: widget.alarm.active
+                                  ? null
+                                  : colorScheme.onSurfaceVariant,
+                            ),
+                      ),
+                      const SizedBox(height: 2),
+                      Text(
+                        subtitle,
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                      if (alarmTime != null) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          alarmTime,
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                color: colorScheme.primary,
+                                fontWeight: FontWeight.bold,
+                              ),
+                        ),
+                      ],
+                      const Spacer(),
+                      Align(
+                        alignment: Alignment.bottomRight,
+                        child: widget.editMode
+                            ? const SizedBox(width: 60, height: 48)
+                            : widget.activating
+                            ? const SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                ),
+                              )
+                            : Semantics(
+                                label:
+                                    '$title, ${widget.alarm.active ? "active" : "inactive"}',
+                                excludeSemantics: true,
+                                child: Switch(
+                                  value: widget.alarm.active,
+                                  onChanged: (active) {
+                                    widget.onToggle(active);
+                                  },
+                                ),
+                              ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
-        subtitle: Text(subtitle),
-        trailing: Switch(
-          value: _active,
-          onChanged: (active) {
-            setState(() => _active = active);
-            widget.onToggle(active);
-          },
-        ),
-        onTap: widget.onTap,
       ),
     );
   }
 
+  String? _departureTime(DepartureAlarmData alarm) {
+    final locationAsync = ref.watch(locationProvider);
+    final position = locationAsync.whenData((p) => p).value;
+    if (position == null) return null;
+
+    final info = calculateDeparture(
+      currentPosition: LatLng(position.latitude, position.longitude),
+      destination: alarm.location,
+      travelMode: alarm.travelMode,
+      bufferMinutes: alarm.bufferMinutes,
+      arrivalTime: alarm.arrivalTime,
+    );
+    if (info == null) return null;
+
+    return formatDepartureInfo(info, context);
+  }
+
   String _departureSubtitle(
+    BuildContext context,
     TravelMode travelMode,
     int bufferMinutes,
     DateTime arrivalTime,
   ) {
-    final hour = arrivalTime.hour.toString().padLeft(2, '0');
-    final minute = arrivalTime.minute.toString().padLeft(2, '0');
-    return 'Arrive by $hour:$minute · ${travelMode.name} · +$bufferMinutes min';
+    final timeStr = TimeOfDay.fromDateTime(arrivalTime).format(context);
+    return 'Arrive by $timeStr · ${travelMode.name} · +$bufferMinutes min';
   }
 }
