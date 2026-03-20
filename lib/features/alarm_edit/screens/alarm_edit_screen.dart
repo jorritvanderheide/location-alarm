@@ -29,6 +29,7 @@ class AlarmEditScreen extends ConsumerStatefulWidget {
 class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
   bool _isNew = true;
   bool _loaded = false;
+  bool _saving = false;
 
   AlarmMode _mode = AlarmMode.proximity;
   late TextEditingController _labelController;
@@ -98,6 +99,8 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
   }
 
   Future<void> _save() async {
+    if (_saving) return;
+
     // Validate first — before any async permission work
     if (_location == null) {
       ScaffoldMessenger.of(
@@ -111,7 +114,25 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
       );
       return;
     }
+    if (_mode == AlarmMode.departure &&
+        _arrivalTime != null &&
+        _arrivalTime!.isBefore(DateTime.now())) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Arrival time is in the past')),
+      );
+      return;
+    }
 
+    setState(() => _saving = true);
+
+    try {
+      await _performSave();
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
+
+  Future<void> _performSave() async {
     // Request permissions needed for alarm monitoring
     final permNotifier = ref.read(locationPermissionProvider.notifier);
     await permNotifier.requestBackground();
@@ -284,7 +305,16 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
       appBar: AppBar(
         title: Text(_isNew ? 'New alarm' : modeLabel),
         actions: [
-          TextButton(onPressed: _save, child: const Text('Save')),
+          TextButton(
+            onPressed: _saving ? null : _save,
+            child: _saving
+                ? const SizedBox(
+                    width: 16,
+                    height: 16,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Text('Save'),
+          ),
           const SizedBox(width: 8),
         ],
       ),
@@ -336,15 +366,6 @@ class _AlarmEditScreenState extends ConsumerState<AlarmEditScreen> {
               onArrivalTimeChanged: (t) => setState(() => _arrivalTime = t),
             ),
           ],
-          const SizedBox(height: 16),
-          const ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: Icon(Icons.volume_up),
-            title: Text('Sound'),
-            subtitle: Text('Default alarm'),
-            trailing: Icon(Icons.chevron_right),
-            enabled: false,
-          ),
           if (!_isNew) ...[
             const SizedBox(height: 24),
             TextButton.icon(

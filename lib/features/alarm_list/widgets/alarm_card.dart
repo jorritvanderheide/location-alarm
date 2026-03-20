@@ -80,7 +80,11 @@ class _AlarmCardState extends ConsumerState<AlarmCard> {
         :final arrivalTime,
       ) =>
         (
-          Icons.directions_walk,
+          switch (travelMode) {
+            TravelMode.walk => Icons.directions_walk,
+            TravelMode.cycle => Icons.directions_bike,
+            TravelMode.drive => Icons.directions_car,
+          },
           _departureSubtitle(context, travelMode, bufferMinutes, arrivalTime),
         ),
     };
@@ -104,23 +108,23 @@ class _AlarmCardState extends ConsumerState<AlarmCard> {
       200.0,
     );
 
-    return SizedBox(
-      height: cardHeight,
-      child: Card.outlined(
-        clipBehavior: Clip.antiAlias,
-        margin: EdgeInsets.zero,
-        color: widget.selected ? colorScheme.primaryContainer : null,
-        child: InkWell(
-          onTap: widget.onTap,
-          onLongPress: widget.onLongPress,
-          child: Row(
-            children: [
-              AspectRatio(
-                aspectRatio: 1,
-                child: _thumbnailFile != null
-                    ? Opacity(
-                        opacity: widget.alarm.active ? 1.0 : 0.5,
-                        child: Stack(
+    return Opacity(
+      opacity: widget.alarm.active ? 1.0 : 0.6,
+      child: SizedBox(
+        height: cardHeight,
+        child: Card.outlined(
+          clipBehavior: Clip.antiAlias,
+          margin: EdgeInsets.zero,
+          color: widget.selected ? colorScheme.primaryContainer : null,
+          child: InkWell(
+            onTap: widget.onTap,
+            onLongPress: widget.onLongPress,
+            child: Row(
+              children: [
+                AspectRatio(
+                  aspectRatio: 1,
+                  child: _thumbnailFile != null
+                      ? Stack(
                           fit: StackFit.expand,
                           children: [
                             Image.file(
@@ -147,78 +151,77 @@ class _AlarmCardState extends ConsumerState<AlarmCard> {
                               ),
                             ),
                           ],
+                        )
+                      : Icon(
+                          icon,
+                          color: widget.alarm.active
+                              ? colorScheme.primary
+                              : colorScheme.onSurfaceVariant,
                         ),
-                      )
-                    : Icon(
-                        icon,
-                        color: widget.alarm.active
-                            ? colorScheme.primary
-                            : colorScheme.onSurfaceVariant,
-                      ),
-              ),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        title,
-                        style: Theme.of(context).textTheme.titleMedium
-                            ?.copyWith(
-                              color: widget.alarm.active
-                                  ? null
-                                  : colorScheme.onSurfaceVariant,
-                            ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        subtitle,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                      if (alarmTime != null) ...[
-                        const SizedBox(height: 4),
+                ),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(12),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                         Text(
-                          alarmTime,
-                          style: Theme.of(context).textTheme.bodySmall
+                          title,
+                          style: Theme.of(context).textTheme.titleMedium
                               ?.copyWith(
-                                color: colorScheme.primary,
-                                fontWeight: FontWeight.bold,
+                                color: widget.alarm.active
+                                    ? null
+                                    : colorScheme.onSurfaceVariant,
                               ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          subtitle,
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(color: colorScheme.onSurfaceVariant),
+                        ),
+                        if (alarmTime != null) ...[
+                          const SizedBox(height: 4),
+                          Text(
+                            alarmTime,
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(
+                                  color: colorScheme.primary,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                          ),
+                        ],
+                        const Spacer(),
+                        Align(
+                          alignment: Alignment.bottomRight,
+                          child: widget.editMode
+                              ? const SizedBox(width: 60, height: 48)
+                              : widget.activating
+                              ? const SizedBox(
+                                  width: 24,
+                                  height: 24,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : Semantics(
+                                  label:
+                                      '$title, ${widget.alarm.active ? "active" : "inactive"}',
+                                  excludeSemantics: true,
+                                  child: Switch(
+                                    value: widget.alarm.active,
+                                    onChanged: (active) {
+                                      widget.onToggle(active);
+                                    },
+                                  ),
+                                ),
                         ),
                       ],
-                      const Spacer(),
-                      Align(
-                        alignment: Alignment.bottomRight,
-                        child: widget.editMode
-                            ? const SizedBox(width: 60, height: 48)
-                            : widget.activating
-                            ? const SizedBox(
-                                width: 24,
-                                height: 24,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                ),
-                              )
-                            : Semantics(
-                                label:
-                                    '$title, ${widget.alarm.active ? "active" : "inactive"}',
-                                excludeSemantics: true,
-                                child: Switch(
-                                  value: widget.alarm.active,
-                                  onChanged: (active) {
-                                    widget.onToggle(active);
-                                  },
-                                ),
-                              ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

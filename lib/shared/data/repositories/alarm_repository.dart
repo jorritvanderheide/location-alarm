@@ -66,7 +66,7 @@ class AlarmRepository {
         updatedAt: row.updatedAt,
         travelMode: row.travelMode ?? TravelMode.walk,
         bufferMinutes: row.bufferMinutes ?? 5,
-        arrivalTime: row.arrivalTime ?? DateTime.now(),
+        arrivalTime: row.arrivalTime ?? DateTime(0),
       ),
     };
   }

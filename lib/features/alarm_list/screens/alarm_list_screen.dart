@@ -327,6 +327,15 @@ class _AlarmListScreenState extends ConsumerState<AlarmListScreen> {
         }
       }
 
+      if (alarm is DepartureAlarmData &&
+          alarm.arrivalTime.isBefore(DateTime.now())) {
+        setState(() => _activatingIds.remove(alarm.id));
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Arrival time is in the past')),
+        );
+        return;
+      }
+
       await ref
           .read(alarmRepositoryProvider)
           .toggleActive(alarm.id!, active: true);
@@ -341,13 +350,19 @@ class _AlarmListScreenState extends ConsumerState<AlarmListScreen> {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(message)));
-    } on Exception {
+    } on LocationServiceDisabledException {
       if (!mounted) return;
       setState(() => _activatingIds.remove(alarm.id));
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Could not acquire location — ensure GPS is enabled'),
+          content: Text('GPS is disabled — enable it in Settings'),
         ),
+      );
+    } on Exception {
+      if (!mounted) return;
+      setState(() => _activatingIds.remove(alarm.id));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Could not acquire location')),
       );
     }
   }

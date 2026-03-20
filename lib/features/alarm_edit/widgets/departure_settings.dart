@@ -145,9 +145,22 @@ class _DepartureSettingsState extends State<DepartureSettings> {
           : TimeOfDay.fromDateTime(now.add(const Duration(hours: 1))),
     );
     if (time == null) return;
-    widget.onArrivalTimeChanged(
-      DateTime(date.year, date.month, date.day, time.hour, time.minute),
+    final combined = DateTime(
+      date.year,
+      date.month,
+      date.day,
+      time.hour,
+      time.minute,
     );
+    if (combined.isBefore(DateTime.now())) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Arrival time must be in the future')),
+        );
+      }
+      return;
+    }
+    widget.onArrivalTimeChanged(combined);
   }
 
   String _formatDateTime(BuildContext context, DateTime dt) {

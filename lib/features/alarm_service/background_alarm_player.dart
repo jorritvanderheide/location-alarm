@@ -29,13 +29,14 @@ class BackgroundAlarmPlayer {
     // forget to avoid blocking the notification path.
     unawaited(_playLoop());
 
+    final label = alarm.name.isNotEmpty ? alarm.name : null;
     final (title, body) = switch (alarm) {
       ProximityAlarmData(:final radius) => (
-        'Location Alarm',
+        label ?? 'Location Alarm',
         'You are within ${radius.round()} m of your destination',
       ),
       DepartureAlarmData(:final travelMode) => (
-        'Time to Leave',
+        label ?? 'Time to Leave',
         'Leave now by ${travelMode.name} to arrive on time',
       ),
     };
