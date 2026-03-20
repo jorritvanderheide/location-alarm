@@ -31,7 +31,7 @@ object AlarmNotificationHelper {
         }
     }
 
-    fun show(context: Context, alarmId: Int, title: String, body: String, isProximity: Boolean = true) {
+    fun show(context: Context, alarmId: Int, title: String, body: String) {
         ensureChannel(context)
 
         // Dismiss action → BroadcastReceiver (no app launch)
@@ -50,7 +50,6 @@ object AlarmNotificationHelper {
             putExtra("alarm_id", alarmId)
             putExtra("alarm_title", title)
             putExtra("alarm_body", body)
-            putExtra("alarm_is_proximity", isProximity)
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
         }
         val contentPending = PendingIntent.getActivity(

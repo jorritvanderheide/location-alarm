@@ -4,18 +4,17 @@ import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:location_alarm/features/alarm_list/widgets/alarm_card.dart';
-import 'package:location_alarm/shared/data/alarm_thumbnail.dart';
-import 'package:location_alarm/shared/data/departure_calculator.dart';
+import 'package:location_alarm/features/alarm_service/providers/foreground_service_provider.dart';
+import 'package:location_alarm/shared/data/geo_utils.dart';
 import 'package:location_alarm/shared/data/models/alarm.dart';
 import 'package:location_alarm/shared/providers/alarm_repository_provider.dart';
 import 'package:location_alarm/shared/providers/alarms_provider.dart';
-import 'package:location_alarm/shared/providers/location_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 enum AlarmSortMode {
   active('Active first'),
   created('Date created'),
-  name('Name'),
-  type('Type');
+  name('Name');
 
   const AlarmSortMode(this.label);
   final String label;
@@ -30,9 +29,7 @@ class AlarmListScreen extends ConsumerStatefulWidget {
 
 class _AlarmListScreenState extends ConsumerState<AlarmListScreen> {
   AlarmSortMode _sortMode = AlarmSortMode.active;
-  bool _editMode = false;
   final Set<int> _activatingIds = {};
-  final Set<int> _selectedIds = {};
 
   List<AlarmData> _sortAlarms(List<AlarmData> alarms) {
     final sorted = [...alarms];
@@ -40,7 +37,6 @@ class _AlarmListScreenState extends ConsumerState<AlarmListScreen> {
       case AlarmSortMode.active:
         sorted.sort((a, b) {
           if (a.active != b.active) return a.active ? -1 : 1;
-          // Within inactive group: most recently updated first
           if (!a.active && !b.active) {
             final aTime = a.updatedAt ?? DateTime(0);
             final bTime = b.updatedAt ?? DateTime(0);
@@ -56,12 +52,6 @@ class _AlarmListScreenState extends ConsumerState<AlarmListScreen> {
         });
       case AlarmSortMode.name:
         sorted.sort((a, b) => a.name.compareTo(b.name));
-      case AlarmSortMode.type:
-        sorted.sort((a, b) {
-          final aType = a is ProximityAlarmData ? 0 : 1;
-          final bType = b is ProximityAlarmData ? 0 : 1;
-          return aType.compareTo(bType);
-        });
     }
     return sorted;
   }
@@ -100,191 +90,141 @@ class _AlarmListScreenState extends ConsumerState<AlarmListScreen> {
     }
   }
 
-  void _enterEditMode(int alarmId) {
-    setState(() {
-      _editMode = true;
-      _selectedIds.add(alarmId);
-    });
-  }
-
-  void _exitEditMode() {
-    setState(() {
-      _editMode = false;
-      _selectedIds.clear();
-    });
-  }
-
-  void _toggleSelection(int alarmId) {
-    setState(() {
-      if (_selectedIds.contains(alarmId)) {
-        _selectedIds.remove(alarmId);
-        if (_selectedIds.isEmpty) _editMode = false;
-      } else {
-        _selectedIds.add(alarmId);
-      }
-    });
-  }
-
-  Future<void> _deleteSelected() async {
-    final count = _selectedIds.length;
-    final confirm = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text('Delete $count alarm${count > 1 ? 's' : ''}?'),
-        content: Text(
-          '$count alarm${count > 1 ? 's' : ''} will be permanently removed.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            style: TextButton.styleFrom(
-              foregroundColor: Theme.of(context).colorScheme.error,
-            ),
-            child: const Text('Delete'),
-          ),
-        ],
-      ),
-    );
-    if (confirm != true) return;
-
-    final repo = ref.read(alarmRepositoryProvider);
-    await Future.wait(
-      _selectedIds.map((id) async {
-        await repo.delete(id);
-        await AlarmThumbnail.delete(id);
-      }),
-    );
-    _exitEditMode();
+  String _formatDistance(double meters) {
+    if (meters >= 1000) {
+      return '${(meters / 1000).toStringAsFixed(1)} km';
+    }
+    return '${meters.round()} m';
   }
 
   @override
   Widget build(BuildContext context) {
     final alarmsAsync = ref.watch(alarmsProvider);
+    final serviceRunning = ref.watch(foregroundServiceProvider);
+    final colorScheme = Theme.of(context).colorScheme;
 
-    return PopScope(
-      canPop: !_editMode,
-      onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) _exitEditMode();
-      },
-      child: Scaffold(
-        appBar: _editMode
-            ? AppBar(
-                leading: IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  onPressed: _exitEditMode,
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Alarms'),
+        actions: [
+          IconButton(
+            icon: _sortMode != AlarmSortMode.active
+                ? Icon(Icons.sort, color: colorScheme.primary)
+                : const Icon(Icons.sort),
+            tooltip: 'Sort alarms',
+            onPressed: _showSortSheet,
+          ),
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              switch (value) {
+                case 'settings':
+                  context.push('/settings');
+                case 'about':
+                  context.push('/about');
+              }
+            },
+            itemBuilder: (context) => const [
+              PopupMenuItem(
+                value: 'settings',
+                child: ListTile(
+                  leading: Icon(Icons.settings),
+                  title: Text('Settings'),
+                  dense: true,
+                  contentPadding: EdgeInsets.zero,
                 ),
-                title: Text('${_selectedIds.length} selected'),
-                actions: [
-                  IconButton(
-                    icon: const Icon(Icons.delete_outline),
-                    tooltip: 'Delete selected',
-                    onPressed: _selectedIds.isNotEmpty ? _deleteSelected : null,
-                  ),
-                ],
-              )
-            : AppBar(
-                title: const Text('Alarms'),
-                actions: [
-                  IconButton(
-                    icon: const Icon(Icons.sort),
-                    tooltip: 'Sort alarms',
-                    onPressed: _showSortSheet,
-                  ),
-                  PopupMenuButton<String>(
-                    onSelected: (value) {
-                      switch (value) {
-                        case 'settings':
-                          context.push('/settings');
-                        case 'about':
-                          context.push('/about');
-                      }
-                    },
-                    itemBuilder: (context) => const [
-                      PopupMenuItem(value: 'settings', child: Text('Settings')),
-                      PopupMenuItem(value: 'about', child: Text('About')),
-                    ],
-                  ),
-                ],
               ),
-        body: alarmsAsync.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (_, _) => const Center(child: Text('Failed to load alarms')),
-          data: (alarms) {
-            if (alarms.isEmpty) {
-              return Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.notifications_none,
-                      size: 64,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'No alarms yet',
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'Tap + to create your first alarm',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                  ],
+              PopupMenuItem(
+                value: 'about',
+                child: ListTile(
+                  leading: Icon(Icons.info_outline),
+                  title: Text('About'),
+                  dense: true,
+                  contentPadding: EdgeInsets.zero,
                 ),
-              );
-            }
-
-            final sorted = _sortAlarms(alarms);
-
-            return SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
+              ),
+            ],
+          ),
+        ],
+      ),
+      body: alarmsAsync.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (_, _) => const Center(child: Text('Failed to load alarms')),
+        data: (alarms) {
+          if (alarms.isEmpty) {
+            return Center(
               child: Column(
-                spacing: 16,
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  for (final alarm in sorted)
-                    AlarmCard(
-                      key: ValueKey(alarm.id),
-                      alarm: alarm,
-                      activating: _activatingIds.contains(alarm.id),
-                      selected: _selectedIds.contains(alarm.id),
-                      editMode: _editMode,
-                      onTap: _editMode
-                          ? () => _toggleSelection(alarm.id!)
-                          : () => context.push('/edit/${alarm.id}'),
-                      onLongPress: _editMode
-                          ? null
-                          : () => _enterEditMode(alarm.id!),
-                      onToggle: (active) => _handleToggle(alarm, active, ref),
+                  Icon(
+                    Icons.notifications_none,
+                    size: 64,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    'No alarms yet',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
                     ),
-                  if (!_editMode)
-                    Text(
-                      'Long press to select and delete',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                      textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Tap + to create your first alarm',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onSurfaceVariant,
                     ),
+                  ),
                 ],
               ),
             );
-          },
-        ),
-        floatingActionButton: _editMode
-            ? null
-            : FloatingActionButton(
-                heroTag: 'create_alarm',
-                onPressed: () => context.push('/create'),
-                child: const Icon(Icons.add),
-              ),
+          }
+
+          final hasActive = alarms.any((a) => a.active);
+          final sorted = _sortAlarms(alarms);
+
+          return SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              spacing: 16,
+              children: [
+                // Warning banner when active alarms exist but service isn't running
+                if (hasActive && !serviceRunning)
+                  Card(
+                    color: colorScheme.errorContainer,
+                    margin: EdgeInsets.zero,
+                    child: ListTile(
+                      leading: Icon(
+                        Icons.warning_amber,
+                        color: colorScheme.onErrorContainer,
+                      ),
+                      title: Text(
+                        'Alarms are not being monitored',
+                        style: TextStyle(color: colorScheme.onErrorContainer),
+                      ),
+                      subtitle: Text(
+                        'Background location permission required',
+                        style: TextStyle(color: colorScheme.onErrorContainer),
+                      ),
+                      onTap: openAppSettings,
+                    ),
+                  ),
+                for (final alarm in sorted)
+                  AlarmCard(
+                    key: ValueKey(alarm.id),
+                    alarm: alarm,
+                    activating: _activatingIds.contains(alarm.id),
+                    onTap: () => context.push('/edit/${alarm.id}'),
+                    onToggle: (active) => _handleToggle(alarm, active, ref),
+                  ),
+              ],
+            ),
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        heroTag: 'create_alarm',
+        onPressed: () => context.push('/create'),
+        child: const Icon(Icons.add),
       ),
     );
   }
@@ -294,16 +234,33 @@ class _AlarmListScreenState extends ConsumerState<AlarmListScreen> {
     bool active,
     WidgetRef ref,
   ) async {
+    final id = alarm.id!;
+    final alarmName = alarm.name.isEmpty ? 'Alarm #$id' : alarm.name;
+
     if (!active) {
-      await ref
-          .read(alarmRepositoryProvider)
-          .toggleActive(alarm.id!, active: false);
+      // Cancel any pending activation for this alarm.
+      _activatingIds.remove(id);
+      await ref.read(alarmRepositoryProvider).toggleActive(id, active: false);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('$alarmName deactivated'),
+            action: SnackBarAction(
+              label: 'Undo',
+              onPressed: () {
+                ref
+                    .read(alarmRepositoryProvider)
+                    .toggleActive(id, active: true);
+              },
+            ),
+          ),
+        );
+      }
       return;
     }
 
-    // GPS check before activating — needed for proximity (area check) and
-    // departure (travel time calculation).
-    setState(() => _activatingIds.add(alarm.id!));
+    // GPS check before activating
+    setState(() => _activatingIds.add(id));
 
     try {
       final position = await Geolocator.getCurrentPosition(
@@ -313,74 +270,68 @@ class _AlarmListScreenState extends ConsumerState<AlarmListScreen> {
         ),
       );
 
-      if (!mounted || !_activatingIds.contains(alarm.id)) return;
+      if (!_activatingIds.contains(id)) return;
+      if (!mounted) return;
 
-      if (alarm is ProximityAlarmData) {
-        final currentLatLng = LatLng(position.latitude, position.longitude);
-        final distance = distanceInMeters(currentLatLng, alarm.location);
-        if (distance <= alarm.radius) {
-          setState(() => _activatingIds.remove(alarm.id));
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('You are already in the alarm area')),
+      final currentLatLng = LatLng(position.latitude, position.longitude);
+      final distance = distanceInMeters(currentLatLng, alarm.location);
+      if (distance <= alarm.radius) {
+        if (mounted) {
+          await showDialog<void>(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('Already inside alarm area'),
+              content: Text(
+                'You are ${_formatDistance(distance)} from "$alarmName". '
+                'Move outside the ${alarm.radius.round()} m radius to activate.',
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
           );
-          return;
         }
-      }
-
-      if (alarm is DepartureAlarmData &&
-          alarm.arrivalTime.isBefore(DateTime.now())) {
-        setState(() => _activatingIds.remove(alarm.id));
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Arrival time is in the past')),
-        );
         return;
       }
 
-      await ref
-          .read(alarmRepositoryProvider)
-          .toggleActive(alarm.id!, active: true);
+      if (!_activatingIds.contains(id)) return;
 
-      if (!mounted) return;
-      setState(() => _activatingIds.remove(alarm.id));
+      await ref.read(alarmRepositoryProvider).toggleActive(id, active: true);
 
-      final message = switch (alarm) {
-        DepartureAlarmData() => _departureActivatedMessage(alarm, ref),
-        _ => 'Alarm activated',
-      };
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text(message)));
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              '$alarmName activated — ${_formatDistance(distance)} away',
+            ),
+          ),
+        );
+      }
     } on LocationServiceDisabledException {
-      if (!mounted) return;
-      setState(() => _activatingIds.remove(alarm.id));
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('GPS is disabled — enable it in Settings'),
-        ),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('GPS is disabled'),
+            action: SnackBarAction(
+              label: 'Open Settings',
+              onPressed: Geolocator.openLocationSettings,
+            ),
+            duration: Duration(seconds: 6),
+          ),
+        );
+      }
     } on Exception {
-      if (!mounted) return;
-      setState(() => _activatingIds.remove(alarm.id));
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Could not acquire location')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Could not acquire location')),
+        );
+      }
+    } finally {
+      _activatingIds.remove(id);
+      if (mounted) setState(() {});
     }
-  }
-
-  String _departureActivatedMessage(DepartureAlarmData alarm, WidgetRef ref) {
-    final locationAsync = ref.read(locationProvider);
-    final position = locationAsync.whenData((p) => p).value;
-    if (position == null) return 'Alarm activated';
-
-    final info = calculateDeparture(
-      currentPosition: LatLng(position.latitude, position.longitude),
-      destination: alarm.location,
-      travelMode: alarm.travelMode,
-      bufferMinutes: alarm.bufferMinutes,
-      arrivalTime: alarm.arrivalTime,
-    );
-    if (info == null) return 'Alarm activated';
-
-    return formatDepartureInfo(info, context);
   }
 }

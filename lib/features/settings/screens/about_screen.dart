@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
 
-const _appVersion = '1.0.0';
-
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
 
@@ -38,7 +36,7 @@ class AboutScreen extends StatelessWidget {
           const ListTile(
             leading: Icon(Icons.info_outline),
             title: Text('Version'),
-            subtitle: Text(_appVersion),
+            subtitle: Text('1.0.0'),
           ),
           const ListTile(
             leading: Icon(Icons.gavel),
@@ -55,7 +53,7 @@ class AboutScreen extends StatelessWidget {
             onPressed: () => showLicensePage(
               context: context,
               applicationName: 'Location Alarm',
-              applicationVersion: _appVersion,
+              applicationVersion: '1.0.0',
             ),
             child: const Text('Open source licenses'),
           ),

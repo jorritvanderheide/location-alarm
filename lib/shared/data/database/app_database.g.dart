@@ -31,15 +31,6 @@ class $AlarmsTable extends Alarms with TableInfo<$AlarmsTable, Alarm> {
     requiredDuringInsert: false,
     defaultValue: const Constant(''),
   );
-  @override
-  late final GeneratedColumnWithTypeConverter<AlarmMode, int> mode =
-      GeneratedColumn<int>(
-        'mode',
-        aliasedName,
-        false,
-        type: DriftSqlType.int,
-        requiredDuringInsert: true,
-      ).withConverter<AlarmMode>($AlarmsTable.$convertermode);
   static const VerificationMeta _latitudeMeta = const VerificationMeta(
     'latitude',
   );
@@ -84,37 +75,6 @@ class $AlarmsTable extends Alarms with TableInfo<$AlarmsTable, Alarm> {
     type: DriftSqlType.double,
     requiredDuringInsert: false,
   );
-  @override
-  late final GeneratedColumnWithTypeConverter<TravelMode?, int> travelMode =
-      GeneratedColumn<int>(
-        'travel_mode',
-        aliasedName,
-        true,
-        type: DriftSqlType.int,
-        requiredDuringInsert: false,
-      ).withConverter<TravelMode?>($AlarmsTable.$convertertravelModen);
-  static const VerificationMeta _bufferMinutesMeta = const VerificationMeta(
-    'bufferMinutes',
-  );
-  @override
-  late final GeneratedColumn<int> bufferMinutes = GeneratedColumn<int>(
-    'buffer_minutes',
-    aliasedName,
-    true,
-    type: DriftSqlType.int,
-    requiredDuringInsert: false,
-  );
-  static const VerificationMeta _arrivalTimeMeta = const VerificationMeta(
-    'arrivalTime',
-  );
-  @override
-  late final GeneratedColumn<DateTime> arrivalTime = GeneratedColumn<DateTime>(
-    'arrival_time',
-    aliasedName,
-    true,
-    type: DriftSqlType.dateTime,
-    requiredDuringInsert: false,
-  );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
   );
@@ -143,14 +103,10 @@ class $AlarmsTable extends Alarms with TableInfo<$AlarmsTable, Alarm> {
   List<GeneratedColumn> get $columns => [
     id,
     name,
-    mode,
     latitude,
     longitude,
     active,
     radius,
-    travelMode,
-    bufferMinutes,
-    arrivalTime,
     createdAt,
     updatedAt,
   ];
@@ -203,24 +159,6 @@ class $AlarmsTable extends Alarms with TableInfo<$AlarmsTable, Alarm> {
         radius.isAcceptableOrUnknown(data['radius']!, _radiusMeta),
       );
     }
-    if (data.containsKey('buffer_minutes')) {
-      context.handle(
-        _bufferMinutesMeta,
-        bufferMinutes.isAcceptableOrUnknown(
-          data['buffer_minutes']!,
-          _bufferMinutesMeta,
-        ),
-      );
-    }
-    if (data.containsKey('arrival_time')) {
-      context.handle(
-        _arrivalTimeMeta,
-        arrivalTime.isAcceptableOrUnknown(
-          data['arrival_time']!,
-          _arrivalTimeMeta,
-        ),
-      );
-    }
     if (data.containsKey('created_at')) {
       context.handle(
         _createdAtMeta,
@@ -250,12 +188,6 @@ class $AlarmsTable extends Alarms with TableInfo<$AlarmsTable, Alarm> {
         DriftSqlType.string,
         data['${effectivePrefix}name'],
       )!,
-      mode: $AlarmsTable.$convertermode.fromSql(
-        attachedDatabase.typeMapping.read(
-          DriftSqlType.int,
-          data['${effectivePrefix}mode'],
-        )!,
-      ),
       latitude: attachedDatabase.typeMapping.read(
         DriftSqlType.double,
         data['${effectivePrefix}latitude'],
@@ -272,20 +204,6 @@ class $AlarmsTable extends Alarms with TableInfo<$AlarmsTable, Alarm> {
         DriftSqlType.double,
         data['${effectivePrefix}radius'],
       ),
-      travelMode: $AlarmsTable.$convertertravelModen.fromSql(
-        attachedDatabase.typeMapping.read(
-          DriftSqlType.int,
-          data['${effectivePrefix}travel_mode'],
-        ),
-      ),
-      bufferMinutes: attachedDatabase.typeMapping.read(
-        DriftSqlType.int,
-        data['${effectivePrefix}buffer_minutes'],
-      ),
-      arrivalTime: attachedDatabase.typeMapping.read(
-        DriftSqlType.dateTime,
-        data['${effectivePrefix}arrival_time'],
-      ),
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
@@ -301,39 +219,24 @@ class $AlarmsTable extends Alarms with TableInfo<$AlarmsTable, Alarm> {
   $AlarmsTable createAlias(String alias) {
     return $AlarmsTable(attachedDatabase, alias);
   }
-
-  static JsonTypeConverter2<AlarmMode, int, int> $convertermode =
-      const EnumIndexConverter<AlarmMode>(AlarmMode.values);
-  static JsonTypeConverter2<TravelMode, int, int> $convertertravelMode =
-      const EnumIndexConverter<TravelMode>(TravelMode.values);
-  static JsonTypeConverter2<TravelMode?, int?, int?> $convertertravelModen =
-      JsonTypeConverter2.asNullable($convertertravelMode);
 }
 
 class Alarm extends DataClass implements Insertable<Alarm> {
   final int id;
   final String name;
-  final AlarmMode mode;
   final double latitude;
   final double longitude;
   final bool active;
   final double? radius;
-  final TravelMode? travelMode;
-  final int? bufferMinutes;
-  final DateTime? arrivalTime;
   final DateTime createdAt;
   final DateTime updatedAt;
   const Alarm({
     required this.id,
     required this.name,
-    required this.mode,
     required this.latitude,
     required this.longitude,
     required this.active,
     this.radius,
-    this.travelMode,
-    this.bufferMinutes,
-    this.arrivalTime,
     required this.createdAt,
     required this.updatedAt,
   });
@@ -342,25 +245,11 @@ class Alarm extends DataClass implements Insertable<Alarm> {
     final map = <String, Expression>{};
     map['id'] = Variable<int>(id);
     map['name'] = Variable<String>(name);
-    {
-      map['mode'] = Variable<int>($AlarmsTable.$convertermode.toSql(mode));
-    }
     map['latitude'] = Variable<double>(latitude);
     map['longitude'] = Variable<double>(longitude);
     map['active'] = Variable<bool>(active);
     if (!nullToAbsent || radius != null) {
       map['radius'] = Variable<double>(radius);
-    }
-    if (!nullToAbsent || travelMode != null) {
-      map['travel_mode'] = Variable<int>(
-        $AlarmsTable.$convertertravelModen.toSql(travelMode),
-      );
-    }
-    if (!nullToAbsent || bufferMinutes != null) {
-      map['buffer_minutes'] = Variable<int>(bufferMinutes);
-    }
-    if (!nullToAbsent || arrivalTime != null) {
-      map['arrival_time'] = Variable<DateTime>(arrivalTime);
     }
     map['created_at'] = Variable<DateTime>(createdAt);
     map['updated_at'] = Variable<DateTime>(updatedAt);
@@ -371,22 +260,12 @@ class Alarm extends DataClass implements Insertable<Alarm> {
     return AlarmsCompanion(
       id: Value(id),
       name: Value(name),
-      mode: Value(mode),
       latitude: Value(latitude),
       longitude: Value(longitude),
       active: Value(active),
       radius: radius == null && nullToAbsent
           ? const Value.absent()
           : Value(radius),
-      travelMode: travelMode == null && nullToAbsent
-          ? const Value.absent()
-          : Value(travelMode),
-      bufferMinutes: bufferMinutes == null && nullToAbsent
-          ? const Value.absent()
-          : Value(bufferMinutes),
-      arrivalTime: arrivalTime == null && nullToAbsent
-          ? const Value.absent()
-          : Value(arrivalTime),
       createdAt: Value(createdAt),
       updatedAt: Value(updatedAt),
     );
@@ -400,18 +279,10 @@ class Alarm extends DataClass implements Insertable<Alarm> {
     return Alarm(
       id: serializer.fromJson<int>(json['id']),
       name: serializer.fromJson<String>(json['name']),
-      mode: $AlarmsTable.$convertermode.fromJson(
-        serializer.fromJson<int>(json['mode']),
-      ),
       latitude: serializer.fromJson<double>(json['latitude']),
       longitude: serializer.fromJson<double>(json['longitude']),
       active: serializer.fromJson<bool>(json['active']),
       radius: serializer.fromJson<double?>(json['radius']),
-      travelMode: $AlarmsTable.$convertertravelModen.fromJson(
-        serializer.fromJson<int?>(json['travelMode']),
-      ),
-      bufferMinutes: serializer.fromJson<int?>(json['bufferMinutes']),
-      arrivalTime: serializer.fromJson<DateTime?>(json['arrivalTime']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime>(json['updatedAt']),
     );
@@ -422,16 +293,10 @@ class Alarm extends DataClass implements Insertable<Alarm> {
     return <String, dynamic>{
       'id': serializer.toJson<int>(id),
       'name': serializer.toJson<String>(name),
-      'mode': serializer.toJson<int>($AlarmsTable.$convertermode.toJson(mode)),
       'latitude': serializer.toJson<double>(latitude),
       'longitude': serializer.toJson<double>(longitude),
       'active': serializer.toJson<bool>(active),
       'radius': serializer.toJson<double?>(radius),
-      'travelMode': serializer.toJson<int?>(
-        $AlarmsTable.$convertertravelModen.toJson(travelMode),
-      ),
-      'bufferMinutes': serializer.toJson<int?>(bufferMinutes),
-      'arrivalTime': serializer.toJson<DateTime?>(arrivalTime),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime>(updatedAt),
     };
@@ -440,29 +305,19 @@ class Alarm extends DataClass implements Insertable<Alarm> {
   Alarm copyWith({
     int? id,
     String? name,
-    AlarmMode? mode,
     double? latitude,
     double? longitude,
     bool? active,
     Value<double?> radius = const Value.absent(),
-    Value<TravelMode?> travelMode = const Value.absent(),
-    Value<int?> bufferMinutes = const Value.absent(),
-    Value<DateTime?> arrivalTime = const Value.absent(),
     DateTime? createdAt,
     DateTime? updatedAt,
   }) => Alarm(
     id: id ?? this.id,
     name: name ?? this.name,
-    mode: mode ?? this.mode,
     latitude: latitude ?? this.latitude,
     longitude: longitude ?? this.longitude,
     active: active ?? this.active,
     radius: radius.present ? radius.value : this.radius,
-    travelMode: travelMode.present ? travelMode.value : this.travelMode,
-    bufferMinutes: bufferMinutes.present
-        ? bufferMinutes.value
-        : this.bufferMinutes,
-    arrivalTime: arrivalTime.present ? arrivalTime.value : this.arrivalTime,
     createdAt: createdAt ?? this.createdAt,
     updatedAt: updatedAt ?? this.updatedAt,
   );
@@ -470,20 +325,10 @@ class Alarm extends DataClass implements Insertable<Alarm> {
     return Alarm(
       id: data.id.present ? data.id.value : this.id,
       name: data.name.present ? data.name.value : this.name,
-      mode: data.mode.present ? data.mode.value : this.mode,
       latitude: data.latitude.present ? data.latitude.value : this.latitude,
       longitude: data.longitude.present ? data.longitude.value : this.longitude,
       active: data.active.present ? data.active.value : this.active,
       radius: data.radius.present ? data.radius.value : this.radius,
-      travelMode: data.travelMode.present
-          ? data.travelMode.value
-          : this.travelMode,
-      bufferMinutes: data.bufferMinutes.present
-          ? data.bufferMinutes.value
-          : this.bufferMinutes,
-      arrivalTime: data.arrivalTime.present
-          ? data.arrivalTime.value
-          : this.arrivalTime,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
       updatedAt: data.updatedAt.present ? data.updatedAt.value : this.updatedAt,
     );
@@ -494,14 +339,10 @@ class Alarm extends DataClass implements Insertable<Alarm> {
     return (StringBuffer('Alarm(')
           ..write('id: $id, ')
           ..write('name: $name, ')
-          ..write('mode: $mode, ')
           ..write('latitude: $latitude, ')
           ..write('longitude: $longitude, ')
           ..write('active: $active, ')
           ..write('radius: $radius, ')
-          ..write('travelMode: $travelMode, ')
-          ..write('bufferMinutes: $bufferMinutes, ')
-          ..write('arrivalTime: $arrivalTime, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -512,14 +353,10 @@ class Alarm extends DataClass implements Insertable<Alarm> {
   int get hashCode => Object.hash(
     id,
     name,
-    mode,
     latitude,
     longitude,
     active,
     radius,
-    travelMode,
-    bufferMinutes,
-    arrivalTime,
     createdAt,
     updatedAt,
   );
@@ -529,14 +366,10 @@ class Alarm extends DataClass implements Insertable<Alarm> {
       (other is Alarm &&
           other.id == this.id &&
           other.name == this.name &&
-          other.mode == this.mode &&
           other.latitude == this.latitude &&
           other.longitude == this.longitude &&
           other.active == this.active &&
           other.radius == this.radius &&
-          other.travelMode == this.travelMode &&
-          other.bufferMinutes == this.bufferMinutes &&
-          other.arrivalTime == this.arrivalTime &&
           other.createdAt == this.createdAt &&
           other.updatedAt == this.updatedAt);
 }
@@ -544,71 +377,50 @@ class Alarm extends DataClass implements Insertable<Alarm> {
 class AlarmsCompanion extends UpdateCompanion<Alarm> {
   final Value<int> id;
   final Value<String> name;
-  final Value<AlarmMode> mode;
   final Value<double> latitude;
   final Value<double> longitude;
   final Value<bool> active;
   final Value<double?> radius;
-  final Value<TravelMode?> travelMode;
-  final Value<int?> bufferMinutes;
-  final Value<DateTime?> arrivalTime;
   final Value<DateTime> createdAt;
   final Value<DateTime> updatedAt;
   const AlarmsCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
-    this.mode = const Value.absent(),
     this.latitude = const Value.absent(),
     this.longitude = const Value.absent(),
     this.active = const Value.absent(),
     this.radius = const Value.absent(),
-    this.travelMode = const Value.absent(),
-    this.bufferMinutes = const Value.absent(),
-    this.arrivalTime = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
   });
   AlarmsCompanion.insert({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
-    required AlarmMode mode,
     required double latitude,
     required double longitude,
     this.active = const Value.absent(),
     this.radius = const Value.absent(),
-    this.travelMode = const Value.absent(),
-    this.bufferMinutes = const Value.absent(),
-    this.arrivalTime = const Value.absent(),
     this.createdAt = const Value.absent(),
     this.updatedAt = const Value.absent(),
-  }) : mode = Value(mode),
-       latitude = Value(latitude),
+  }) : latitude = Value(latitude),
        longitude = Value(longitude);
   static Insertable<Alarm> custom({
     Expression<int>? id,
     Expression<String>? name,
-    Expression<int>? mode,
     Expression<double>? latitude,
     Expression<double>? longitude,
     Expression<bool>? active,
     Expression<double>? radius,
-    Expression<int>? travelMode,
-    Expression<int>? bufferMinutes,
-    Expression<DateTime>? arrivalTime,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
       if (name != null) 'name': name,
-      if (mode != null) 'mode': mode,
       if (latitude != null) 'latitude': latitude,
       if (longitude != null) 'longitude': longitude,
       if (active != null) 'active': active,
       if (radius != null) 'radius': radius,
-      if (travelMode != null) 'travel_mode': travelMode,
-      if (bufferMinutes != null) 'buffer_minutes': bufferMinutes,
-      if (arrivalTime != null) 'arrival_time': arrivalTime,
       if (createdAt != null) 'created_at': createdAt,
       if (updatedAt != null) 'updated_at': updatedAt,
     });
@@ -617,28 +429,20 @@ class AlarmsCompanion extends UpdateCompanion<Alarm> {
   AlarmsCompanion copyWith({
     Value<int>? id,
     Value<String>? name,
-    Value<AlarmMode>? mode,
     Value<double>? latitude,
     Value<double>? longitude,
     Value<bool>? active,
     Value<double?>? radius,
-    Value<TravelMode?>? travelMode,
-    Value<int?>? bufferMinutes,
-    Value<DateTime?>? arrivalTime,
     Value<DateTime>? createdAt,
     Value<DateTime>? updatedAt,
   }) {
     return AlarmsCompanion(
       id: id ?? this.id,
       name: name ?? this.name,
-      mode: mode ?? this.mode,
       latitude: latitude ?? this.latitude,
       longitude: longitude ?? this.longitude,
       active: active ?? this.active,
       radius: radius ?? this.radius,
-      travelMode: travelMode ?? this.travelMode,
-      bufferMinutes: bufferMinutes ?? this.bufferMinutes,
-      arrivalTime: arrivalTime ?? this.arrivalTime,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
@@ -653,11 +457,6 @@ class AlarmsCompanion extends UpdateCompanion<Alarm> {
     if (name.present) {
       map['name'] = Variable<String>(name.value);
     }
-    if (mode.present) {
-      map['mode'] = Variable<int>(
-        $AlarmsTable.$convertermode.toSql(mode.value),
-      );
-    }
     if (latitude.present) {
       map['latitude'] = Variable<double>(latitude.value);
     }
@@ -669,17 +468,6 @@ class AlarmsCompanion extends UpdateCompanion<Alarm> {
     }
     if (radius.present) {
       map['radius'] = Variable<double>(radius.value);
-    }
-    if (travelMode.present) {
-      map['travel_mode'] = Variable<int>(
-        $AlarmsTable.$convertertravelModen.toSql(travelMode.value),
-      );
-    }
-    if (bufferMinutes.present) {
-      map['buffer_minutes'] = Variable<int>(bufferMinutes.value);
-    }
-    if (arrivalTime.present) {
-      map['arrival_time'] = Variable<DateTime>(arrivalTime.value);
     }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
@@ -695,14 +483,10 @@ class AlarmsCompanion extends UpdateCompanion<Alarm> {
     return (StringBuffer('AlarmsCompanion(')
           ..write('id: $id, ')
           ..write('name: $name, ')
-          ..write('mode: $mode, ')
           ..write('latitude: $latitude, ')
           ..write('longitude: $longitude, ')
           ..write('active: $active, ')
           ..write('radius: $radius, ')
-          ..write('travelMode: $travelMode, ')
-          ..write('bufferMinutes: $bufferMinutes, ')
-          ..write('arrivalTime: $arrivalTime, ')
           ..write('createdAt: $createdAt, ')
           ..write('updatedAt: $updatedAt')
           ..write(')'))
@@ -725,14 +509,10 @@ typedef $$AlarmsTableCreateCompanionBuilder =
     AlarmsCompanion Function({
       Value<int> id,
       Value<String> name,
-      required AlarmMode mode,
       required double latitude,
       required double longitude,
       Value<bool> active,
       Value<double?> radius,
-      Value<TravelMode?> travelMode,
-      Value<int?> bufferMinutes,
-      Value<DateTime?> arrivalTime,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
     });
@@ -740,14 +520,10 @@ typedef $$AlarmsTableUpdateCompanionBuilder =
     AlarmsCompanion Function({
       Value<int> id,
       Value<String> name,
-      Value<AlarmMode> mode,
       Value<double> latitude,
       Value<double> longitude,
       Value<bool> active,
       Value<double?> radius,
-      Value<TravelMode?> travelMode,
-      Value<int?> bufferMinutes,
-      Value<DateTime?> arrivalTime,
       Value<DateTime> createdAt,
       Value<DateTime> updatedAt,
     });
@@ -771,12 +547,6 @@ class $$AlarmsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
-  ColumnWithTypeConverterFilters<AlarmMode, AlarmMode, int> get mode =>
-      $composableBuilder(
-        column: $table.mode,
-        builder: (column) => ColumnWithTypeConverterFilters(column),
-      );
-
   ColumnFilters<double> get latitude => $composableBuilder(
     column: $table.latitude,
     builder: (column) => ColumnFilters(column),
@@ -794,22 +564,6 @@ class $$AlarmsTableFilterComposer
 
   ColumnFilters<double> get radius => $composableBuilder(
     column: $table.radius,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnWithTypeConverterFilters<TravelMode?, TravelMode, int> get travelMode =>
-      $composableBuilder(
-        column: $table.travelMode,
-        builder: (column) => ColumnWithTypeConverterFilters(column),
-      );
-
-  ColumnFilters<int> get bufferMinutes => $composableBuilder(
-    column: $table.bufferMinutes,
-    builder: (column) => ColumnFilters(column),
-  );
-
-  ColumnFilters<DateTime> get arrivalTime => $composableBuilder(
-    column: $table.arrivalTime,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -843,11 +597,6 @@ class $$AlarmsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
-  ColumnOrderings<int> get mode => $composableBuilder(
-    column: $table.mode,
-    builder: (column) => ColumnOrderings(column),
-  );
-
   ColumnOrderings<double> get latitude => $composableBuilder(
     column: $table.latitude,
     builder: (column) => ColumnOrderings(column),
@@ -865,21 +614,6 @@ class $$AlarmsTableOrderingComposer
 
   ColumnOrderings<double> get radius => $composableBuilder(
     column: $table.radius,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get travelMode => $composableBuilder(
-    column: $table.travelMode,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<int> get bufferMinutes => $composableBuilder(
-    column: $table.bufferMinutes,
-    builder: (column) => ColumnOrderings(column),
-  );
-
-  ColumnOrderings<DateTime> get arrivalTime => $composableBuilder(
-    column: $table.arrivalTime,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -909,9 +643,6 @@ class $$AlarmsTableAnnotationComposer
   GeneratedColumn<String> get name =>
       $composableBuilder(column: $table.name, builder: (column) => column);
 
-  GeneratedColumnWithTypeConverter<AlarmMode, int> get mode =>
-      $composableBuilder(column: $table.mode, builder: (column) => column);
-
   GeneratedColumn<double> get latitude =>
       $composableBuilder(column: $table.latitude, builder: (column) => column);
 
@@ -923,22 +654,6 @@ class $$AlarmsTableAnnotationComposer
 
   GeneratedColumn<double> get radius =>
       $composableBuilder(column: $table.radius, builder: (column) => column);
-
-  GeneratedColumnWithTypeConverter<TravelMode?, int> get travelMode =>
-      $composableBuilder(
-        column: $table.travelMode,
-        builder: (column) => column,
-      );
-
-  GeneratedColumn<int> get bufferMinutes => $composableBuilder(
-    column: $table.bufferMinutes,
-    builder: (column) => column,
-  );
-
-  GeneratedColumn<DateTime> get arrivalTime => $composableBuilder(
-    column: $table.arrivalTime,
-    builder: (column) => column,
-  );
 
   GeneratedColumn<DateTime> get createdAt =>
       $composableBuilder(column: $table.createdAt, builder: (column) => column);
@@ -977,27 +692,19 @@ class $$AlarmsTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<String> name = const Value.absent(),
-                Value<AlarmMode> mode = const Value.absent(),
                 Value<double> latitude = const Value.absent(),
                 Value<double> longitude = const Value.absent(),
                 Value<bool> active = const Value.absent(),
                 Value<double?> radius = const Value.absent(),
-                Value<TravelMode?> travelMode = const Value.absent(),
-                Value<int?> bufferMinutes = const Value.absent(),
-                Value<DateTime?> arrivalTime = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
               }) => AlarmsCompanion(
                 id: id,
                 name: name,
-                mode: mode,
                 latitude: latitude,
                 longitude: longitude,
                 active: active,
                 radius: radius,
-                travelMode: travelMode,
-                bufferMinutes: bufferMinutes,
-                arrivalTime: arrivalTime,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
               ),
@@ -1005,27 +712,19 @@ class $$AlarmsTableTableManager
               ({
                 Value<int> id = const Value.absent(),
                 Value<String> name = const Value.absent(),
-                required AlarmMode mode,
                 required double latitude,
                 required double longitude,
                 Value<bool> active = const Value.absent(),
                 Value<double?> radius = const Value.absent(),
-                Value<TravelMode?> travelMode = const Value.absent(),
-                Value<int?> bufferMinutes = const Value.absent(),
-                Value<DateTime?> arrivalTime = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
                 Value<DateTime> updatedAt = const Value.absent(),
               }) => AlarmsCompanion.insert(
                 id: id,
                 name: name,
-                mode: mode,
                 latitude: latitude,
                 longitude: longitude,
                 active: active,
                 radius: radius,
-                travelMode: travelMode,
-                bufferMinutes: bufferMinutes,
-                arrivalTime: arrivalTime,
                 createdAt: createdAt,
                 updatedAt: updatedAt,
               ),

@@ -1,24 +1,24 @@
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
-import 'package:location_alarm/shared/data/models/alarm_mode.dart';
 
 class LocationPreview extends StatelessWidget {
   const LocationPreview({
     super.key,
     this.location,
     this.thumbnail,
-    this.mode = AlarmMode.proximity,
+    this.hasError = false,
     required this.onTap,
   });
 
   final ({double latitude, double longitude})? location;
   final Uint8List? thumbnail;
-  final AlarmMode mode;
+  final bool hasError;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    final borderColor = hasError ? colorScheme.error : colorScheme.outline;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -34,7 +34,7 @@ class LocationPreview extends StatelessWidget {
             clipBehavior: Clip.antiAlias,
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12),
-              side: BorderSide(color: colorScheme.outline),
+              side: BorderSide(color: borderColor),
             ),
             child: InkWell(
               borderRadius: BorderRadius.circular(12),
@@ -74,14 +74,20 @@ class LocationPreview extends StatelessWidget {
                             Icon(
                               Icons.map,
                               size: 32,
-                              color: colorScheme.onSurfaceVariant,
+                              color: hasError
+                                  ? colorScheme.error
+                                  : colorScheme.onSurfaceVariant,
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              'Tap to pick location',
+                              hasError
+                                  ? 'Location is required'
+                                  : 'Tap to pick location',
                               style: Theme.of(context).textTheme.bodyMedium
                                   ?.copyWith(
-                                    color: colorScheme.onSurfaceVariant,
+                                    color: hasError
+                                        ? colorScheme.error
+                                        : colorScheme.onSurfaceVariant,
                                   ),
                             ),
                           ],

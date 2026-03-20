@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 
-const _tileUrl =
-    'https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png';
+const _tileUrl = 'https://tile.openstreetmap.org/{z}/{x}/{y}.png';
 
 class AlarmMap extends StatelessWidget {
   const AlarmMap({
@@ -32,14 +31,18 @@ class AlarmMap extends StatelessWidget {
         initialZoom: initialZoom,
         initialCameraFit: initialCameraFit,
         onTap: onTap,
+        interactionOptions: const InteractionOptions(rotationThreshold: 25),
       ),
       children: [
         TileLayer(
           urlTemplate: _tileUrl,
-          subdomains: const ['a', 'b', 'c', 'd'],
           userAgentPackageName: 'nl.bw20.location_alarm',
         ),
         ...children,
+        const RichAttributionWidget(
+          alignment: AttributionAlignment.bottomLeft,
+          attributions: [TextSourceAttribution('OpenStreetMap contributors')],
+        ),
       ],
     );
   }

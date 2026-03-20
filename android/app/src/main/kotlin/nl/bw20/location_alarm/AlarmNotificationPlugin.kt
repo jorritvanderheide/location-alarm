@@ -20,8 +20,7 @@ class AlarmNotificationPlugin(private val context: Context) :
                             val alarmId = call.argument<Int>("alarmId") ?: -1
                             val title = call.argument<String>("title") ?: ""
                             val body = call.argument<String>("body") ?: ""
-                            val isProximity = call.argument<Boolean>("isProximity") ?: true
-                            AlarmNotificationHelper.show(context, alarmId, title, body, isProximity)
+                            AlarmNotificationHelper.show(context, alarmId, title, body)
                             result.success(null)
                         }
                         "dismissAlarm" -> {

@@ -1,1 +1,0 @@
-enum AlarmMode { proximity, departure }

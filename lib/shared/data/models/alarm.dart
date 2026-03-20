@@ -1,7 +1,6 @@
 import 'package:latlong2/latlong.dart';
-import 'package:location_alarm/shared/data/models/travel_mode.dart';
 
-sealed class AlarmData {
+final class AlarmData {
   const AlarmData({
     this.id,
     required this.name,
@@ -9,6 +8,7 @@ sealed class AlarmData {
     required this.active,
     this.createdAt,
     this.updatedAt,
+    required this.radius,
   });
 
   final int? id;
@@ -17,36 +17,5 @@ sealed class AlarmData {
   final bool active;
   final DateTime? createdAt;
   final DateTime? updatedAt;
-}
-
-final class ProximityAlarmData extends AlarmData {
-  const ProximityAlarmData({
-    super.id,
-    required super.name,
-    required super.location,
-    required super.active,
-    super.createdAt,
-    super.updatedAt,
-    required this.radius,
-  });
-
   final double radius;
-}
-
-final class DepartureAlarmData extends AlarmData {
-  const DepartureAlarmData({
-    super.id,
-    required super.name,
-    required super.location,
-    required super.active,
-    super.createdAt,
-    super.updatedAt,
-    required this.travelMode,
-    required this.bufferMinutes,
-    required this.arrivalTime,
-  });
-
-  final TravelMode travelMode;
-  final int bufferMinutes;
-  final DateTime arrivalTime;
 }

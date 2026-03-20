@@ -3,7 +3,6 @@ import 'package:location_alarm/features/alarm_service/foreground_service_manager
 import 'package:location_alarm/shared/data/models/alarm.dart';
 import 'package:location_alarm/shared/providers/alarms_provider.dart';
 import 'package:location_alarm/shared/providers/location_permission_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
 
 final foregroundServiceProvider =
     NotifierProvider<ForegroundServiceNotifier, bool>(
@@ -17,7 +16,7 @@ class ForegroundServiceNotifier extends Notifier<bool> {
       next.whenData(_evaluate);
     });
 
-    ref.listen(locationPermissionProvider, (_, _) {
+    ref.listen(backgroundPermissionProvider, (_, _) {
       final alarmsAsync = ref.read(alarmsProvider);
       alarmsAsync.whenData(_evaluate);
     });
@@ -32,8 +31,7 @@ class ForegroundServiceNotifier extends Notifier<bool> {
 
   void _evaluate(List<AlarmData> alarms) {
     final hasActive = alarms.any((a) => a.active);
-    final hasPermission =
-        ref.read(locationPermissionProvider) == PermissionStatus.granted;
+    final hasPermission = ref.read(backgroundPermissionProvider);
     _updateService(hasActive && hasPermission);
   }
 

@@ -2,8 +2,6 @@ import 'package:drift/drift.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:location_alarm/shared/data/database/app_database.dart' as db;
 import 'package:location_alarm/shared/data/models/alarm.dart';
-import 'package:location_alarm/shared/data/models/alarm_mode.dart';
-import 'package:location_alarm/shared/data/models/travel_mode.dart';
 
 class AlarmRepository {
   AlarmRepository(this._db);
@@ -46,61 +44,28 @@ class AlarmRepository {
   }
 
   AlarmData _rowToAlarm(db.Alarm row) {
-    final location = LatLng(row.latitude, row.longitude);
-    return switch (row.mode) {
-      AlarmMode.proximity => ProximityAlarmData(
-        id: row.id,
-        name: row.name,
-        location: location,
-        active: row.active,
-        createdAt: row.createdAt,
-        updatedAt: row.updatedAt,
-        radius: row.radius ?? 500,
-      ),
-      AlarmMode.departure => DepartureAlarmData(
-        id: row.id,
-        name: row.name,
-        location: location,
-        active: row.active,
-        createdAt: row.createdAt,
-        updatedAt: row.updatedAt,
-        travelMode: row.travelMode ?? TravelMode.walk,
-        bufferMinutes: row.bufferMinutes ?? 5,
-        arrivalTime: row.arrivalTime ?? DateTime(0),
-      ),
-    };
+    return AlarmData(
+      id: row.id,
+      name: row.name,
+      location: LatLng(row.latitude, row.longitude),
+      active: row.active,
+      createdAt: row.createdAt,
+      updatedAt: row.updatedAt,
+      radius: row.radius ?? 500,
+    );
   }
 
   db.AlarmsCompanion _alarmToCompanion(AlarmData alarm) {
+    final now = DateTime.now();
     return db.AlarmsCompanion(
       id: alarm.id != null ? Value(alarm.id!) : const Value.absent(),
-      createdAt: alarm.id != null
-          ? const Value.absent()
-          : Value(DateTime.now()),
+      createdAt: alarm.id != null ? const Value.absent() : Value(now),
+      updatedAt: Value(now),
       name: Value(alarm.name),
       latitude: Value(alarm.location.latitude),
       longitude: Value(alarm.location.longitude),
       active: Value(alarm.active),
-      mode: Value(switch (alarm) {
-        ProximityAlarmData() => AlarmMode.proximity,
-        DepartureAlarmData() => AlarmMode.departure,
-      }),
-      radius: Value(switch (alarm) {
-        ProximityAlarmData(:final radius) => radius,
-        DepartureAlarmData() => null,
-      }),
-      travelMode: Value(switch (alarm) {
-        ProximityAlarmData() => null,
-        DepartureAlarmData(:final travelMode) => travelMode,
-      }),
-      bufferMinutes: Value(switch (alarm) {
-        ProximityAlarmData() => null,
-        DepartureAlarmData(:final bufferMinutes) => bufferMinutes,
-      }),
-      arrivalTime: Value(switch (alarm) {
-        ProximityAlarmData() => null,
-        DepartureAlarmData(:final arrivalTime) => arrivalTime,
-      }),
+      radius: Value(alarm.radius),
     );
   }
 }

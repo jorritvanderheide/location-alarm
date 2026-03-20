@@ -60,10 +60,10 @@ ThemeData _buildTheme(
 
     snackBarTheme: SnackBarThemeData(
       behavior: SnackBarBehavior.floating,
-      width: 280,
-      backgroundColor: colorScheme.primaryContainer,
-      contentTextStyle: TextStyle(color: colorScheme.onPrimaryContainer),
-      shape: const StadiumBorder(),
+      elevation: 0,
+      backgroundColor: colorScheme.inverseSurface,
+      contentTextStyle: TextStyle(color: colorScheme.onInverseSurface),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
     ),
   );
 }

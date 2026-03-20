@@ -12,6 +12,7 @@ import 'package:location_alarm/features/alarm_service/screens/alarm_ring_screen.
 import 'package:location_alarm/shared/data/database/connection.dart';
 import 'package:location_alarm/shared/data/models/alarm.dart';
 import 'package:location_alarm/shared/providers/database_provider.dart';
+import 'package:location_alarm/shared/providers/location_permission_provider.dart';
 import 'package:location_alarm/shared/providers/preferences_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -82,12 +83,10 @@ void main() async {
       final alarmId = args['alarm_id'] as int?;
       final title = args['title'] as String? ?? '';
       final body = args['body'] as String? ?? '';
-      final isProximity = args['is_proximity'] as bool? ?? true;
       if (alarmId != null && !shownDismissIds.contains(alarmId)) {
         shownDismissIds.add(alarmId);
         _showDismissScreenFromIntent(
           alarmId: alarmId,
-          isProximity: isProximity,
           title: title,
           body: body,
           onDismissed: () => shownDismissIds.remove(alarmId),
@@ -140,13 +139,11 @@ Future<void> _checkLaunchIntent({
 
     final title = data['title'] as String? ?? '';
     final body = data['body'] as String? ?? '';
-    final isProximity = data['is_proximity'] as bool? ?? true;
 
     // Wait for the navigator to be ready (runApp may not have completed yet)
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _showDismissScreenFromIntent(
         alarmId: alarmId,
-        isProximity: isProximity,
         title: title,
         body: body,
         onDismissed: () => onDismissed(alarmId),
@@ -159,7 +156,6 @@ Future<void> _checkLaunchIntent({
 
 void _showDismissScreenFromIntent({
   required int alarmId,
-  required bool isProximity,
   required String title,
   required String body,
   required VoidCallback onDismissed,
@@ -168,7 +164,6 @@ void _showDismissScreenFromIntent({
     MaterialPageRoute<void>(
       builder: (_) => AlarmRingScreen(
         alarmId: alarmId,
-        isProximity: isProximity,
         title: title,
         body: body,
         onDismissed: onDismissed,
@@ -179,22 +174,13 @@ void _showDismissScreenFromIntent({
 
 void _showDismissScreen(AlarmData alarm, VoidCallback onDismissed) {
   final label = alarm.name.isNotEmpty ? alarm.name : null;
-  final (title, body) = switch (alarm) {
-    ProximityAlarmData(:final radius) => (
-      label ?? 'Location Alarm',
-      'You are within ${radius.round()} m of your destination',
-    ),
-    DepartureAlarmData(:final travelMode) => (
-      label ?? 'Time to Leave',
-      'Leave now by ${travelMode.name} to arrive on time',
-    ),
-  };
+  final title = label ?? 'Location Alarm';
+  final body = 'You are within ${alarm.radius.round()} m of your destination';
 
   navigatorKey.currentState?.push(
     MaterialPageRoute<void>(
       builder: (_) => AlarmRingScreen(
         alarmId: alarm.id!,
-        isProximity: alarm is ProximityAlarmData,
         title: title,
         body: body,
         onDismissed: onDismissed,
@@ -230,6 +216,10 @@ class _AppWithServicesState extends ConsumerState<_AppWithServices>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      // Re-check permissions in case they were revoked in system settings.
+      ref.read(locationPermissionProvider.notifier).checkAll();
+    }
     if (_previousState == AppLifecycleState.resumed &&
         state == AppLifecycleState.paused) {
       widget.onScreenLocked();

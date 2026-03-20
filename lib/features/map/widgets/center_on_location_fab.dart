@@ -11,12 +11,20 @@ class CenterOnLocationButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final locationAsync = ref.watch(locationProvider);
+
+    final icon = locationAsync.when(
+      data: (_) => Icons.my_location,
+      loading: () => Icons.location_searching,
+      error: (_, _) => Icons.location_disabled,
+    );
+
     return FloatingActionButton.small(
       heroTag: 'center_location',
       elevation: 6,
       onPressed: () {
-        final locationAsync = ref.read(locationProvider);
-        locationAsync.when(
+        final current = ref.read(locationProvider);
+        current.when(
           data: (position) {
             mapController.move(
               LatLng(position.latitude, position.longitude),
@@ -35,7 +43,7 @@ class CenterOnLocationButton extends ConsumerWidget {
           },
         );
       },
-      child: const Icon(Icons.my_location),
+      child: Icon(icon),
     );
   }
 }

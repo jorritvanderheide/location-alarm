@@ -19,7 +19,6 @@ class MainActivity : FlutterActivity() {
     private var pendingAlarmId: Int = -1
     private var pendingAlarmTitle: String? = null
     private var pendingAlarmBody: String? = null
-    private var pendingAlarmIsProximity: Boolean = true
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -50,15 +49,13 @@ class MainActivity : FlutterActivity() {
                         val data = mapOf(
                             "alarm_id" to pendingAlarmId,
                             "title" to (pendingAlarmTitle ?: ""),
-                            "body" to (pendingAlarmBody ?: ""),
-                            "is_proximity" to pendingAlarmIsProximity
+                            "body" to (pendingAlarmBody ?: "")
                         )
                         // Clear pending data after consumption
                         pendingAlarmAction = null
                         pendingAlarmId = -1
                         pendingAlarmTitle = null
                         pendingAlarmBody = null
-                        pendingAlarmIsProximity = true
                         result.success(data)
                     } else {
                         result.success(null)
@@ -80,8 +77,7 @@ class MainActivity : FlutterActivity() {
             screenChannel?.invokeMethod("onAlarmRing", mapOf(
                 "alarm_id" to pendingAlarmId,
                 "title" to (pendingAlarmTitle ?: ""),
-                "body" to (pendingAlarmBody ?: ""),
-                "is_proximity" to pendingAlarmIsProximity
+                "body" to (pendingAlarmBody ?: "")
             ))
         }
     }
@@ -92,7 +88,6 @@ class MainActivity : FlutterActivity() {
             pendingAlarmId = intent.getIntExtra("alarm_id", -1)
             pendingAlarmTitle = intent.getStringExtra("alarm_title")
             pendingAlarmBody = intent.getStringExtra("alarm_body")
-            pendingAlarmIsProximity = intent.getBooleanExtra("alarm_is_proximity", true)
             // Show over lock screen when launched via alarm
             showOverLockScreen()
         }

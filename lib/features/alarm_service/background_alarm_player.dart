@@ -30,16 +30,8 @@ class BackgroundAlarmPlayer {
     unawaited(_playLoop());
 
     final label = alarm.name.isNotEmpty ? alarm.name : null;
-    final (title, body) = switch (alarm) {
-      ProximityAlarmData(:final radius) => (
-        label ?? 'Location Alarm',
-        'You are within ${radius.round()} m of your destination',
-      ),
-      DepartureAlarmData(:final travelMode) => (
-        label ?? 'Time to Leave',
-        'Leave now by ${travelMode.name} to arrive on time',
-      ),
-    };
+    final title = label ?? 'Location Alarm';
+    final body = 'You are within ${alarm.radius.round()} m of your destination';
 
     // Show notification via native Android method channel
     try {
@@ -47,7 +39,6 @@ class BackgroundAlarmPlayer {
         'alarmId': alarm.id,
         'title': title,
         'body': body,
-        'isProximity': alarm is ProximityAlarmData,
       });
     } on Exception catch (e) {
       debugPrint('ALARM: notification failed: $e');

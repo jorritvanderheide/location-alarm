@@ -35,20 +35,19 @@ class SettingsScreen extends ConsumerWidget {
               ref.read(themeModeProvider.notifier).set(mode);
             },
           ),
-          SwitchListTile(
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 8,
+          if (isDark)
+            SwitchListTile(
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 8,
+              ),
+              title: const Text('True black'),
+              subtitle: const Text('Pure black background for AMOLED displays'),
+              value: amoled,
+              onChanged: (value) {
+                ref.read(amoledBlackProvider.notifier).set(value);
+              },
             ),
-            title: const Text('True black'),
-            subtitle: const Text('Only available in dark mode'),
-            value: amoled && isDark,
-            onChanged: isDark
-                ? (value) {
-                    ref.read(amoledBlackProvider.notifier).set(value);
-                  }
-                : null,
-          ),
         ],
       ),
     );

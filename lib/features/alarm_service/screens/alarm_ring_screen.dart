@@ -8,14 +8,12 @@ class AlarmRingScreen extends ConsumerStatefulWidget {
   const AlarmRingScreen({
     super.key,
     required this.alarmId,
-    required this.isProximity,
     required this.title,
     required this.body,
     this.onDismissed,
   });
 
   final int alarmId;
-  final bool isProximity;
   final String title;
   final String body;
   final VoidCallback? onDismissed;
@@ -107,13 +105,7 @@ class _AlarmRingScreenState extends ConsumerState<AlarmRingScreen>
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                widget.isProximity
-                    ? Icons.notifications
-                    : Icons.directions_walk,
-                size: 96,
-                color: colorScheme.primary,
-              ),
+              Icon(Icons.notifications, size: 96, color: colorScheme.primary),
               const SizedBox(height: 32),
               Semantics(
                 liveRegion: true,
@@ -132,13 +124,17 @@ class _AlarmRingScreenState extends ConsumerState<AlarmRingScreen>
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 64),
-              FilledButton.icon(
-                onPressed: _dismiss,
-                icon: const Icon(Icons.alarm_off),
-                label: const Text('Dismiss'),
-                style: FilledButton.styleFrom(
-                  minimumSize: const Size(200, 56),
-                  textStyle: Theme.of(context).textTheme.titleMedium,
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 32),
+                child: FilledButton.icon(
+                  autofocus: true,
+                  onPressed: _dismiss,
+                  icon: const Icon(Icons.alarm_off, size: 28),
+                  label: const Text('Dismiss'),
+                  style: FilledButton.styleFrom(
+                    minimumSize: const Size.fromHeight(72),
+                    textStyle: Theme.of(context).textTheme.titleLarge,
+                  ),
                 ),
               ),
             ],
