@@ -15,18 +15,23 @@ class CompassButton extends StatelessWidget {
         final rotation = mapController.camera.rotation;
         final isNorth = rotation.abs() < 0.5;
 
-        return AnimatedOpacity(
-          opacity: isNorth ? 0.0 : 1.0,
+        return AnimatedSize(
           duration: const Duration(milliseconds: 300),
-          child: isNorth
-              ? const SizedBox.shrink()
-              : IconButton.filledTonal(
-                  onPressed: () => mapController.rotate(0),
-                  icon: Transform.rotate(
-                    angle: rotation * pi / 180,
-                    child: const Icon(Icons.navigation),
+          child: AnimatedOpacity(
+            opacity: isNorth ? 0.0 : 1.0,
+            duration: const Duration(milliseconds: 300),
+            child: isNorth
+                ? const SizedBox.shrink()
+                : FloatingActionButton.small(
+                    heroTag: 'compass',
+                    elevation: 6,
+                    onPressed: () => mapController.rotate(0),
+                    child: Transform.rotate(
+                      angle: rotation * pi / 180,
+                      child: const Icon(Icons.navigation),
+                    ),
                   ),
-                ),
+          ),
         );
       },
     );

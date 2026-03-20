@@ -11,14 +11,31 @@ class CenterOnLocationButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return IconButton.filledTonal(
+    return FloatingActionButton.small(
+      heroTag: 'center_location',
+      elevation: 6,
       onPressed: () {
         final locationAsync = ref.read(locationProvider);
-        locationAsync.whenData((position) {
-          mapController.move(LatLng(position.latitude, position.longitude), 15);
-        });
+        locationAsync.when(
+          data: (position) {
+            mapController.move(
+              LatLng(position.latitude, position.longitude),
+              15,
+            );
+          },
+          loading: () {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Getting location...')),
+            );
+          },
+          error: (_, _) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Location unavailable')),
+            );
+          },
+        );
       },
-      icon: const Icon(Icons.my_location),
+      child: const Icon(Icons.my_location),
     );
   }
 }
