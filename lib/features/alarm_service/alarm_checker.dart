@@ -1,69 +1,28 @@
 import 'package:latlong2/latlong.dart';
+import 'package:location_alarm/shared/data/departure_calculator.dart';
 import 'package:location_alarm/shared/data/models/alarm.dart';
-import 'package:location_alarm/shared/data/models/travel_mode.dart';
 
-const _distanceCalc = Distance();
-
-// Average speeds in meters per minute
-const _speeds = {
-  TravelMode.walk: 83.3, // ~5 km/h
-  TravelMode.cycle: 250.0, // ~15 km/h
-  TravelMode.drive: 833.3, // ~50 km/h
-};
-
+/// Pure logic — checks if alarm trigger conditions are met.
+/// Does not track state; the caller decides which alarms to check.
 class AlarmChecker {
-  final Set<int> _triggeredIds = {};
-
-  List<AlarmData> check(List<AlarmData> activeAlarms, LatLng position) {
-    final triggered = <AlarmData>[];
-
-    for (final alarm in activeAlarms) {
-      if (!alarm.active || alarm.id == null) continue;
-      if (_triggeredIds.contains(alarm.id)) continue;
-
-      final shouldTrigger = switch (alarm) {
-        ProximityAlarmData() => _checkProximity(alarm, position),
-        DepartureAlarmData() => _checkDeparture(alarm, position),
+  List<AlarmData> check(List<AlarmData> alarms, LatLng position) {
+    return alarms.where((alarm) {
+      return switch (alarm) {
+        ProximityAlarmData() =>
+          distanceInMeters(position, alarm.location) <= alarm.radius,
+        DepartureAlarmData() => _shouldLeave(alarm, position),
       };
-
-      if (shouldTrigger) {
-        _triggeredIds.add(alarm.id!);
-        triggered.add(alarm);
-      }
-    }
-
-    return triggered;
+    }).toList();
   }
 
-  void resetTriggered(int alarmId) {
-    _triggeredIds.remove(alarmId);
-  }
-
-  void clearAll() {
-    _triggeredIds.clear();
-  }
-
-  bool _checkProximity(ProximityAlarmData alarm, LatLng position) {
-    final distance = _distanceCalc.as(
-      LengthUnit.Meter,
-      position,
-      alarm.location,
+  bool _shouldLeave(DepartureAlarmData alarm, LatLng position) {
+    final info = calculateDeparture(
+      currentPosition: position,
+      destination: alarm.location,
+      travelMode: alarm.travelMode,
+      bufferMinutes: alarm.bufferMinutes,
+      arrivalTime: alarm.arrivalTime,
     );
-    return distance <= alarm.radius;
-  }
-
-  bool _checkDeparture(DepartureAlarmData alarm, LatLng position) {
-    final distance = _distanceCalc.as(
-      LengthUnit.Meter,
-      position,
-      alarm.location,
-    );
-    final speed = _speeds[alarm.travelMode] ?? _speeds[TravelMode.walk]!;
-    final travelMinutes = distance / speed;
-    final totalMinutes = travelMinutes + alarm.bufferMinutes;
-    final latestDeparture = alarm.arrivalTime.subtract(
-      Duration(minutes: totalMinutes.ceil()),
-    );
-    return DateTime.now().isAfter(latestDeparture);
+    return info?.shouldLeaveNow ?? false;
   }
 }

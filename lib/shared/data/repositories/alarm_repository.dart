@@ -63,6 +63,9 @@ class AlarmRepository {
   db.AlarmsCompanion _alarmToCompanion(AlarmData alarm) {
     return db.AlarmsCompanion(
       id: alarm.id != null ? Value(alarm.id!) : const Value.absent(),
+      createdAt: alarm.id != null
+          ? const Value.absent()
+          : Value(DateTime.now()),
       name: Value(alarm.name),
       latitude: Value(alarm.location.latitude),
       longitude: Value(alarm.location.longitude),

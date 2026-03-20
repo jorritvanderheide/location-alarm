@@ -1,6 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:location_alarm/features/alarm_service/foreground_service_manager.dart';
+import 'package:location_alarm/shared/data/models/alarm.dart';
 import 'package:location_alarm/shared/providers/alarms_provider.dart';
+import 'package:location_alarm/shared/providers/location_permission_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 final foregroundServiceProvider =
     NotifierProvider<ForegroundServiceNotifier, bool>(
@@ -11,21 +14,27 @@ class ForegroundServiceNotifier extends Notifier<bool> {
   @override
   bool build() {
     ref.listen(alarmsProvider, (_, next) {
-      next.whenData((alarms) {
-        final hasActive = alarms.any((a) => a.active);
-        _updateService(hasActive);
-      });
+      next.whenData(_evaluate);
+    });
+
+    ref.listen(locationPermissionProvider, (_, _) {
+      final alarmsAsync = ref.read(alarmsProvider);
+      alarmsAsync.whenData(_evaluate);
     });
 
     final alarmsAsync = ref.read(alarmsProvider);
     alarmsAsync.whenData((alarms) {
-      final hasActive = alarms.any((a) => a.active);
-      if (hasActive) {
-        Future.microtask(() => _updateService(true));
-      }
-    });
+      Future.microtask(() => _evaluate(alarms));
+    }); // ignore: unnecessary_lambdas
 
     return false;
+  }
+
+  void _evaluate(List<AlarmData> alarms) {
+    final hasActive = alarms.any((a) => a.active);
+    final hasPermission =
+        ref.read(locationPermissionProvider) == PermissionStatus.granted;
+    _updateService(hasActive && hasPermission);
   }
 
   Future<void> _updateService(bool shouldRun) async {

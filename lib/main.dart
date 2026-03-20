@@ -1,16 +1,18 @@
-import 'package:alarm/alarm.dart';
-import 'package:alarm/utils/alarm_set.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:location_alarm/app.dart';
-import 'package:location_alarm/features/alarm_service/alarm_notification_service.dart';
+import 'package:location_alarm/features/alarm_service/alarm_player.dart';
 import 'package:location_alarm/features/alarm_service/foreground_service_manager.dart';
 import 'package:location_alarm/features/alarm_service/providers/alarm_service_provider.dart';
 import 'package:location_alarm/features/alarm_service/providers/foreground_service_provider.dart';
 import 'package:location_alarm/features/alarm_service/screens/alarm_ring_screen.dart';
 import 'package:location_alarm/shared/data/database/connection.dart';
+import 'package:location_alarm/shared/data/models/alarm.dart';
+import 'package:location_alarm/shared/providers/alarm_repository_provider.dart';
 import 'package:location_alarm/shared/providers/database_provider.dart';
+import 'package:location_alarm/shared/providers/preferences_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 const _screenChannel = MethodChannel('nl.bw20.location_alarm/screen');
 
@@ -27,45 +29,62 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   final db = openDatabase();
-  await AlarmNotificationService.init();
+  final prefs = await SharedPreferences.getInstance();
+  await AlarmPlayer.init();
   ForegroundServiceManager.init();
 
-  // Clear any leftover lock screen flags from a previous alarm
+  // Clear any leftover lock screen flags
   try {
     await _screenChannel.invokeMethod('clearLockScreenFlags');
   } on MissingPluginException {
     // ignore
   }
 
-  // Track ringing alarms for lock screen detection
-  AlarmSet currentlyRinging = AlarmSet.empty();
+  final container = ProviderContainer(
+    overrides: [
+      databaseProvider.overrideWithValue(db),
+      preferencesProvider.overrideWithValue(prefs),
+    ],
+  );
+
   bool dismissScreenShowing = false;
 
-  Alarm.ringing.listen((alarmSet) async {
-    currentlyRinging = alarmSet;
+  // Handle notification dismiss action
+  AlarmPlayer.setDismissCallback(() async {
+    final alarm = AlarmPlayer.currentRinging;
+    if (alarm?.id == null) return;
+    await AlarmPlayer.stop();
+    await container
+        .read(alarmRepositoryProvider)
+        .toggleActive(alarm!.id!, active: false);
+  });
 
-    if (alarmSet.alarms.isEmpty) return;
+  // Listen for alarm fires — show full-screen dismiss
+  AlarmPlayer.ringing.listen((alarm) async {
+    if (alarm == null) return;
     if (dismissScreenShowing) return;
 
     final screenOff = await _isScreenOff();
     if (screenOff) {
-      _showDismissScreen(alarmSet.alarms.first, () {
+      dismissScreenShowing = true;
+      _showDismissScreen(alarm, () {
         dismissScreenShowing = false;
       });
-      dismissScreenShowing = true;
     }
+    // Screen on: notification is already shown by AlarmPlayer.fire()
   });
 
   runApp(
-    ProviderScope(
-      overrides: [databaseProvider.overrideWithValue(db)],
+    UncontrolledProviderScope(
+      container: container,
       child: _AppWithServices(
         onScreenLocked: () {
-          if (currentlyRinging.alarms.isNotEmpty && !dismissScreenShowing) {
-            _showDismissScreen(currentlyRinging.alarms.first, () {
+          final alarm = AlarmPlayer.currentRinging;
+          if (alarm != null && !dismissScreenShowing) {
+            dismissScreenShowing = true;
+            _showDismissScreen(alarm, () {
               dismissScreenShowing = false;
             });
-            dismissScreenShowing = true;
           }
         },
       ),
@@ -73,11 +92,27 @@ void main() async {
   );
 }
 
-void _showDismissScreen(AlarmSettings settings, VoidCallback onDismissed) {
+void _showDismissScreen(AlarmData alarm, VoidCallback onDismissed) {
+  final (title, body) = switch (alarm) {
+    ProximityAlarmData(:final radius) => (
+      'Location Alarm',
+      'You are within ${radius.round()} m of your destination',
+    ),
+    DepartureAlarmData(:final travelMode) => (
+      'Time to Leave',
+      'Leave now by ${travelMode.name} to arrive on time',
+    ),
+  };
+
   navigatorKey.currentState?.push(
     MaterialPageRoute<void>(
-      builder: (_) =>
-          AlarmRingScreen(alarmSettings: settings, onDismissed: onDismissed),
+      builder: (_) => AlarmRingScreen(
+        alarmId: alarm.id!,
+        isProximity: alarm is ProximityAlarmData,
+        title: title,
+        body: body,
+        onDismissed: onDismissed,
+      ),
     ),
   );
 }
@@ -93,6 +128,8 @@ class _AppWithServices extends ConsumerStatefulWidget {
 
 class _AppWithServicesState extends ConsumerState<_AppWithServices>
     with WidgetsBindingObserver {
+  AppLifecycleState? _previousState;
+
   @override
   void initState() {
     super.initState();
@@ -107,10 +144,11 @@ class _AppWithServicesState extends ConsumerState<_AppWithServices>
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.paused ||
-        state == AppLifecycleState.inactive) {
+    if (_previousState == AppLifecycleState.resumed &&
+        state == AppLifecycleState.paused) {
       widget.onScreenLocked();
     }
+    _previousState = state;
   }
 
   @override
