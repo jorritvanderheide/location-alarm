@@ -1,68 +1,58 @@
+import 'dart:async';
 import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:latlong2/latlong.dart';
-import 'package:location_alarm/features/alarm_service/alarm_checker.dart';
-import 'package:location_alarm/features/alarm_service/alarm_player.dart';
 import 'package:location_alarm/shared/data/models/alarm.dart';
 import 'package:location_alarm/shared/providers/alarms_provider.dart';
 
-final alarmServiceProvider = NotifierProvider<AlarmServiceNotifier, void>(
+final alarmServiceProvider = NotifierProvider<AlarmServiceNotifier, AlarmData?>(
   AlarmServiceNotifier.new,
 );
 
-class AlarmServiceNotifier extends Notifier<void> {
-  final _checker = AlarmChecker();
-  final Set<int> _firedIds = {};
-
+/// Relays alarm-fire events from the background isolate to the UI.
+///
+/// State is the currently ringing [AlarmData], or `null` when idle.
+class AlarmServiceNotifier extends Notifier<AlarmData?> {
   @override
-  void build() {
+  AlarmData? build() {
     FlutterForegroundTask.initCommunicationPort();
-    FlutterForegroundTask.addTaskDataCallback(_onLocationData);
-
-    // Clear _firedIds when alarms are deactivated
-    ref.listen(alarmsProvider, (_, next) {
-      next.whenData((alarms) {
-        final activeIds = alarms
-            .where((a) => a.active)
-            .map((a) => a.id!)
-            .toSet();
-        _firedIds.retainAll(activeIds);
-      });
-    });
+    FlutterForegroundTask.addTaskDataCallback(_onTaskData);
 
     ref.onDispose(() {
-      FlutterForegroundTask.removeTaskDataCallback(_onLocationData);
+      FlutterForegroundTask.removeTaskDataCallback(_onTaskData);
     });
+
+    return null;
   }
 
-  Future<void> _onLocationData(Object data) async {
+  Future<void> _onTaskData(Object data) async {
     if (data is! String) return;
 
     final json = jsonDecode(data) as Map<String, dynamic>;
-    final lat = json['lat'] as double;
-    final lng = json['lng'] as double;
-    final position = LatLng(lat, lng);
+    final type = json['type'] as String?;
 
-    final List<AlarmData>? alarms = ref
-        .read(alarmsProvider)
-        .whenData((a) => a)
-        .value;
-    if (alarms == null) return;
+    if (type == 'alarm_fired') {
+      final id = json['id'] as int;
+      debugPrint('ALARM: received alarm_fired for $id in main isolate');
 
-    final activeAlarms = alarms.where((a) => a.active).toList();
-
-    // Check alarms that haven't been fired yet
-    final checkable = activeAlarms
-        .where((a) => !_firedIds.contains(a.id))
-        .toList();
-    final triggered = _checker.check(checkable, position);
-
-    for (final alarm in triggered) {
-      _firedIds.add(alarm.id!);
-      debugPrint('ALARM: firing alarm ${alarm.id}');
-      await AlarmPlayer.fire(alarm);
+      // Look up the alarm data for the UI
+      final alarms = ref.read(alarmsProvider).whenData((a) => a).value;
+      final alarm = alarms?.where((a) => a.id == id).firstOrNull;
+      if (alarm != null) {
+        state = alarm;
+      }
     }
+  }
+
+  /// Dismiss the currently ringing alarm by sending a command to the
+  /// background isolate.
+  void dismiss(int alarmId) {
+    debugPrint('ALARM: sending dismiss for $alarmId to background');
+    FlutterForegroundTask.sendDataToTask(
+      jsonEncode({'type': 'dismiss', 'id': alarmId}),
+    );
+    state = null;
   }
 }

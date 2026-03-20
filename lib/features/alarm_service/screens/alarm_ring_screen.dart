@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:location_alarm/features/alarm_service/alarm_player.dart';
-import 'package:location_alarm/shared/providers/alarm_repository_provider.dart';
+import 'package:location_alarm/features/alarm_service/providers/alarm_service_provider.dart';
 import 'package:location_alarm/shared/providers/alarms_provider.dart';
 
 class AlarmRingScreen extends ConsumerStatefulWidget {
@@ -71,10 +70,10 @@ class _AlarmRingScreenState extends ConsumerState<AlarmRingScreen>
   Future<void> _dismiss() async {
     if (_dismissed) return;
     _dismissed = true;
-    await AlarmPlayer.stop();
-    await ref
-        .read(alarmRepositoryProvider)
-        .toggleActive(widget.alarmId, active: false);
+
+    // Send dismiss command to background isolate
+    ref.read(alarmServiceProvider.notifier).dismiss(widget.alarmId);
+
     await _clearLockScreenFlags();
     if (mounted) {
       Navigator.of(context).pop();

@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:location_alarm/app.dart';
-import 'package:location_alarm/features/alarm_service/alarm_player.dart';
+import 'package:location_alarm/features/alarm_service/background_notification_handler.dart';
 import 'package:location_alarm/features/alarm_service/foreground_service_manager.dart';
 import 'package:location_alarm/features/alarm_service/providers/alarm_service_provider.dart';
 import 'package:location_alarm/features/alarm_service/providers/foreground_service_provider.dart';
 import 'package:location_alarm/features/alarm_service/screens/alarm_ring_screen.dart';
 import 'package:location_alarm/shared/data/database/connection.dart';
 import 'package:location_alarm/shared/data/models/alarm.dart';
-import 'package:location_alarm/shared/providers/alarm_repository_provider.dart';
 import 'package:location_alarm/shared/providers/database_provider.dart';
 import 'package:location_alarm/shared/providers/preferences_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -30,7 +30,19 @@ void main() async {
 
   final db = openDatabase();
   final prefs = await SharedPreferences.getInstance();
-  await AlarmPlayer.init();
+
+  // Initialize notifications in main isolate for foreground responses.
+  // Background responses are handled by onBackgroundNotificationResponse.
+  final notifications = FlutterLocalNotificationsPlugin();
+  const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+  const initSettings = InitializationSettings(android: androidSettings);
+  await notifications.initialize(
+    settings: initSettings,
+    onDidReceiveNotificationResponse: _onForegroundNotificationResponse,
+    onDidReceiveBackgroundNotificationResponse:
+        onBackgroundNotificationResponse,
+  );
+
   ForegroundServiceManager.init();
 
   // Clear any leftover lock screen flags
@@ -47,31 +59,21 @@ void main() async {
     ],
   );
 
+  // Store container reference for the foreground notification callback
+  _container = container;
+
   bool dismissScreenShowing = false;
 
-  // Handle notification dismiss action
-  AlarmPlayer.setDismissCallback(() async {
-    final alarm = AlarmPlayer.currentRinging;
-    if (alarm?.id == null) return;
-    await AlarmPlayer.stop();
-    await container
-        .read(alarmRepositoryProvider)
-        .toggleActive(alarm!.id!, active: false);
-  });
+  // Listen for alarm fires from the background isolate via the provider
+  container.listen(alarmServiceProvider, (previous, next) {
+    if (next == null || previous == next) return;
 
-  // Listen for alarm fires — show full-screen dismiss
-  AlarmPlayer.ringing.listen((alarm) async {
-    if (alarm == null) return;
-    if (dismissScreenShowing) return;
-
-    final screenOff = await _isScreenOff();
-    if (screenOff) {
-      dismissScreenShowing = true;
-      _showDismissScreen(alarm, () {
-        dismissScreenShowing = false;
-      });
-    }
-    // Screen on: notification is already shown by AlarmPlayer.fire()
+    _showDismissScreenIfNeeded(
+      next,
+      isDismissShowing: () => dismissScreenShowing,
+      setDismissShowing: (value) => dismissScreenShowing = value,
+      container: container,
+    );
   });
 
   runApp(
@@ -79,10 +81,10 @@ void main() async {
       container: container,
       child: _AppWithServices(
         onScreenLocked: () {
-          final alarm = AlarmPlayer.currentRinging;
+          final alarm = container.read(alarmServiceProvider);
           if (alarm != null && !dismissScreenShowing) {
             dismissScreenShowing = true;
-            _showDismissScreen(alarm, () {
+            _showDismissScreen(alarm, container, () {
               dismissScreenShowing = false;
             });
           }
@@ -92,7 +94,40 @@ void main() async {
   );
 }
 
-void _showDismissScreen(AlarmData alarm, VoidCallback onDismissed) {
+ProviderContainer? _container;
+
+/// Handle notification actions when the main isolate is alive.
+void _onForegroundNotificationResponse(NotificationResponse response) {
+  if (response.actionId == 'dismiss_alarm') {
+    final alarmId = int.tryParse(response.payload ?? '');
+    if (alarmId != null) {
+      _container?.read(alarmServiceProvider.notifier).dismiss(alarmId);
+    }
+  }
+}
+
+Future<void> _showDismissScreenIfNeeded(
+  AlarmData alarm, {
+  required bool Function() isDismissShowing,
+  required void Function(bool) setDismissShowing,
+  required ProviderContainer container,
+}) async {
+  if (isDismissShowing()) return;
+
+  final screenOff = await _isScreenOff();
+  if (screenOff) {
+    setDismissShowing(true);
+    _showDismissScreen(alarm, container, () {
+      setDismissShowing(false);
+    });
+  }
+}
+
+void _showDismissScreen(
+  AlarmData alarm,
+  ProviderContainer container,
+  VoidCallback onDismissed,
+) {
   final (title, body) = switch (alarm) {
     ProximityAlarmData(:final radius) => (
       'Location Alarm',
