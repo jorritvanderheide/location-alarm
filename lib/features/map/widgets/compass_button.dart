@@ -58,9 +58,10 @@ class _CompassButtonState extends State<CompassButton> {
         child: FloatingActionButton.small(
           heroTag: 'compass',
           elevation: 2,
+          tooltip: 'Reset north',
           onPressed: () => widget.mapController.rotate(0),
           child: Transform.rotate(
-            angle: rotation * pi / 180,
+            angle: -rotation * pi / 180,
             child: const Icon(Icons.navigation),
           ),
         ),

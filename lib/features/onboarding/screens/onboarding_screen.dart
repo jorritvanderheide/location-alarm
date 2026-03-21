@@ -131,7 +131,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                     minimumSize: const Size.fromHeight(56),
                   ),
                   child: Text(
-                    _backgroundGranted
+                    _locationGranted &&
+                            _backgroundGranted &&
+                            _notificationGranted
                         ? 'Get started'
                         : 'Continue without permissions',
                   ),

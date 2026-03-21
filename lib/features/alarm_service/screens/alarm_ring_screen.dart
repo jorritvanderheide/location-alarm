@@ -116,12 +116,15 @@ class _AlarmRingScreenState extends ConsumerState<AlarmRingScreen>
                 ),
               ),
               const SizedBox(height: 16),
-              Text(
-                widget.body,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: colorScheme.onSurfaceVariant,
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 480),
+                child: Text(
+                  widget.body,
+                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
-                textAlign: TextAlign.center,
               ),
               const SizedBox(height: 64),
               Padding(

@@ -7,8 +7,9 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:location_alarm/features/alarm_map/widgets/alarm_map_hint.dart';
 import 'package:location_alarm/features/alarm_map/widgets/alarm_settings_sheet.dart';
+import 'package:location_alarm/features/alarm_service/providers/alarm_service_provider.dart';
+import 'package:location_alarm/features/alarm_map/widgets/map_search_bar.dart';
 import 'package:location_alarm/features/map/widgets/alarm_map.dart';
 import 'package:location_alarm/features/map/widgets/center_on_location_fab.dart';
 import 'package:location_alarm/features/map/widgets/compass_button.dart';
@@ -17,6 +18,7 @@ import 'package:location_alarm/shared/data/alarm_thumbnail.dart';
 import 'package:location_alarm/shared/data/geo_utils.dart';
 import 'package:location_alarm/shared/data/models/alarm.dart';
 import 'package:location_alarm/shared/providers/alarm_repository_provider.dart';
+import 'package:location_alarm/shared/providers/geocoding_provider.dart';
 import 'package:location_alarm/shared/providers/location_permission_provider.dart';
 import 'package:location_alarm/shared/providers/location_provider.dart';
 
@@ -41,8 +43,10 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
   bool _wasActive = true;
 
   late TextEditingController _labelController;
+  final _labelFocusNode = FocusNode();
   LatLng? _selectedLocation;
   double _radius = 500;
+  double _sheetHeight = 0;
 
   String _initialLabel = '';
   LatLng? _initialLocation;
@@ -52,6 +56,7 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
   void initState() {
     super.initState();
     _labelController = TextEditingController();
+    _labelController.addListener(() => setState(() {}));
     _isNew = widget.alarmId == null;
     if (!_isNew) {
       _loadAlarm();
@@ -66,8 +71,19 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
   @override
   void dispose() {
     _labelController.dispose();
+    _labelFocusNode.dispose();
     _mapController.dispose();
     super.dispose();
+  }
+
+  EdgeInsets _mapPadding(BuildContext context) {
+    final viewPadding = MediaQuery.of(context).viewPadding;
+    return EdgeInsets.fromLTRB(
+      48,
+      80 + viewPadding.top, // search bar
+      48,
+      _sheetHeight + 16, // settings sheet + gap
+    );
   }
 
   bool get _hasUnsavedChanges {
@@ -114,9 +130,9 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
 
   // -- Map helpers --
 
-  CameraFit? _initialCameraFit() {
+  CameraFit? _initialCameraFit(BuildContext context) {
     if (_selectedLocation == null) return null;
-    return _boundsForCircle();
+    return _boundsForCircle(padding: _mapPadding(context));
   }
 
   CameraFit _boundsForCircle({EdgeInsets padding = const EdgeInsets.all(48)}) {
@@ -141,15 +157,45 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
 
   void _fitCircle() {
     if (_selectedLocation == null) return;
-    _mapController.fitCamera(_boundsForCircle());
+    _mapController.fitCamera(_boundsForCircle(padding: _mapPadding(context)));
+  }
+
+  void _centerOnGps() {
+    final locationAsync = ref.read(locationProvider);
+    locationAsync.when(
+      data: (position) {
+        final loc = LatLng(position.latitude, position.longitude);
+        const delta = 0.005;
+        _mapController.fitCamera(
+          CameraFit.bounds(
+            bounds: LatLngBounds(
+              LatLng(loc.latitude - delta, loc.longitude - delta),
+              LatLng(loc.latitude + delta, loc.longitude + delta),
+            ),
+            padding: _mapPadding(context),
+            maxZoom: 15,
+          ),
+        );
+      },
+      loading: () {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Getting location...')));
+      },
+      error: (_, _) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Location unavailable')));
+      },
+    );
   }
 
   void _centerOnFirstLocation() {
     if (_hasCenteredOnLocation) return;
     final locationAsync = ref.read(locationProvider);
-    locationAsync.whenData((position) {
+    locationAsync.whenData((_) {
       _hasCenteredOnLocation = true;
-      _mapController.move(LatLng(position.latitude, position.longitude), 15);
+      _centerOnGps();
     });
   }
 
@@ -293,13 +339,27 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
       if (proceed != true || !mounted) return;
     }
 
+    // Always reverse geocode for location name (used as card subtitle).
+    // Also use as alarm name fallback when no label was typed.
+    final geocodingRepo = ref.read(geocodingRepositoryProvider);
+    final locationName =
+        await geocodingRepo.reverseGeocode(
+          _selectedLocation!,
+          radius: _radius,
+        ) ??
+        '';
+    final alarmName = _labelController.text.isEmpty
+        ? locationName
+        : _labelController.text;
+
     final active = (!hasLocationLock || isInsideRadius) ? false : _wasActive;
     final alarm = AlarmData(
       id: widget.alarmId,
-      name: _labelController.text,
+      name: alarmName,
       location: _selectedLocation!,
       active: active,
       radius: _radius,
+      locationName: locationName,
     );
 
     if (thumbnail != null && widget.alarmId != null) {
@@ -311,6 +371,7 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
     }
 
     final alarmId = await repo.save(alarm);
+    AlarmServiceNotifier.refresh();
 
     if (thumbnail != null && widget.alarmId == null) {
       try {
@@ -363,7 +424,7 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
     final colorScheme = Theme.of(context).colorScheme;
 
     return PopScope(
-      canPop: !_hasUnsavedChanges,
+      canPop: !_hasUnsavedChanges && !_saving,
       onPopInvokedWithResult: (didPop, _) async {
         if (didPop) return;
         final discard = await showDialog<bool>(
@@ -388,26 +449,6 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
       },
       child: Scaffold(
         resizeToAvoidBottomInset: false,
-        extendBodyBehindAppBar: true,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          scrolledUnderElevation: 0,
-          flexibleSpace: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Colors.black.withValues(alpha: 0.35),
-                  Colors.black.withValues(alpha: 0.0),
-                ],
-              ),
-            ),
-          ),
-          foregroundColor: Colors.white,
-          systemOverlayStyle: SystemUiOverlayStyle.light,
-        ),
         body: Stack(
           children: [
             RepaintBoundary(
@@ -416,7 +457,7 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
                 mapController: _mapController,
                 initialCenter: _selectedLocation,
                 initialZoom: _selectedLocation != null ? 15 : 7,
-                initialCameraFit: _initialCameraFit(),
+                initialCameraFit: _initialCameraFit(context),
                 onTap: (_, latLng) {
                   setState(() => _selectedLocation = latLng);
                 },
@@ -458,31 +499,63 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
               ),
             ),
 
+            // Search bar with back button and location search
+            MapSearchBar(
+              onBack: () => Navigator.of(context).maybePop(),
+              near: switch (ref.read(locationProvider)) {
+                AsyncData(:final value) => LatLng(
+                  value.latitude,
+                  value.longitude,
+                ),
+                _ => null,
+              },
+              onLocationSelected: (location) {
+                setState(() => _selectedLocation = location);
+                _fitCircle();
+              },
+            ),
+
             // Map controls (bottom-right, above sheet)
             Positioned(
               right: 16,
-              bottom: 232,
+              bottom: _sheetHeight + 16,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   CompassButton(mapController: _mapController),
                   const SizedBox(height: 8),
-                  CenterOnLocationButton(mapController: _mapController),
+                  CenterOnLocationButton(onPressed: _centerOnGps),
                 ],
               ),
             ),
 
-            if (_selectedLocation == null) const AlarmMapHint(),
-
-            AlarmSettingsSheet(
-              labelController: _labelController,
-              radius: _radius,
-              onRadiusChanged: (r) {
-                setState(() => _radius = r);
-                _fitCircle();
-              },
-              onSave: _save,
-              saving: _saving,
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: AlarmSettingsSheet(
+                labelController: _labelController,
+                labelFocusNode: _labelFocusNode,
+                radius: _radius,
+                canSave: _selectedLocation != null && _hasUnsavedChanges,
+                onHeightChanged: (h) {
+                  if (h != _sheetHeight) {
+                    setState(() => _sheetHeight = h);
+                    // Re-center map with updated padding.
+                    if (_selectedLocation != null) {
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        _fitCircle();
+                      });
+                    }
+                  }
+                },
+                onRadiusChanged: (r) {
+                  setState(() => _radius = r);
+                  _fitCircle();
+                },
+                onSave: _save,
+                saving: _saving,
+              ),
             ),
           ],
         ),

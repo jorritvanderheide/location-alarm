@@ -21,9 +21,6 @@ final _routerProvider = Provider<GoRouter>((ref) {
       if (!onboarded && state.matchedLocation != '/onboarding') {
         return '/onboarding';
       }
-      if (onboarded && state.matchedLocation == '/onboarding') {
-        return '/';
-      }
       return null;
     },
     routes: [
@@ -79,6 +76,7 @@ ThemeData _buildTheme(
     snackBarTheme: SnackBarThemeData(
       behavior: SnackBarBehavior.floating,
       elevation: 0,
+      closeIconColor: colorScheme.onInverseSurface,
       backgroundColor: colorScheme.inverseSurface,
       contentTextStyle: TextStyle(color: colorScheme.onInverseSurface),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),

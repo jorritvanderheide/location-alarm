@@ -6,16 +6,16 @@ final locationPermissionProvider =
       LocationPermissionNotifier.new,
     );
 
-/// Tracks whether background location permission has been granted.
-/// Used by [foregroundServiceProvider] and the alarm list warning banner.
-/// Tracks background location permission status.
 /// `null` = not checked yet, `true`/`false` = checked result.
-final backgroundPermissionProvider =
-    NotifierProvider<BackgroundPermissionNotifier, bool?>(
-      BackgroundPermissionNotifier.new,
-    );
+final backgroundPermissionProvider = NotifierProvider<_BoolPermNotifier, bool?>(
+  _BoolPermNotifier.new,
+);
 
-class BackgroundPermissionNotifier extends Notifier<bool?> {
+/// `null` = not checked yet, `true`/`false` = checked result.
+final notificationPermissionProvider =
+    NotifierProvider<_BoolPermNotifier, bool?>(_BoolPermNotifier.new);
+
+class _BoolPermNotifier extends Notifier<bool?> {
   @override
   bool? build() => null;
 
@@ -34,6 +34,9 @@ class LocationPermissionNotifier extends Notifier<PermissionStatus> {
     ref
         .read(backgroundPermissionProvider.notifier)
         .set((await Permission.locationAlways.status).isGranted);
+    ref
+        .read(notificationPermissionProvider.notifier)
+        .set((await Permission.notification.status).isGranted);
   }
 
   Future<void> checkAll() async {
@@ -41,6 +44,9 @@ class LocationPermissionNotifier extends Notifier<PermissionStatus> {
     ref
         .read(backgroundPermissionProvider.notifier)
         .set((await Permission.locationAlways.status).isGranted);
+    ref
+        .read(notificationPermissionProvider.notifier)
+        .set((await Permission.notification.status).isGranted);
   }
 
   Future<void> request() async {
@@ -49,7 +55,6 @@ class LocationPermissionNotifier extends Notifier<PermissionStatus> {
 
   /// Requests background location. Returns true if granted.
   Future<bool> requestBackground() async {
-    // Short-circuit if already granted.
     if ((await Permission.locationAlways.status).isGranted) {
       ref.read(backgroundPermissionProvider.notifier).set(true);
       return true;
@@ -68,6 +73,7 @@ class LocationPermissionNotifier extends Notifier<PermissionStatus> {
   /// Requests notification permission. Returns true if granted.
   Future<bool> requestNotification() async {
     final result = await Permission.notification.request();
+    ref.read(notificationPermissionProvider.notifier).set(result.isGranted);
     return result.isGranted;
   }
 }
