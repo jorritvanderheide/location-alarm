@@ -4,10 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:location_alarm/features/alarm_map/screens/alarm_map_screen.dart';
 import 'package:location_alarm/features/alarm_list/screens/alarm_list_screen.dart';
-import 'package:location_alarm/features/onboarding/screens/onboarding_screen.dart';
 import 'package:location_alarm/features/settings/screens/about_screen.dart';
 import 'package:location_alarm/features/settings/screens/settings_screen.dart';
-import 'package:location_alarm/shared/providers/onboarding_provider.dart';
 import 'package:location_alarm/shared/providers/theme_provider.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
@@ -16,18 +14,7 @@ final _routerProvider = Provider<GoRouter>((ref) {
   return GoRouter(
     navigatorKey: navigatorKey,
     initialLocation: '/',
-    redirect: (context, state) {
-      final onboarded = ref.read(onboardingCompleteProvider);
-      if (!onboarded && state.matchedLocation != '/onboarding') {
-        return '/onboarding';
-      }
-      return null;
-    },
     routes: [
-      GoRoute(
-        path: '/onboarding',
-        builder: (context, state) => const OnboardingScreen(),
-      ),
       GoRoute(path: '/', builder: (context, state) => const AlarmListScreen()),
       GoRoute(
         path: '/create',

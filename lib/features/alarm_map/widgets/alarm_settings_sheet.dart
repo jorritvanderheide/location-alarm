@@ -39,11 +39,11 @@ class AlarmSettingsSheet extends StatelessWidget {
         child: BottomSheet(
           onClosing: () {},
           enableDrag: false,
-          showDragHandle: true,
+          showDragHandle: false,
           builder: (context) => Padding(
             padding: EdgeInsets.fromLTRB(
               16,
-              0,
+              24,
               16,
               liftForKeyboard ? 16 : bottomPadding + 16,
             ),

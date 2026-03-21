@@ -11,7 +11,7 @@ import 'package:location_alarm/shared/data/models/alarm.dart';
 import 'package:location_alarm/shared/providers/alarm_repository_provider.dart';
 import 'package:location_alarm/shared/providers/alarms_provider.dart';
 import 'package:location_alarm/shared/providers/location_permission_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
+import 'package:location_alarm/shared/widgets/permission_dialogs.dart';
 
 enum AlarmSortMode {
   created('Date created'),
@@ -31,7 +31,6 @@ class AlarmListScreen extends ConsumerStatefulWidget {
 class _AlarmListScreenState extends ConsumerState<AlarmListScreen> {
   AlarmSortMode _sortMode = AlarmSortMode.created;
   final Set<int> _activatingIds = {};
-  bool _hasRedirectedToOnboarding = false;
 
   // Multi-select state
   bool _editMode = false;
@@ -96,36 +95,6 @@ class _AlarmListScreenState extends ConsumerState<AlarmListScreen> {
       return '${(meters / 1000).toStringAsFixed(1)} km';
     }
     return '${meters.round()} m';
-  }
-
-  // -- Permissions --
-
-  /// Whether both location and notification permissions are missing
-  /// (different Android settings screens → route to onboarding).
-  bool _multiplePermScreensMissing(PermissionStatus fg, bool? bg, bool? notif) {
-    final locationMissing = fg != PermissionStatus.granted || bg == false;
-    final notifMissing = notif == false;
-    return locationMissing && notifMissing;
-  }
-
-  String? _permissionBannerMessage(
-    bool hasActive,
-    PermissionStatus fg,
-    bool? bg,
-    bool? notif,
-  ) {
-    if (!hasActive || bg == null) return null;
-    final missing = <String>[];
-    if (fg != PermissionStatus.granted) {
-      missing.add('location');
-    } else if (bg == false) {
-      missing.add('background location');
-    }
-    if (notif == false) {
-      missing.add('notifications');
-    }
-    if (missing.isEmpty) return null;
-    return 'Missing: ${missing.join(', ')}';
   }
 
   // -- Multi-select --
@@ -196,23 +165,7 @@ class _AlarmListScreenState extends ConsumerState<AlarmListScreen> {
   @override
   Widget build(BuildContext context) {
     final alarmsAsync = ref.watch(alarmsProvider);
-    final fgPerm = ref.watch(locationPermissionProvider);
-    final bgPerm = ref.watch(backgroundPermissionProvider);
-    final notifPerm = ref.watch(notificationPermissionProvider);
     final colorScheme = Theme.of(context).colorScheme;
-
-    // Auto-redirect to onboarding when multiple permission screens need fixing.
-    final shouldRedirect =
-        bgPerm != null &&
-        _multiplePermScreensMissing(fgPerm, bgPerm, notifPerm);
-    if (shouldRedirect && !_hasRedirectedToOnboarding) {
-      _hasRedirectedToOnboarding = true;
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (mounted) context.go('/onboarding');
-      });
-    } else if (!shouldRedirect) {
-      _hasRedirectedToOnboarding = false;
-    }
 
     return PopScope(
       canPop: !_editMode,
@@ -330,53 +283,30 @@ class _AlarmListScreenState extends ConsumerState<AlarmListScreen> {
               );
             }
 
-            final hasActive = alarms.any((a) => a.active);
             final sorted = _sortAlarms(alarms);
-            final bannerMessage = _permissionBannerMessage(
-              hasActive,
-              fgPerm,
-              bgPerm,
-              notifPerm,
-            );
 
-            return Column(
-              children: [
-                if (bannerMessage != null)
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-                    child: _PermissionBanner(
-                      message: bannerMessage,
-                      colorScheme: colorScheme,
-                      onTap: openAppSettings,
+            return SingleChildScrollView(
+              padding: const EdgeInsets.fromLTRB(16, 16, 16, 112),
+              child: Column(
+                spacing: 16,
+                children: [
+                  for (final alarm in sorted)
+                    AlarmCard(
+                      key: ValueKey(alarm.id),
+                      alarm: alarm,
+                      activating: _activatingIds.contains(alarm.id),
+                      selected: _selectedIds.contains(alarm.id),
+                      editMode: _editMode,
+                      onTap: _editMode
+                          ? () => _toggleSelection(alarm.id!)
+                          : () => context.push('/edit/${alarm.id}'),
+                      onLongPress: _editMode
+                          ? null
+                          : () => _enterEditMode(alarm.id!),
+                      onToggle: (active) => _handleToggle(alarm, active, ref),
                     ),
-                  ),
-                Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.fromLTRB(16, 16, 16, 112),
-                    child: Column(
-                      spacing: 16,
-                      children: [
-                        for (final alarm in sorted)
-                          AlarmCard(
-                            key: ValueKey(alarm.id),
-                            alarm: alarm,
-                            activating: _activatingIds.contains(alarm.id),
-                            selected: _selectedIds.contains(alarm.id),
-                            editMode: _editMode,
-                            onTap: _editMode
-                                ? () => _toggleSelection(alarm.id!)
-                                : () => context.push('/edit/${alarm.id}'),
-                            onLongPress: _editMode
-                                ? null
-                                : () => _enterEditMode(alarm.id!),
-                            onToggle: (active) =>
-                                _handleToggle(alarm, active, ref),
-                          ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
+                ],
+              ),
             );
           },
         ),
@@ -403,16 +333,9 @@ class _AlarmListScreenState extends ConsumerState<AlarmListScreen> {
       _activatingIds.remove(id);
       await ref.read(alarmRepositoryProvider).toggleActive(id, active: false);
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('$alarmName deactivated'),
-            duration: const Duration(seconds: 6),
-            action: SnackBarAction(
-              label: 'Undo',
-              onPressed: () => _handleToggle(alarm, true, ref),
-            ),
-          ),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('$alarmName deactivated')));
       }
       return;
     }
@@ -421,6 +344,39 @@ class _AlarmListScreenState extends ConsumerState<AlarmListScreen> {
     setState(() => _activatingIds.add(id));
 
     try {
+      // 1. Check foreground location.
+      if (!await ensureForegroundLocation(context, ref)) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Location permission required')),
+          );
+        }
+        return;
+      }
+      if (!mounted) return;
+
+      // 2. Check background location with rationale dialog.
+      final bgGranted = await requestBackgroundWithRationale(context, ref);
+      if (!mounted) return;
+      if (!bgGranted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Background location required')),
+        );
+        return;
+      }
+
+      // 3. Request notification permission (warn but allow activation).
+      final permNotifier = ref.read(locationPermissionProvider.notifier);
+      final notifGranted = await permNotifier.requestNotification();
+      if (!mounted) return;
+      if (!notifGranted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Notifications disabled — you won\'t hear the alarm'),
+          ),
+        );
+      }
+
       final position = await Geolocator.getCurrentPosition(
         locationSettings: const LocationSettings(
           accuracy: LocationAccuracy.high,
@@ -492,37 +448,5 @@ class _AlarmListScreenState extends ConsumerState<AlarmListScreen> {
       _activatingIds.remove(id);
       if (mounted) setState(() {});
     }
-  }
-}
-
-class _PermissionBanner extends StatelessWidget {
-  const _PermissionBanner({
-    required this.message,
-    required this.colorScheme,
-    required this.onTap,
-  });
-
-  final String message;
-  final ColorScheme colorScheme;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      color: colorScheme.errorContainer,
-      margin: EdgeInsets.zero,
-      child: ListTile(
-        leading: Icon(Icons.warning_amber, color: colorScheme.onErrorContainer),
-        title: Text(
-          message,
-          style: TextStyle(color: colorScheme.onErrorContainer),
-        ),
-        subtitle: Text(
-          'Tap to fix',
-          style: TextStyle(color: colorScheme.onErrorContainer),
-        ),
-        onTap: onTap,
-      ),
-    );
   }
 }

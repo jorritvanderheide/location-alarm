@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:latlong2/latlong.dart';
@@ -21,6 +22,8 @@ import 'package:location_alarm/shared/providers/alarm_repository_provider.dart';
 import 'package:location_alarm/shared/providers/geocoding_provider.dart';
 import 'package:location_alarm/shared/providers/location_permission_provider.dart';
 import 'package:location_alarm/shared/providers/location_provider.dart';
+import 'package:location_alarm/shared/widgets/permission_dialogs.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class AlarmMapScreen extends ConsumerStatefulWidget {
   const AlarmMapScreen({super.key, this.alarmId});
@@ -36,6 +39,7 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
   final _mapController = MapController();
   final _mapKey = GlobalKey();
   bool _hasCenteredOnLocation = false;
+  LatLng? _lastKnownLocation;
 
   bool _isNew = true;
   bool _loaded = false;
@@ -63,6 +67,7 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
     } else {
       _loaded = true;
     }
+    _loadLastKnownLocation();
     Future.microtask(() {
       ref.read(locationPermissionProvider.notifier).request();
     });
@@ -84,6 +89,20 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
       48,
       _sheetHeight + 16, // settings sheet + gap
     );
+  }
+
+  Future<void> _loadLastKnownLocation() async {
+    if (_selectedLocation != null) return; // editing — already have a location
+    try {
+      final pos = await Geolocator.getLastKnownPosition();
+      if (pos != null && !_hasCenteredOnLocation && mounted) {
+        _lastKnownLocation = LatLng(pos.latitude, pos.longitude);
+        setState(() {});
+        _mapController.move(_lastKnownLocation!, 13);
+      }
+    } on Exception {
+      // Best-effort — GPS stream will handle it
+    }
   }
 
   bool get _hasUnsavedChanges {
@@ -160,7 +179,20 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
     _mapController.fitCamera(_boundsForCircle(padding: _mapPadding(context)));
   }
 
-  void _centerOnGps() {
+  Future<void> _centerOnGps() async {
+    final perm = ref.read(locationPermissionProvider);
+    if (perm != PermissionStatus.granted) {
+      await ref.read(locationPermissionProvider.notifier).request();
+      if (ref.read(locationPermissionProvider) != PermissionStatus.granted) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Location permission required')),
+          );
+        }
+        return;
+      }
+    }
+
     final locationAsync = ref.read(locationProvider);
     locationAsync.when(
       data: (position) {
@@ -266,36 +298,40 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
   }
 
   Future<void> _performSave() async {
-    final permNotifier = ref.read(locationPermissionProvider.notifier);
-    final bgGranted = await permNotifier.requestBackground();
+    // 1. Verify foreground location.
+    if (!await ensureForegroundLocation(context, ref)) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Location permission required')),
+        );
+      }
+      return;
+    }
     if (!mounted) return;
 
+    // 2. Require background location with rationale dialog.
+    final bgGranted = await requestBackgroundWithRationale(context, ref);
+    if (!mounted) return;
     if (!bgGranted) {
-      final proceed = await showDialog<bool>(
-        context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Background location required'),
-          content: const Text(
-            'Without background location permission, the alarm will not '
-            'trigger. You can grant it later in system settings.',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.pop(context, true),
-              child: const Text('Save anyway'),
-            ),
-          ],
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Background location required to save alarm'),
         ),
       );
-      if (proceed != true || !mounted) return;
+      return;
     }
 
-    await permNotifier.requestNotification();
+    // 3. Request notification permission (warn but allow save).
+    final permNotifier = ref.read(locationPermissionProvider.notifier);
+    final notifGranted = await permNotifier.requestNotification();
     if (!mounted) return;
+    if (!notifGranted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Notifications disabled — you won\'t hear the alarm'),
+        ),
+      );
+    }
 
     // Animate to nicely framed view, then capture thumbnail.
     await _animateCamera(_boundsForCircle());
@@ -388,9 +424,7 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
         : _labelController.text;
 
     final String message;
-    if (!bgGranted) {
-      message = '$label saved — enable background location to monitor';
-    } else if (!hasLocationLock) {
+    if (!hasLocationLock) {
       message = '$label saved (inactive — no GPS lock)';
     } else if (isInsideRadius) {
       message = '$label saved (inactive)';
@@ -455,8 +489,12 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
               key: _mapKey,
               child: AlarmMap(
                 mapController: _mapController,
-                initialCenter: _selectedLocation,
-                initialZoom: _selectedLocation != null ? 15 : 7,
+                initialCenter: _selectedLocation ?? _lastKnownLocation,
+                initialZoom: _selectedLocation != null
+                    ? 15
+                    : _lastKnownLocation != null
+                    ? 13
+                    : 7,
                 initialCameraFit: _initialCameraFit(context),
                 onTap: (_, latLng) {
                   setState(() => _selectedLocation = latLng);
