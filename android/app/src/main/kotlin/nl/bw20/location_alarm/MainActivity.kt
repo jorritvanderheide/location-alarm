@@ -40,6 +40,10 @@ class MainActivity : FlutterActivity() {
                     clearLockScreenFlags()
                     result.success(null)
                 }
+                "moveToBack" -> {
+                    moveTaskToBack(true)
+                    result.success(null)
+                }
                 "isScreenOff" -> {
                     val powerManager = getSystemService(POWER_SERVICE) as PowerManager
                     val keyguardManager = getSystemService(KEYGUARD_SERVICE) as KeyguardManager

@@ -14,8 +14,12 @@ Future<bool> requestBackgroundWithRationale(
   final notifier = ref.read(locationPermissionProvider.notifier);
 
   // Already granted — nothing to do.
-  final bgGranted = ref.read(backgroundPermissionProvider);
-  if (bgGranted == true) return true;
+  if ((await Permission.locationAlways.status).isGranted) {
+    ref.read(backgroundPermissionProvider.notifier).set(true);
+    return true;
+  }
+
+  if (!context.mounted) return false;
 
   // Show rationale dialog.
   final proceed = await showDialog<bool>(
@@ -51,8 +55,7 @@ Future<bool> ensureForegroundLocation(
   BuildContext context,
   WidgetRef ref,
 ) async {
-  final perm = ref.read(locationPermissionProvider);
-  if (perm == PermissionStatus.granted) return true;
+  if ((await Permission.locationWhenInUse.status).isGranted) return true;
 
   await ref.read(locationPermissionProvider.notifier).request();
   return ref.read(locationPermissionProvider) == PermissionStatus.granted;

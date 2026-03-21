@@ -11,6 +11,7 @@ import 'package:location_alarm/shared/data/models/alarm.dart';
 import 'package:location_alarm/shared/providers/alarm_repository_provider.dart';
 import 'package:location_alarm/shared/providers/alarms_provider.dart';
 import 'package:location_alarm/shared/providers/location_permission_provider.dart';
+import 'package:location_alarm/shared/providers/location_settings_provider.dart';
 import 'package:location_alarm/shared/widgets/permission_dialogs.dart';
 
 enum AlarmSortMode {
@@ -389,7 +390,8 @@ class _AlarmListScreenState extends ConsumerState<AlarmListScreen> {
 
       final currentLatLng = LatLng(position.latitude, position.longitude);
       final distance = distanceInMeters(currentLatLng, alarm.location);
-      if (distance <= alarm.radius) {
+      final triggerInside = ref.read(triggerInsideRadiusProvider);
+      if (distance <= alarm.radius && !triggerInside) {
         if (mounted) {
           await showDialog<void>(
             context: context,

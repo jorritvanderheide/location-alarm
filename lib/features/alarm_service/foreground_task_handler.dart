@@ -62,6 +62,7 @@ class LocationTaskHandler extends TaskHandler {
           locationSettings: AndroidSettings(
             accuracy: LocationAccuracy.high,
             distanceFilter: 0,
+            intervalDuration: const Duration(seconds: 10),
             forceLocationManager: !_usePlayServices,
           ),
         ).listen(
@@ -143,12 +144,10 @@ class LocationTaskHandler extends TaskHandler {
   @override
   void onRepeatEvent(DateTime timestamp) {
     if (!_ready) return;
-    final position = _lastPosition;
-    if (position != null) {
-      _checkAlarms(position);
-    } else {
-      _fetchInitialPosition();
-    }
+    // Always request a fresh fix — the cached _lastPosition may be stale,
+    // especially with the Android Location Manager when the OS throttles
+    // background GPS updates.
+    _fetchInitialPosition();
   }
 
   @override

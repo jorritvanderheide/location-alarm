@@ -60,7 +60,12 @@ void main() async {
     for (final alarm in next) {
       if (shownDismissIds.contains(alarm.id)) continue;
       shownDismissIds.add(alarm.id!);
-      _showDismissIfScreenOff(alarm, () => shownDismissIds.remove(alarm.id));
+      _showDismissIfScreenOff(
+        alarm,
+        () => shownDismissIds.remove(alarm.id),
+      ).then((shown) {
+        if (!shown) shownDismissIds.remove(alarm.id);
+      });
     }
   });
 
@@ -112,15 +117,18 @@ void main() async {
   );
 }
 
-Future<void> _showDismissIfScreenOff(
+/// Returns `true` if the dismiss screen was shown.
+Future<bool> _showDismissIfScreenOff(
   AlarmData alarm,
   VoidCallback onDismissed,
 ) async {
   final screenOff = await _isScreenOff();
   if (screenOff) {
     _showDismissScreen(alarm, onDismissed);
+    return true;
   }
   // Screen on: the native notification handles dismiss via AlarmDismissReceiver
+  return false;
 }
 
 Future<void> _checkLaunchIntent({

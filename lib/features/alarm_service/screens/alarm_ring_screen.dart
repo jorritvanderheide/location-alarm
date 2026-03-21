@@ -22,31 +22,21 @@ class AlarmRingScreen extends ConsumerStatefulWidget {
   ConsumerState<AlarmRingScreen> createState() => _AlarmRingScreenState();
 }
 
-class _AlarmRingScreenState extends ConsumerState<AlarmRingScreen>
-    with WidgetsBindingObserver {
+class _AlarmRingScreenState extends ConsumerState<AlarmRingScreen> {
   static const _channel = MethodChannel('nl.bw20.location_alarm/screen');
   bool _dismissed = false;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
     _showOverLockScreen();
   }
 
   @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
     _clearLockScreenFlags();
     widget.onDismissed?.call();
     super.dispose();
-  }
-
-  @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state == AppLifecycleState.resumed) {
-      _showOverLockScreen();
-    }
   }
 
   Future<void> _showOverLockScreen() async {
@@ -76,6 +66,18 @@ class _AlarmRingScreenState extends ConsumerState<AlarmRingScreen>
     if (mounted) {
       Navigator.of(context).pop();
     }
+    await _moveToBackIfLocked();
+  }
+
+  Future<void> _moveToBackIfLocked() async {
+    try {
+      final isOff = await _channel.invokeMethod<bool>('isScreenOff');
+      if (isOff == true) {
+        await _channel.invokeMethod('moveToBack');
+      }
+    } on MissingPluginException {
+      // ignore
+    }
   }
 
   @override
@@ -87,6 +89,7 @@ class _AlarmRingScreenState extends ConsumerState<AlarmRingScreen>
         if ((alarm == null || !alarm.active) && !_dismissed) {
           _dismissed = true;
           _clearLockScreenFlags();
+          _moveToBackIfLocked();
           if (mounted) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (mounted) Navigator.of(context).pop();

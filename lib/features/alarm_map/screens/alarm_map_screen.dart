@@ -22,6 +22,7 @@ import 'package:location_alarm/shared/providers/alarm_repository_provider.dart';
 import 'package:location_alarm/shared/providers/geocoding_provider.dart';
 import 'package:location_alarm/shared/providers/location_permission_provider.dart';
 import 'package:location_alarm/shared/providers/location_provider.dart';
+import 'package:location_alarm/shared/providers/location_settings_provider.dart';
 import 'package:location_alarm/shared/widgets/permission_dialogs.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -351,7 +352,8 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
             ) <=
             _radius;
 
-    if (isInsideRadius) {
+    final triggerInside = ref.read(triggerInsideRadiusProvider);
+    if (isInsideRadius && !triggerInside) {
       final proceed = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
@@ -388,7 +390,9 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
         ? locationName
         : _labelController.text;
 
-    final active = (!hasLocationLock || isInsideRadius) ? false : _wasActive;
+    final active = (!hasLocationLock || (isInsideRadius && !triggerInside))
+        ? false
+        : _wasActive;
     final alarm = AlarmData(
       id: widget.alarmId,
       name: alarmName,

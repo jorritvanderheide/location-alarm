@@ -45,10 +45,12 @@ class AlarmServiceNotifier extends Notifier<List<AlarmData>> {
         state = [...state, alarm];
       }
     } else if (type == 'alarm_dismissed') {
-      // Background isolate already wrote active=false to DB.
-      // Just update the UI state.
+      // Background isolate already wrote active=false to its DB connection.
+      // Invalidate the alarms provider so the main isolate's DB connection
+      // re-reads the updated state.
       final id = json['id'] as int;
       state = state.where((a) => a.id != id).toList();
+      ref.invalidate(alarmsProvider);
     }
   }
 

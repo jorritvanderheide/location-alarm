@@ -16,6 +16,7 @@ class SettingsScreen extends ConsumerWidget {
     final themeMode = ref.watch(themeModeProvider);
     final amoled = ref.watch(amoledBlackProvider);
     final usePlayServices = ref.watch(usePlayServicesProvider);
+    final triggerInside = ref.watch(triggerInsideRadiusProvider);
     final isDark =
         themeMode == ThemeMode.dark ||
         (themeMode == ThemeMode.system &&
@@ -80,6 +81,21 @@ class SettingsScreen extends ConsumerWidget {
                   ),
                 );
               }
+            },
+          ),
+          _SectionHeader(label: 'Debug', colorScheme: colorScheme),
+          SwitchListTile(
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 8,
+            ),
+            title: const Text('Trigger inside radius'),
+            subtitle: const Text(
+              'Allow activating alarms when already inside the radius',
+            ),
+            value: triggerInside,
+            onChanged: (value) {
+              ref.read(triggerInsideRadiusProvider.notifier).set(value);
             },
           ),
         ],
