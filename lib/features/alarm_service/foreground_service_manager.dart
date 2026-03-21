@@ -20,11 +20,11 @@ class ForegroundServiceManager {
         playSound: false,
         enableVibration: false,
       ),
-      iosNotificationOptions: const IOSNotificationOptions(), // required param
+      iosNotificationOptions: const IOSNotificationOptions(),
       foregroundTaskOptions: ForegroundTaskOptions(
-        eventAction: ForegroundTaskEventAction.repeat(300000),
-        autoRunOnBoot: false,
-        autoRunOnMyPackageReplaced: false,
+        eventAction: ForegroundTaskEventAction.repeat(60000), // 1 minute
+        autoRunOnBoot: true,
+        autoRunOnMyPackageReplaced: true,
         allowWakeLock: true,
         allowWifiLock: false,
       ),

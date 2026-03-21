@@ -4,7 +4,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:location_alarm/shared/data/models/alarm.dart';
-import 'package:location_alarm/shared/providers/alarm_repository_provider.dart';
 import 'package:location_alarm/shared/providers/alarms_provider.dart';
 
 const _notificationChannel = MethodChannel(
@@ -39,7 +38,6 @@ class AlarmServiceNotifier extends Notifier<List<AlarmData>> {
 
     if (type == 'alarm_fired') {
       final id = json['id'] as int;
-      // Don't add duplicates
       if (state.any((a) => a.id == id)) return;
       final alarms = ref.read(alarmsProvider).whenData((a) => a).value;
       final alarm = alarms?.where((a) => a.id == id).firstOrNull;
@@ -47,25 +45,29 @@ class AlarmServiceNotifier extends Notifier<List<AlarmData>> {
         state = [...state, alarm];
       }
     } else if (type == 'alarm_dismissed') {
+      // Background isolate already wrote active=false to DB.
+      // Just update the UI state.
       final id = json['id'] as int;
-      await ref.read(alarmRepositoryProvider).toggleActive(id, active: false);
       state = state.where((a) => a.id != id).toList();
     }
   }
 
   /// Dismiss a ringing alarm by sending a command to the background isolate.
+  /// The background isolate owns the DB write for active=false.
   Future<void> dismiss(int alarmId) async {
     FlutterForegroundTask.sendDataToTask(
       jsonEncode({'type': 'dismiss', 'id': alarmId}),
     );
-    await ref
-        .read(alarmRepositoryProvider)
-        .toggleActive(alarmId, active: false);
     try {
       await _notificationChannel.invokeMethod('dismissAlarm');
     } on MissingPluginException {
       // Channel may not be available yet
     }
     state = state.where((a) => a.id != alarmId).toList();
+  }
+
+  /// Tell the background isolate to re-check alarms immediately.
+  static void refresh() {
+    FlutterForegroundTask.sendDataToTask(jsonEncode({'type': 'refresh'}));
   }
 }

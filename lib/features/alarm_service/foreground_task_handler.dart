@@ -10,6 +10,8 @@ import 'package:location_alarm/features/alarm_service/background_alarm_player.da
 import 'package:location_alarm/shared/data/database/app_database.dart';
 import 'package:location_alarm/shared/data/database/connection.dart';
 import 'package:location_alarm/shared/data/repositories/alarm_repository.dart';
+import 'package:location_alarm/shared/providers/location_settings_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 @pragma('vm:entry-point')
 void startCallback() {
@@ -27,6 +29,7 @@ class LocationTaskHandler extends TaskHandler {
   final Set<int> _firedIds = {};
   LatLng? _lastPosition;
   bool _ready = false;
+  bool _usePlayServices = false;
 
   @override
   Future<void> onStart(DateTime timestamp, TaskStarter starter) async {
@@ -34,25 +37,64 @@ class LocationTaskHandler extends TaskHandler {
       _db = openDatabase();
       _repo = AlarmRepository(_db!);
       await _player.init();
+
+      // Read Play Services preference from SharedPreferences directly
+      // (Riverpod is not available in the background isolate).
+      final prefs = await SharedPreferences.getInstance();
+      _usePlayServices = prefs.getBool(usePlayServicesKey) ?? false;
+
       _ready = true;
     } on Exception catch (e) {
       debugPrint('ALARM: failed to initialize background task: $e');
       return;
     }
 
+    _startPositionStream();
+
+    // Seed initial position immediately so we don't wait for the stream.
+    await _fetchInitialPosition();
+  }
+
+  void _startPositionStream() {
+    _positionSub?.cancel();
     _positionSub =
         Geolocator.getPositionStream(
           locationSettings: AndroidSettings(
             accuracy: LocationAccuracy.high,
-            distanceFilter: 10,
-            forceLocationManager: true,
+            distanceFilter: 0,
+            forceLocationManager: !_usePlayServices,
           ),
         ).listen(
           _onPosition,
           onError: (Object e) {
             debugPrint('ALARM: position stream error: $e');
+            _lastPosition = null;
+            _resubscribeAfterDelay();
           },
         );
+  }
+
+  Future<void> _fetchInitialPosition() async {
+    try {
+      final pos = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+          timeLimit: Duration(seconds: 15),
+        ),
+      );
+      final latLng = LatLng(pos.latitude, pos.longitude);
+      _lastPosition = latLng;
+      await _checkAlarms(latLng);
+    } on Exception catch (e) {
+      debugPrint('ALARM: initial position check failed: $e');
+    }
+  }
+
+  void _resubscribeAfterDelay() {
+    Future<void>.delayed(const Duration(seconds: 30), () {
+      if (!_ready) return;
+      _startPositionStream();
+    });
   }
 
   Future<void> _onPosition(Position position) async {
@@ -87,8 +129,6 @@ class LocationTaskHandler extends TaskHandler {
       for (final alarm in triggered) {
         _firedIds.add(alarm.id!);
 
-        // Notify main isolate first so dismiss screen shows regardless
-        // of whether audio/notification succeeds
         FlutterForegroundTask.sendDataToMain(
           jsonEncode({'type': 'alarm_fired', 'id': alarm.id}),
         );
@@ -106,29 +146,34 @@ class LocationTaskHandler extends TaskHandler {
     final position = _lastPosition;
     if (position != null) {
       _checkAlarms(position);
+    } else {
+      _fetchInitialPosition();
     }
   }
 
   @override
   void onReceiveData(Object data) {
     if (data is! String) return;
+    _handleData(data);
+  }
 
+  Future<void> _handleData(String data) async {
     try {
       final json = jsonDecode(data) as Map<String, dynamic>;
       final type = json['type'] as String?;
 
       if (type == 'dismiss') {
         final id = json['id'] as int;
-        _player.stop();
+        await _player.stop();
+        await _repo?.toggleActive(id, active: false);
         _firedIds.remove(id);
-        _repo?.toggleActive(id, active: false);
         FlutterForegroundTask.sendDataToMain(
           jsonEncode({'type': 'alarm_dismissed', 'id': id}),
         );
       } else if (type == 'refresh') {
         final position = _lastPosition;
         if (position != null) {
-          _checkAlarms(position);
+          await _checkAlarms(position);
         }
       }
     } on Exception catch (e) {
@@ -138,6 +183,7 @@ class LocationTaskHandler extends TaskHandler {
 
   @override
   Future<void> onDestroy(DateTime timestamp, bool isTimeout) async {
+    _ready = false;
     await _positionSub?.cancel();
     await _player.stop();
     await _player.dispose();
