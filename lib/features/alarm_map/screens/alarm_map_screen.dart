@@ -37,7 +37,9 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
   final _labelFocusNode = FocusNode();
 
   bool _mapReady = false;
-  double _sheetHeight = 0;
+  // Estimated initial height — updated by _MeasuredBox once the sheet renders.
+  // Avoids the map centering without sheet offset on first frame.
+  double _sheetHeight = 230;
 
   @override
   void initState() {
