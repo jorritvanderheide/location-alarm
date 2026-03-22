@@ -47,6 +47,11 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
     super.initState();
     _labelController.addListener(_syncNameToProvider);
     Future.microtask(() {
+      // Invalidate to get a fresh form state — the family key (null for new
+      // alarms) is reused across screens, so stale state persists otherwise.
+      ref.invalidate(alarmFormProvider(widget.alarmId));
+      ref.invalidate(alarmSaveProvider);
+      _labelController.clear();
       ref.read(locationPermissionProvider.notifier).request();
       _loadLastKnownLocation();
     });
@@ -54,6 +59,7 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
 
   @override
   void dispose() {
+    _cameraAnimController?.dispose();
     _labelController.removeListener(_syncNameToProvider);
     _labelController.dispose();
     _labelFocusNode.dispose();
@@ -193,11 +199,18 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
     });
   }
 
+  AnimationController? _cameraAnimController;
+
   Future<void> _animateCamera(
     CameraFit target, {
     Duration duration = const Duration(milliseconds: 400),
   }) {
     if (!_mapReady) return Future.value();
+
+    // Cancel any in-progress animation.
+    _cameraAnimController?.stop();
+    _cameraAnimController?.dispose();
+
     final dest = target.fit(_mapController.camera);
     final startCenter = _mapController.camera.center;
     final startZoom = _mapController.camera.zoom;
@@ -205,6 +218,7 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
     final endZoom = dest.zoom;
 
     final controller = AnimationController(vsync: this, duration: duration);
+    _cameraAnimController = controller;
     final completer = Completer<void>();
 
     controller.addListener(() {
@@ -223,6 +237,9 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
     controller.addStatusListener((status) {
       if (status == AnimationStatus.completed ||
           status == AnimationStatus.dismissed) {
+        if (_cameraAnimController == controller) {
+          _cameraAnimController = null;
+        }
         controller.dispose();
         if (!completer.isCompleted) completer.complete();
       }
@@ -449,10 +466,15 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
       next.whenData((_) => _centerOnFirstLocation());
     });
 
-    // Sync loaded alarm data into text controller (one-time on load).
+    // Sync loaded alarm data into UI (one-time on load).
     ref.listen(alarmFormProvider(widget.alarmId), (prev, next) {
-      if (prev?.isLoaded != true && next.isLoaded && next.name.isNotEmpty) {
-        _labelController.text = next.name;
+      if (prev?.isLoaded != true && next.isLoaded) {
+        if (next.name.isNotEmpty) _labelController.text = next.name;
+        // Center on the alarm's location once loaded (edit mode).
+        if (next.location != null && _mapReady) {
+          _hasCenteredOnLocation = true;
+          _fitCircle();
+        }
       }
     });
 
@@ -540,9 +562,8 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
                   ref
                       .read(alarmFormProvider(widget.alarmId).notifier)
                       .setLocation(latLng);
-                  // Center on the tapped location with the alarm circle.
                   WidgetsBinding.instance.addPostFrameCallback((_) {
-                    _fitCircle();
+                    if (mounted) _fitCircle();
                   });
                 },
                 children: [
