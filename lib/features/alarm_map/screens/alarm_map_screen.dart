@@ -38,6 +38,7 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
   final _labelFocusNode = FocusNode();
 
   bool _hasCenteredOnLocation = false;
+  bool _mapReady = false;
   LatLng? _lastKnownLocation;
   double _sheetHeight = 0;
 
@@ -86,12 +87,6 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
       if (pos != null && !_hasCenteredOnLocation && mounted) {
         _lastKnownLocation = LatLng(pos.latitude, pos.longitude);
         setState(() {});
-        // Defer move until after the map widget has rendered.
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          if (mounted && !_hasCenteredOnLocation) {
-            _mapController.move(_lastKnownLocation!, 13);
-          }
-        });
       }
     } on Exception {
       // Best-effort
@@ -127,6 +122,7 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
   }
 
   void _fitCircle() {
+    if (!_mapReady) return;
     final form = ref.read(alarmFormProvider);
     if (form.location == null) return;
     _mapController.fitCamera(
@@ -151,6 +147,8 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
         return;
       }
     }
+
+    if (!_mapReady) return;
 
     final locationAsync = ref.read(locationProvider);
     locationAsync.when(
@@ -194,6 +192,7 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
     CameraFit target, {
     Duration duration = const Duration(milliseconds: 400),
   }) {
+    if (!_mapReady) return Future.value();
     final dest = target.fit(_mapController.camera);
     final startCenter = _mapController.camera.center;
     final startZoom = _mapController.camera.zoom;
@@ -456,6 +455,13 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
               key: _mapKey,
               child: AlarmMap(
                 mapController: _mapController,
+                onMapReady: () {
+                  _mapReady = true;
+                  // Center on last known location if we got it before map was ready.
+                  if (_lastKnownLocation != null && !_hasCenteredOnLocation) {
+                    _mapController.move(_lastKnownLocation!, 13);
+                  }
+                },
                 initialCenter: form.location ?? _lastKnownLocation,
                 initialZoom: form.location != null
                     ? 15

@@ -9,6 +9,7 @@ class AlarmMap extends StatelessWidget {
     super.key,
     required this.mapController,
     this.onTap,
+    this.onMapReady,
     this.initialCenter,
     this.initialZoom = 7,
     this.initialCameraFit,
@@ -17,6 +18,7 @@ class AlarmMap extends StatelessWidget {
 
   final MapController mapController;
   final void Function(TapPosition, LatLng)? onTap;
+  final VoidCallback? onMapReady;
   final LatLng? initialCenter;
   final double initialZoom;
   final CameraFit? initialCameraFit;
@@ -31,6 +33,7 @@ class AlarmMap extends StatelessWidget {
         initialZoom: initialZoom,
         initialCameraFit: initialCameraFit,
         onTap: onTap,
+        onMapReady: onMapReady,
         interactionOptions: const InteractionOptions(rotationThreshold: 25),
       ),
       children: [
