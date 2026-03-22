@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart' show debugPrint, kDebugMode;
@@ -15,6 +16,9 @@ class AlarmLog {
   static const _fileName = 'alarm_log.txt';
   static File? _file;
 
+  // Serializes writes to prevent interleaved/corrupted log lines.
+  static Completer<void>? _writeLock;
+
   static Future<File> _getFile() async {
     if (_file != null) return _file!;
     final dir = await getApplicationDocumentsDirectory();
@@ -24,6 +28,11 @@ class AlarmLog {
 
   static Future<void> write(String message) async {
     if (!kDebugMode) return;
+    // Wait for any in-flight write to finish.
+    while (_writeLock != null) {
+      await _writeLock!.future;
+    }
+    _writeLock = Completer<void>();
     try {
       final file = await _getFile();
       final timestamp = DateTime.now().toIso8601String();
@@ -32,6 +41,9 @@ class AlarmLog {
       debugPrint('ALARM: $message');
     } on Exception {
       // Logging should never crash the app.
+    } finally {
+      _writeLock!.complete();
+      _writeLock = null;
     }
   }
 
