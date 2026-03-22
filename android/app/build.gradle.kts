@@ -40,6 +40,11 @@ android {
     }
 }
 
+configurations.all {
+    // Remove Google Play Services — this app uses LocationManager only.
+    exclude(group = "com.google.android.gms")
+}
+
 dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 }

@@ -125,8 +125,11 @@ class _AlarmCardState extends State<AlarmCard> {
                     children: [
                       Text(
                         title,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.titleMedium
                             ?.copyWith(
+                              height: 1.2,
                               color: widget.alarm.active
                                   ? null
                                   : colorScheme.onSurfaceVariant,
@@ -135,6 +138,8 @@ class _AlarmCardState extends State<AlarmCard> {
                       const SizedBox(height: 2),
                       Text(
                         subtitle,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
                           color: colorScheme.onSurfaceVariant,
                         ),
