@@ -11,6 +11,7 @@ import 'package:location_alarm/features/alarm_list/widgets/service_health_banner
 import 'package:location_alarm/shared/data/geo_utils.dart';
 import 'package:location_alarm/shared/data/models/alarm.dart';
 import 'package:location_alarm/shared/providers/alarms_provider.dart';
+import 'package:location_alarm/shared/providers/location_provider.dart';
 
 enum AlarmSortMode {
   created('Date created'),
@@ -293,6 +294,9 @@ class _AlarmListScreenState extends ConsumerState<AlarmListScreen> {
     final alarmsAsync = ref.watch(alarmsProvider);
     final activationState = ref.watch(alarmActivationProvider);
     final colorScheme = Theme.of(context).colorScheme;
+
+    // Pre-warm GPS so location is cached when user opens the map screen.
+    ref.watch(locationProvider);
 
     // React to activation events.
     ref.listen(alarmActivationProvider, (_, next) {

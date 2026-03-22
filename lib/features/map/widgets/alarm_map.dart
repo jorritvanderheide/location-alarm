@@ -34,7 +34,7 @@ class AlarmMap extends StatelessWidget {
         initialCameraFit: initialCameraFit,
         onTap: onTap,
         onMapReady: onMapReady,
-        interactionOptions: const InteractionOptions(rotationThreshold: 25),
+        interactionOptions: const InteractionOptions(rotationThreshold: 45),
       ),
       children: [
         TileLayer(

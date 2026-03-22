@@ -12,7 +12,8 @@ class CompassButton extends StatefulWidget {
   State<CompassButton> createState() => _CompassButtonState();
 }
 
-class _CompassButtonState extends State<CompassButton> {
+class _CompassButtonState extends State<CompassButton>
+    with SingleTickerProviderStateMixin {
   bool _visible = false;
   Timer? _hideTimer;
   StreamSubscription<MapEvent>? _mapEventSub;
@@ -46,6 +47,31 @@ class _CompassButtonState extends State<CompassButton> {
     }
   }
 
+  void _animateToNorth() {
+    final startRotation = widget.mapController.camera.rotation;
+    if (startRotation.abs() < 0.5) return;
+
+    final controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 300),
+    );
+
+    controller.addListener(() {
+      if (!mounted) return;
+      final t = Curves.easeOut.transform(controller.value);
+      widget.mapController.rotate(startRotation * (1 - t));
+    });
+
+    controller.addStatusListener((status) {
+      if (status == AnimationStatus.completed ||
+          status == AnimationStatus.dismissed) {
+        controller.dispose();
+      }
+    });
+
+    controller.forward();
+  }
+
   @override
   Widget build(BuildContext context) {
     final rotation = widget.mapController.camera.rotation;
@@ -59,7 +85,7 @@ class _CompassButtonState extends State<CompassButton> {
           heroTag: 'compass',
           elevation: 2,
           tooltip: 'Reset north',
-          onPressed: () => widget.mapController.rotate(0),
+          onPressed: _animateToNorth,
           child: Transform.rotate(
             angle: -rotation * pi / 180,
             child: const Icon(Icons.navigation),

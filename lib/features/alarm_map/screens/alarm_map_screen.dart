@@ -116,17 +116,20 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
     );
   }
 
-  void _fitCircle() {
+  void _fitCircle({bool animate = true}) {
     if (!_mapReady) return;
     final form = ref.read(alarmFormProvider(widget.alarmId));
     if (form.location == null) return;
-    _mapController.fitCamera(
-      _boundsForCircle(
-        form.location!,
-        form.radius,
-        padding: _mapPadding(context),
-      ),
+    final target = _boundsForCircle(
+      form.location!,
+      form.radius,
+      padding: _mapPadding(context),
     );
+    if (animate) {
+      _animateCamera(target);
+    } else {
+      _mapController.fitCamera(target);
+    }
   }
 
   Future<void> _centerOnGps() async {
@@ -150,7 +153,7 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
       data: (position) {
         final loc = LatLng(position.latitude, position.longitude);
         const delta = 0.005;
-        _mapController.fitCamera(
+        _animateCamera(
           CameraFit.bounds(
             bounds: LatLngBounds(
               LatLng(loc.latitude - delta, loc.longitude - delta),
@@ -176,6 +179,13 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
 
   void _centerOnFirstLocation() {
     if (_hasCenteredOnLocation) return;
+    // When editing, the alarm's location is already set via initialCameraFit.
+    // Don't override it with the GPS position.
+    final form = ref.read(alarmFormProvider(widget.alarmId));
+    if (form.location != null) {
+      _hasCenteredOnLocation = true;
+      return;
+    }
     final locationAsync = ref.read(locationProvider);
     locationAsync.whenData((_) {
       _hasCenteredOnLocation = true;
@@ -222,14 +232,46 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
     return completer.future;
   }
 
-  Future<Uint8List?> _captureMap() async {
+  /// Captures the map and crops the bottom by the sheet height so the alarm
+  /// pin appears centered in the resulting thumbnail.
+  Future<Uint8List?> _captureAndCropMap() async {
     try {
       final boundary =
           _mapKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
       if (boundary == null) return null;
-      final image = await boundary.toImage(pixelRatio: 1.5);
-      final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
-      image.dispose();
+
+      const pixelRatio = 1.5;
+      final fullImage = await boundary.toImage(pixelRatio: pixelRatio);
+
+      // Crop the bottom portion (covered by the sheet) so the dot is centered.
+      final cropBottom = (_sheetHeight * pixelRatio).round();
+      final cropHeight = fullImage.height - cropBottom;
+      if (cropHeight <= 0) {
+        fullImage.dispose();
+        return null;
+      }
+
+      final srcWidth = fullImage.width.toDouble();
+      final recorder = ui.PictureRecorder();
+      Canvas(recorder).drawImageRect(
+        fullImage,
+        Rect.fromLTWH(0, 0, srcWidth, cropHeight.toDouble()),
+        Rect.fromLTWH(0, 0, srcWidth, cropHeight.toDouble()),
+        Paint(),
+      );
+      fullImage.dispose();
+
+      final croppedPicture = recorder.endRecording();
+      final croppedImage = await croppedPicture.toImage(
+        srcWidth.round(),
+        cropHeight,
+      );
+      croppedPicture.dispose();
+
+      final byteData = await croppedImage.toByteData(
+        format: ui.ImageByteFormat.png,
+      );
+      croppedImage.dispose();
       return byteData?.buffer.asUint8List();
     } catch (_) {
       return null;
@@ -274,10 +316,18 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
       case AlarmSaveNeedsThumbnail():
         final form = ref.read(alarmFormProvider(widget.alarmId));
         if (form.location != null) {
-          await _animateCamera(_boundsForCircle(form.location!, form.radius));
+          // Use the same offset padding as the normal view so the camera
+          // doesn't jump. We'll crop the bottom to center the dot.
+          await _animateCamera(
+            _boundsForCircle(
+              form.location!,
+              form.radius,
+              padding: _mapPadding(context),
+            ),
+          );
           await Future<void>.delayed(const Duration(milliseconds: 300));
         }
-        final thumbnail = await _captureMap();
+        final thumbnail = await _captureAndCropMap();
         await notifier.provideThumbnail(thumbnail);
 
       case AlarmSaveNotificationDenied():
@@ -454,7 +504,22 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
                   _mapReady = true;
                   // Center on last known location if we got it before map was ready.
                   if (_lastKnownLocation != null && !_hasCenteredOnLocation) {
-                    _mapController.move(_lastKnownLocation!, 13);
+                    _animateCamera(
+                      CameraFit.bounds(
+                        bounds: LatLngBounds(
+                          LatLng(
+                            _lastKnownLocation!.latitude - 0.005,
+                            _lastKnownLocation!.longitude - 0.005,
+                          ),
+                          LatLng(
+                            _lastKnownLocation!.latitude + 0.005,
+                            _lastKnownLocation!.longitude + 0.005,
+                          ),
+                        ),
+                        padding: _mapPadding(context),
+                        maxZoom: 13,
+                      ),
+                    );
                   }
                 },
                 initialCenter: form.location ?? _lastKnownLocation,
@@ -519,6 +584,7 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
                 labelFocusNode: _labelFocusNode,
                 radius: form.radius,
                 canSave: form.canSave,
+                showRadius: form.location != null,
                 onHeightChanged: (h) {
                   if (h != _sheetHeight) {
                     final wasZero = _sheetHeight == 0;

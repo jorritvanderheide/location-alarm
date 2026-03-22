@@ -35,15 +35,14 @@ class AlarmMapLayers extends StatelessWidget {
           markers: [
             Marker(
               point: location,
-              width: 18,
-              height: 18,
-              alignment: Alignment.center,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: colorScheme.primary,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: Colors.white, width: 2),
-                ),
+              width: 40,
+              height: 40,
+              alignment: Alignment.topCenter,
+              child: Icon(
+                Icons.location_on,
+                size: 40,
+                color: colorScheme.primary,
+                shadows: const [Shadow(color: Colors.black26, blurRadius: 4)],
               ),
             ),
           ],
