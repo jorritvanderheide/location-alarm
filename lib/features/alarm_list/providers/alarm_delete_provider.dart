@@ -35,7 +35,12 @@ class AlarmDeleteNotifier extends Notifier<AlarmDeleteState> {
       await Future.wait(
         ids.map((id) async {
           await repo.delete(id);
-          await AlarmThumbnail.delete(id);
+          // Thumbnail cleanup is non-critical.
+          try {
+            await AlarmThumbnail.delete(id);
+          } on Exception {
+            // ignore
+          }
         }),
       );
       state = AlarmDeleteSuccess(ids.length);
