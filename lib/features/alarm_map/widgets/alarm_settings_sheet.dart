@@ -11,7 +11,7 @@ class AlarmSettingsSheet extends StatelessWidget {
     required this.onSave,
     required this.saving,
     this.canSave = true,
-    this.showRadius = true,
+    this.radiusEnabled = true,
     this.onHeightChanged,
   });
 
@@ -22,7 +22,7 @@ class AlarmSettingsSheet extends StatelessWidget {
   final VoidCallback onSave;
   final bool saving;
   final bool canSave;
-  final bool showRadius;
+  final bool radiusEnabled;
   final ValueChanged<double>? onHeightChanged;
 
   @override
@@ -61,18 +61,22 @@ class AlarmSettingsSheet extends StatelessWidget {
                   controller: labelController,
                   focusNode: labelFocusNode,
                 ),
-                if (showRadius) ...[
-                  const SizedBox(height: 16),
-                  Material(
-                    elevation: 0,
-                    borderRadius: BorderRadius.circular(28),
-                    color: colorScheme.surfaceContainerHigh,
-                    child: RadiusSlider(
-                      radius: radius,
-                      onChanged: onRadiusChanged,
+                const SizedBox(height: 16),
+                Opacity(
+                  opacity: radiusEnabled ? 1.0 : 0.5,
+                  child: IgnorePointer(
+                    ignoring: !radiusEnabled,
+                    child: Material(
+                      elevation: 0,
+                      borderRadius: BorderRadius.circular(28),
+                      color: colorScheme.surfaceContainerHigh,
+                      child: RadiusSlider(
+                        radius: radius,
+                        onChanged: onRadiusChanged,
+                      ),
                     ),
                   ),
-                ],
+                ),
                 const SizedBox(height: 16),
                 SizedBox(
                   width: double.infinity,

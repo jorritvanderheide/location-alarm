@@ -617,7 +617,7 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
                 labelFocusNode: _labelFocusNode,
                 radius: form.radius,
                 canSave: form.canSave,
-                showRadius: form.location != null,
+                radiusEnabled: form.location != null,
                 onHeightChanged: (h) {
                   if (h != _sheetHeight) {
                     final wasZero = _sheetHeight == 0;
