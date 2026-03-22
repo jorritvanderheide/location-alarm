@@ -37,9 +37,7 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
   final _labelFocusNode = FocusNode();
 
   bool _mapReady = false;
-  // Estimated initial height — updated by _MeasuredBox once the sheet renders.
-  // Avoids the map centering without sheet offset on first frame.
-  double _sheetHeight = 230;
+  double _sheetHeight = 248; // Estimated; updated by measurement.
 
   @override
   void initState() {
@@ -75,7 +73,8 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
 
   EdgeInsets _mapPadding(BuildContext context) {
     final viewPadding = MediaQuery.of(context).viewPadding;
-    return EdgeInsets.fromLTRB(48, 80 + viewPadding.top, 48, _sheetHeight + 16);
+    // Search bar: viewPadding.top + 8 (margin) + 56 (TextField) = 64 below viewPadding.
+    return EdgeInsets.fromLTRB(48, 64 + viewPadding.top, 48, _sheetHeight + 16);
   }
 
   CameraFit? _initialCameraFit(BuildContext context, LatLng? bestPos) {
@@ -224,7 +223,7 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
       final h = fullImage.height.toDouble();
 
       // The pin is at the visual center between the top and bottom paddings.
-      final topPad = (80 + viewPadding.top) * pixelRatio;
+      final topPad = (64 + viewPadding.top) * pixelRatio;
       final bottomPad = (_sheetHeight + 16) * pixelRatio;
       final pinY = topPad + (h - topPad - bottomPad) / 2;
 
@@ -514,11 +513,6 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
                 onHeightChanged: (h) {
                   if (h != _sheetHeight) {
                     setState(() => _sheetHeight = h);
-                    WidgetsBinding.instance.addPostFrameCallback((_) {
-                      if (form.location != null) {
-                        _fitCircle(animate: false);
-                      }
-                    });
                   }
                 },
                 onRadiusChanged: (r) {
