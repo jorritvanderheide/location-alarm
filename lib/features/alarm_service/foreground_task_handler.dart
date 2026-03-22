@@ -13,8 +13,6 @@ import 'package:location_alarm/shared/data/database/app_database.dart';
 import 'package:location_alarm/shared/data/geo_utils.dart';
 import 'package:location_alarm/shared/data/database/connection.dart';
 import 'package:location_alarm/shared/data/repositories/alarm_repository.dart';
-import 'package:location_alarm/shared/providers/location_settings_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 @pragma('vm:entry-point')
 void startCallback() {
@@ -31,7 +29,6 @@ class LocationTaskHandler extends TaskHandler {
   final _player = BackgroundAlarmPlayer();
   final Set<int> _firedIds = {};
   bool _ready = false;
-  bool _usePlayServices = false;
 
   // Position tracking — deduplicate checks.
   LatLng? _lastPosition;
@@ -53,12 +50,8 @@ class LocationTaskHandler extends TaskHandler {
       _db = openDatabase();
       _repo = AlarmRepository(_db!);
       await _player.init();
-
-      final prefs = await SharedPreferences.getInstance();
-      _usePlayServices = prefs.getBool(usePlayServicesKey) ?? false;
-
       _ready = true;
-      await AlarmLog.write('Initialized (playServices: $_usePlayServices)');
+      await AlarmLog.write('Initialized');
     } on Exception catch (e) {
       await AlarmLog.write('FATAL: failed to initialize: $e');
       return;
@@ -77,7 +70,7 @@ class LocationTaskHandler extends TaskHandler {
             accuracy: LocationAccuracy.high,
             distanceFilter: 0,
             intervalDuration: const Duration(seconds: 10),
-            forceLocationManager: !_usePlayServices,
+            forceLocationManager: true,
           ),
         ).listen(
           _onStreamPosition,

@@ -1,14 +1,9 @@
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:location_alarm/shared/data/alarm_log.dart';
 import 'package:location_alarm/shared/providers/location_settings_provider.dart';
 import 'package:location_alarm/shared/providers/theme_provider.dart';
-
-const _playServicesChannel = MethodChannel(
-  'nl.bw20.location_alarm/play_services',
-);
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -17,7 +12,6 @@ class SettingsScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeModeProvider);
     final amoled = ref.watch(amoledBlackProvider);
-    final usePlayServices = ref.watch(usePlayServicesProvider);
     final triggerInside = ref.watch(triggerInsideRadiusProvider);
     final isDark =
         themeMode == ThemeMode.dark ||
@@ -50,41 +44,6 @@ class SettingsScreen extends ConsumerWidget {
                 ref.read(amoledBlackProvider.notifier).set(value);
               },
             ),
-          _SectionHeader(label: 'Location', colorScheme: colorScheme),
-          SwitchListTile(
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 8,
-            ),
-            title: const Text('Google Play Services'),
-            subtitle: const Text('More reliable location tracking'),
-            value: usePlayServices,
-            onChanged: (value) async {
-              if (value) {
-                final available = await _checkPlayServices();
-                if (!available) {
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text(
-                          'Google Play Services is not available on this device',
-                        ),
-                      ),
-                    );
-                  }
-                  return;
-                }
-              }
-              ref.read(usePlayServicesProvider.notifier).set(value);
-              if (context.mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Restart the app for changes to take effect'),
-                  ),
-                );
-              }
-            },
-          ),
           if (kDebugMode) ...[
             _SectionHeader(label: 'Debug', colorScheme: colorScheme),
             SwitchListTile(
@@ -142,17 +101,6 @@ class SettingsScreen extends ConsumerWidget {
         ],
       ),
     );
-  }
-
-  Future<bool> _checkPlayServices() async {
-    try {
-      final result = await _playServicesChannel.invokeMethod<bool>(
-        'isAvailable',
-      );
-      return result ?? false;
-    } on MissingPluginException {
-      return false;
-    }
   }
 }
 

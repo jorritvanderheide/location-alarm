@@ -32,8 +32,13 @@ class ForegroundServiceNotifier extends Notifier<bool> {
 
   Future<void> _evaluate(List<AlarmData> alarms) async {
     final hasActive = alarms.any((a) => a.active);
-    final hasPermission = ref.read(backgroundPermissionProvider) ?? false;
-    final shouldRun = hasActive && hasPermission;
+    final bgPerm = ref.read(backgroundPermissionProvider);
+
+    // Don't stop the service while permission status is still being checked
+    // (null = not yet queried). Only act on definite true/false.
+    if (bgPerm == null) return;
+
+    final shouldRun = hasActive && bgPerm;
 
     // Self-healing: if service should be running but was killed by the OS,
     // restart it.

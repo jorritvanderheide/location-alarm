@@ -5,8 +5,6 @@ import android.content.Intent
 import android.os.Build
 import android.os.PowerManager
 import android.view.WindowManager
-import com.google.android.gms.common.GoogleApiAvailability
-import com.google.android.gms.common.ConnectionResult
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -71,19 +69,6 @@ class MainActivity : FlutterActivity() {
                 else -> result.notImplemented()
             }
         }
-
-        // Play Services availability check
-        MethodChannel(flutterEngine.dartExecutor.binaryMessenger, "nl.bw20.location_alarm/play_services")
-            .setMethodCallHandler { call, result ->
-                when (call.method) {
-                    "isAvailable" -> {
-                        val code = GoogleApiAvailability.getInstance()
-                            .isGooglePlayServicesAvailable(this)
-                        result.success(code == ConnectionResult.SUCCESS)
-                    }
-                    else -> result.notImplemented()
-                }
-            }
 
         // Check if launched via full-screen intent
         handleAlarmIntent(intent)
