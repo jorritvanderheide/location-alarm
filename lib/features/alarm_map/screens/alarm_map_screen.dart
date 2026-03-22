@@ -45,17 +45,10 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
   @override
   void initState() {
     super.initState();
-    _labelController.clear();
     _labelController.addListener(_syncNameToProvider);
-    _loadLastKnownLocation();
-    // Invalidate forces the provider to rebuild fresh — avoids stale state
-    // from a previous screen and avoids modifying providers during build.
-    ref.invalidate(alarmFormProvider);
     Future.microtask(() {
-      if (widget.alarmId != null) {
-        ref.read(alarmFormProvider.notifier).loadAlarm(widget.alarmId!);
-      }
       ref.read(locationPermissionProvider.notifier).request();
+      _loadLastKnownLocation();
     });
   }
 
@@ -69,7 +62,9 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
   }
 
   void _syncNameToProvider() {
-    ref.read(alarmFormProvider.notifier).setName(_labelController.text);
+    ref
+        .read(alarmFormProvider(widget.alarmId).notifier)
+        .setName(_labelController.text);
   }
 
   // -- Map helpers --
@@ -80,7 +75,7 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
   }
 
   Future<void> _loadLastKnownLocation() async {
-    final form = ref.read(alarmFormProvider);
+    final form = ref.read(alarmFormProvider(widget.alarmId));
     if (form.location != null) return;
     try {
       final pos = await Geolocator.getLastKnownPosition();
@@ -94,7 +89,7 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
   }
 
   CameraFit? _initialCameraFit(BuildContext context) {
-    final form = ref.read(alarmFormProvider);
+    final form = ref.read(alarmFormProvider(widget.alarmId));
     if (form.location == null) return null;
     return _boundsForCircle(
       form.location!,
@@ -123,7 +118,7 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
 
   void _fitCircle() {
     if (!_mapReady) return;
-    final form = ref.read(alarmFormProvider);
+    final form = ref.read(alarmFormProvider(widget.alarmId));
     if (form.location == null) return;
     _mapController.fitCamera(
       _boundsForCircle(
@@ -244,7 +239,7 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
   // -- Save --
 
   void _save() {
-    final form = ref.read(alarmFormProvider);
+    final form = ref.read(alarmFormProvider(widget.alarmId));
     if (form.location == null) return;
     ref
         .read(alarmSaveProvider.notifier)
@@ -277,7 +272,7 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
         }
 
       case AlarmSaveNeedsThumbnail():
-        final form = ref.read(alarmFormProvider);
+        final form = ref.read(alarmFormProvider(widget.alarmId));
         if (form.location != null) {
           await _animateCamera(_boundsForCircle(form.location!, form.radius));
           await Future<void>.delayed(const Duration(milliseconds: 300));
@@ -289,7 +284,7 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
         _showSnackBar('Notifications disabled — you won\'t hear the alarm');
 
       case AlarmSaved(:final message):
-        ref.read(alarmFormProvider.notifier).markSaved();
+        ref.read(alarmFormProvider(widget.alarmId).notifier).markSaved();
         notifier.reset();
         if (mounted) {
           context.pop();
@@ -389,7 +384,7 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
 
   @override
   Widget build(BuildContext context) {
-    final form = ref.watch(alarmFormProvider);
+    final form = ref.watch(alarmFormProvider(widget.alarmId));
     final saveState = ref.watch(alarmSaveProvider);
     final saving = saveState is AlarmSaveBusy;
 
@@ -398,7 +393,7 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
     });
 
     // Sync loaded alarm data into text controller (one-time on load).
-    ref.listen(alarmFormProvider, (prev, next) {
+    ref.listen(alarmFormProvider(widget.alarmId), (prev, next) {
       if (prev?.isLoaded != true && next.isLoaded && next.name.isNotEmpty) {
         _labelController.text = next.name;
       }
@@ -470,7 +465,9 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
                     : 7,
                 initialCameraFit: _initialCameraFit(context),
                 onTap: (_, latLng) {
-                  ref.read(alarmFormProvider.notifier).setLocation(latLng);
+                  ref
+                      .read(alarmFormProvider(widget.alarmId).notifier)
+                      .setLocation(latLng);
                 },
                 children: [
                   const CurrentLocationMarker(),
@@ -493,7 +490,9 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
                 _ => null,
               },
               onLocationSelected: (location) {
-                ref.read(alarmFormProvider.notifier).setLocation(location);
+                ref
+                    .read(alarmFormProvider(widget.alarmId).notifier)
+                    .setLocation(location);
                 _fitCircle();
               },
             ),
@@ -534,7 +533,9 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
                   }
                 },
                 onRadiusChanged: (r) {
-                  ref.read(alarmFormProvider.notifier).setRadius(r);
+                  ref
+                      .read(alarmFormProvider(widget.alarmId).notifier)
+                      .setRadius(r);
                   _fitCircle();
                 },
                 onSave: _save,

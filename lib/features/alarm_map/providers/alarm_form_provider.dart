@@ -2,9 +2,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:location_alarm/shared/providers/alarm_repository_provider.dart';
 
-final alarmFormProvider = NotifierProvider<AlarmFormNotifier, AlarmFormState>(
-  AlarmFormNotifier.new,
-);
+final alarmFormProvider =
+    NotifierProvider.family<AlarmFormNotifier, AlarmFormState, int?>(
+      AlarmFormNotifier.new,
+    );
 
 final class AlarmFormState {
   const AlarmFormState({
@@ -63,12 +64,20 @@ final class AlarmFormState {
 }
 
 class AlarmFormNotifier extends Notifier<AlarmFormState> {
-  @override
-  AlarmFormState build() => const AlarmFormState(isLoaded: true);
+  AlarmFormNotifier(this.alarmId);
 
-  /// Initialize for editing an existing alarm.
-  Future<void> loadAlarm(int id) async {
-    state = AlarmFormState(alarmId: id);
+  final int? alarmId;
+
+  @override
+  AlarmFormState build() {
+    if (alarmId != null) {
+      _loadAlarm(alarmId!);
+      return AlarmFormState(alarmId: alarmId);
+    }
+    return const AlarmFormState(isLoaded: true);
+  }
+
+  Future<void> _loadAlarm(int id) async {
     try {
       final alarm = await ref.read(alarmRepositoryProvider).getById(id);
       if (alarm == null) {
