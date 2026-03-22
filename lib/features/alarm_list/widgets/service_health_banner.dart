@@ -24,6 +24,10 @@ class ServiceHealthBanner extends ConsumerWidget {
     // Service is running — all good.
     if (serviceRunning) return const SizedBox.shrink();
 
+    // Permission is granted — service will start momentarily. Don't flash
+    // the banner during the brief async startup window.
+    if (bgPerm) return const SizedBox.shrink();
+
     final colorScheme = Theme.of(context).colorScheme;
 
     return Card(
