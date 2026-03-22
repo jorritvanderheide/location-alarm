@@ -30,7 +30,8 @@ class AlarmNotificationPlugin(private val context: Context) :
                             result.success(null)
                         }
                         "dismissAlarm" -> {
-                            AlarmNotificationHelper.cancel(context)
+                            val alarmId = call.argument<Int>("alarmId") ?: -1
+                            AlarmNotificationHelper.cancel(context, alarmId)
                             result.success(null)
                         }
                         else -> result.notImplemented()

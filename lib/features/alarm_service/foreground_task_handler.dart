@@ -293,7 +293,7 @@ class LocationTaskHandler extends TaskHandler {
 
       if (type == 'dismiss') {
         final id = json['id'] as int;
-        await _player.stop();
+        await _player.stop(alarmId: id);
         await _repo?.toggleActive(id, active: false);
         _firedIds.remove(id);
         await AlarmLog.write('Dismissed alarm $id');

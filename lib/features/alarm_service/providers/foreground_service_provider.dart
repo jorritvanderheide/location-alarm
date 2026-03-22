@@ -31,7 +31,19 @@ class ForegroundServiceNotifier extends Notifier<bool> {
     return false;
   }
 
+  bool _evaluating = false;
+
   Future<void> _evaluate(List<AlarmData> alarms) async {
+    if (_evaluating) return;
+    _evaluating = true;
+    try {
+      await _doEvaluate(alarms);
+    } finally {
+      _evaluating = false;
+    }
+  }
+
+  Future<void> _doEvaluate(List<AlarmData> alarms) async {
     final activeAlarms = alarms.where((a) => a.active).toList();
     final hasActive = activeAlarms.isNotEmpty;
     final bgPerm = ref.read(backgroundPermissionProvider);

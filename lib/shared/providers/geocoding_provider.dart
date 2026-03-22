@@ -40,7 +40,10 @@ class GeocodingNotifier extends Notifier<GeocodingState> {
   int _searchId = 0;
 
   @override
-  GeocodingState build() => const GeocodingIdle();
+  GeocodingState build() {
+    ref.onDispose(() => _debounce?.cancel());
+    return const GeocodingIdle();
+  }
 
   void search(String query, {LatLng? near}) {
     _debounce?.cancel();

@@ -9,6 +9,7 @@ import 'package:location_alarm/features/alarm_list/widgets/alarm_list_empty_stat
 import 'package:location_alarm/features/alarm_list/widgets/alarm_list_error_state.dart';
 import 'package:location_alarm/features/alarm_list/widgets/service_health_banner.dart';
 import 'package:location_alarm/shared/data/geo_utils.dart';
+import 'package:location_alarm/shared/widgets/permission_dialogs.dart';
 import 'package:location_alarm/shared/data/models/alarm.dart';
 import 'package:location_alarm/shared/providers/alarms_provider.dart';
 import 'package:location_alarm/shared/providers/location_provider.dart';
@@ -170,17 +171,17 @@ class _AlarmListScreenState extends ConsumerState<AlarmListScreen> {
         _showSnackBar('Location permission required');
         notifier.consumeEvent();
 
-      case AlarmActivationNeedsBackgroundRationale():
+      case AlarmActivationNeedsBackgroundRationale(:final alarmId):
         notifier.consumeEvent();
         if (!mounted) return;
-        final confirmed = await _showBackgroundRationaleDialog();
-        await notifier.continueWithBackground(confirmed);
+        final confirmed = await showBackgroundRationaleDialog(context);
+        await notifier.continueWithBackground(alarmId, confirmed);
 
-      case AlarmActivationNeedsBatteryRationale():
+      case AlarmActivationNeedsBatteryRationale(:final alarmId):
         notifier.consumeEvent();
         if (!mounted) return;
-        final confirmed = await _showBatteryRationaleDialog();
-        await notifier.continueWithBattery(confirmed);
+        final confirmed = await showBatteryRationaleDialog(context);
+        await notifier.continueWithBattery(alarmId, confirmed);
 
       case AlarmActivationNotificationDenied():
         _showSnackBar('Notifications disabled — you won\'t hear the alarm');
@@ -235,56 +236,6 @@ class _AlarmListScreenState extends ConsumerState<AlarmListScreen> {
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(SnackBar(content: Text(message)));
-  }
-
-  Future<bool> _showBackgroundRationaleDialog() async {
-    final result = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Background location needed'),
-        content: const Text(
-          'Location Alarm needs to monitor your location in the background '
-          'to trigger alarms when you arrive.\n\n'
-          'On the next screen, select "Allow all the time".',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Continue'),
-          ),
-        ],
-      ),
-    );
-    return result ?? false;
-  }
-
-  Future<bool> _showBatteryRationaleDialog() async {
-    final result = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Disable battery optimization'),
-        content: const Text(
-          'To reliably monitor your location in the background, '
-          'Location Alarm needs to be excluded from battery optimization.\n\n'
-          'Without this, Android may stop the alarm service to save battery.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Skip'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Disable optimization'),
-          ),
-        ],
-      ),
-    );
-    return result ?? false;
   }
 
   // -- Build --
@@ -437,6 +388,7 @@ class _AlarmListScreenState extends ConsumerState<AlarmListScreen> {
             ? null
             : FloatingActionButton(
                 heroTag: 'create_alarm',
+                tooltip: 'Create alarm',
                 onPressed: () => context.push('/create'),
                 child: const Icon(Icons.add),
               ),

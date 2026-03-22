@@ -10,7 +10,7 @@ final _tileProvider = NetworkTileProvider(
   silenceExceptions: true,
   cachingProvider: BuiltInMapCachingProvider.getOrCreateInstance(
     overrideFreshAge: const Duration(days: 30),
-    maxCacheSize: 2_000_000_000,
+    maxCacheSize: 500_000_000,
   ),
 );
 

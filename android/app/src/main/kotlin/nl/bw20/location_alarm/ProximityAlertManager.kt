@@ -12,6 +12,8 @@ import kotlin.math.max
 object ProximityAlertManager {
     private const val TAG = "ProximityAlert"
     private const val CHANNEL = "nl.bw20.location_alarm/proximity_alert"
+    private const val PREFS_NAME = "proximity_alert_ids"
+    private const val KEY_IDS = "registered_ids"
     // Offset to avoid PendingIntent collision with notification intents.
     private const val REQUEST_CODE_OFFSET = 20000
     // Buffer added to alarm radius so the wake-up fires before the user
@@ -58,8 +60,7 @@ object ProximityAlertManager {
         try {
             @Suppress("MissingPermission") // Permissions are checked on the Dart side.
             lm.addProximityAlert(lat, lng, alertRadius, -1, intent)
-            // Track registered IDs so unregisterAll can recreate PendingIntents.
-            registeredIds.add(alarmId)
+            persistAdd(context, alarmId)
             Log.d(TAG, "Registered alarm $alarmId at ($lat, $lng) radius ${alertRadius}m")
         } catch (e: Exception) {
             Log.e(TAG, "Failed to register alarm $alarmId: $e")
@@ -67,9 +68,11 @@ object ProximityAlertManager {
     }
 
     fun unregister(context: Context, alarmId: Int) {
-        if (!registeredIds.remove(alarmId)) return
+        val ids = loadIds(context)
+        if (!ids.remove(alarmId)) return
+        saveIds(context, ids)
+
         val lm = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        // Recreate the same PendingIntent — Android matches by request code + intent.
         val intent = createPendingIntent(context, alarmId)
         try {
             lm.removeProximityAlert(intent)
@@ -80,8 +83,9 @@ object ProximityAlertManager {
     }
 
     fun unregisterAll(context: Context) {
+        val ids = loadIds(context)
         val lm = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        for (id in registeredIds.toSet()) {
+        for (id in ids) {
             val intent = createPendingIntent(context, id)
             try {
                 lm.removeProximityAlert(intent)
@@ -90,12 +94,27 @@ object ProximityAlertManager {
                 Log.e(TAG, "Failed to unregister alarm $id: $e")
             }
         }
-        registeredIds.clear()
+        saveIds(context, mutableSetOf())
     }
 
-    // Track registered alarm IDs. Unlike storing PendingIntents, IDs survive
-    // being recreated — we can rebuild the PendingIntent from the ID alone.
-    private val registeredIds = mutableSetOf<Int>()
+    private fun persistAdd(context: Context, alarmId: Int) {
+        val ids = loadIds(context)
+        ids.add(alarmId)
+        saveIds(context, ids)
+    }
+
+    private fun loadIds(context: Context): MutableSet<Int> {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        return prefs.getStringSet(KEY_IDS, emptySet())
+            ?.mapNotNull { it.toIntOrNull() }
+            ?.toMutableSet()
+            ?: mutableSetOf()
+    }
+
+    private fun saveIds(context: Context, ids: MutableSet<Int>) {
+        val prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
+        prefs.edit().putStringSet(KEY_IDS, ids.map { it.toString() }.toSet()).apply()
+    }
 
     private fun createPendingIntent(context: Context, alarmId: Int): PendingIntent {
         val intent = Intent(context, ProximityAlertReceiver::class.java).apply {

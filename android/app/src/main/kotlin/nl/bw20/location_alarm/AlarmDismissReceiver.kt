@@ -10,7 +10,7 @@ class AlarmDismissReceiver : BroadcastReceiver() {
         val alarmId = intent.getIntExtra("alarm_id", -1)
         if (alarmId == -1) return
 
-        AlarmNotificationHelper.cancel(context)
+        AlarmNotificationHelper.cancel(context, alarmId)
         // Stop audio directly — covers the case where the FGS is dead
         // and the Dart-side stop call won't reach.
         AlarmNotificationPlugin.stopAlarmSound()

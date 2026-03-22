@@ -59,6 +59,7 @@ void main() async {
     if (next.isEmpty) return;
 
     for (final alarm in next) {
+      if (alarm.id == null) continue;
       if (shownDismissIds.contains(alarm.id)) continue;
       shownDismissIds.add(alarm.id!);
       _showDismissIfScreenOff(
@@ -116,6 +117,7 @@ void main() async {
           // over lock screen so they can dismiss without unlocking.
           final alarms = container.read(alarmServiceProvider);
           for (final alarm in alarms) {
+            if (alarm.id == null) continue;
             if (shownDismissIds.contains(alarm.id)) continue;
             shownDismissIds.add(alarm.id!);
             _showDismissScreen(
@@ -205,6 +207,7 @@ void _showDismissScreen(
   required bool launchedByIntent,
   required VoidCallback onDismissed,
 }) {
+  if (alarm.id == null) return;
   final label = alarm.name.isNotEmpty ? alarm.name : null;
   final title = label ?? 'Location Alarm';
   final body = 'You are within ${alarm.radius.round()} m of your destination';
@@ -255,7 +258,11 @@ class _AppWithServicesState extends ConsumerState<_AppWithServices>
     }
     if (_previousState == AppLifecycleState.resumed &&
         state == AppLifecycleState.paused) {
-      widget.onScreenLocked();
+      // Only show the ring screen if the screen is actually off — not when
+      // the user just pressed home or switched apps.
+      _isScreenOff().then((isOff) {
+        if (isOff) widget.onScreenLocked();
+      });
     }
     _previousState = state;
   }

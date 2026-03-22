@@ -94,6 +94,7 @@ class AlarmSaveNotifier extends Notifier<AlarmSaveState> {
     required LatLng location,
     required double radius,
   }) async {
+    if (state is! AlarmSaveIdle) return;
     _alarmId = alarmId;
     _name = name;
     _location = location;

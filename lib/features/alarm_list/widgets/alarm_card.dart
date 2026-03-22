@@ -42,14 +42,14 @@ class _AlarmCardState extends State<AlarmCard> {
   void didUpdateWidget(AlarmCard oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.alarm != widget.alarm) {
-      _loadThumbnail();
+      _loadThumbnail(evict: true);
     }
   }
 
-  Future<void> _loadThumbnail() async {
+  Future<void> _loadThumbnail({bool evict = false}) async {
     if (widget.alarm.id == null) return;
     final file = await AlarmThumbnail.get(widget.alarm.id!);
-    if (file != null) {
+    if (file != null && evict) {
       final provider = FileImage(file);
       await provider.evict();
     }

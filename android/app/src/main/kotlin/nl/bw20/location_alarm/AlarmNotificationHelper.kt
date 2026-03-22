@@ -12,7 +12,8 @@ import androidx.core.app.NotificationManagerCompat
 object AlarmNotificationHelper {
     private const val CHANNEL_ID = "alarm_alert_channel"
     private const val CHANNEL_NAME = "Alarm Alerts"
-    private const val NOTIFICATION_ID = 9999
+    // Use alarm ID + offset as notification ID so multiple alarms don't collide.
+    private const val NOTIFICATION_ID_OFFSET = 30000
 
     fun ensureChannel(context: Context) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -76,13 +77,13 @@ object AlarmNotificationHelper {
             .build()
 
         try {
-            NotificationManagerCompat.from(context).notify(NOTIFICATION_ID, notification)
+            NotificationManagerCompat.from(context).notify(alarmId + NOTIFICATION_ID_OFFSET, notification)
         } catch (_: SecurityException) {
             // Missing POST_NOTIFICATIONS permission on Android 13+
         }
     }
 
-    fun cancel(context: Context) {
-        NotificationManagerCompat.from(context).cancel(NOTIFICATION_ID)
+    fun cancel(context: Context, alarmId: Int) {
+        NotificationManagerCompat.from(context).cancel(alarmId + NOTIFICATION_ID_OFFSET)
     }
 }

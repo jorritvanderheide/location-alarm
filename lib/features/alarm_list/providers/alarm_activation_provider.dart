@@ -97,8 +97,8 @@ final class AlarmActivationError extends AlarmActivationEvent {
 // -- Notifier --
 
 class AlarmActivationNotifier extends Notifier<AlarmActivationState> {
-  // Stored between async steps for multi-step flows.
-  AlarmData? _pendingAlarm;
+  // Stored between async steps for multi-step flows, keyed by alarm ID.
+  final Map<int, AlarmData> _pendingAlarms = {};
 
   @override
   AlarmActivationState build() => const AlarmActivationState();
@@ -131,7 +131,7 @@ class AlarmActivationNotifier extends Notifier<AlarmActivationState> {
     final id = alarm.id!;
     if (state.activatingIds.contains(id)) return;
 
-    _pendingAlarm = alarm;
+    _pendingAlarms[id] = alarm;
     state = state.copyWith(activatingIds: {...state.activatingIds, id});
 
     // Step 1: Foreground location.
@@ -157,8 +157,8 @@ class AlarmActivationNotifier extends Notifier<AlarmActivationState> {
   }
 
   /// Called by the UI after the background location rationale dialog.
-  Future<void> continueWithBackground(bool confirmed) async {
-    final alarm = _pendingAlarm;
+  Future<void> continueWithBackground(int alarmId, bool confirmed) async {
+    final alarm = _pendingAlarms[alarmId];
     if (alarm == null) return;
 
     if (!confirmed) {
@@ -211,8 +211,8 @@ class AlarmActivationNotifier extends Notifier<AlarmActivationState> {
   }
 
   /// Called by the UI after the battery optimization rationale dialog.
-  Future<void> continueWithBattery(bool confirmed) async {
-    final alarm = _pendingAlarm;
+  Future<void> continueWithBattery(int alarmId, bool confirmed) async {
+    final alarm = _pendingAlarms[alarmId];
     if (alarm == null) return;
 
     if (confirmed) {
@@ -263,7 +263,7 @@ class AlarmActivationNotifier extends Notifier<AlarmActivationState> {
   }
 
   void _finish(int id, AlarmActivationEvent event) {
-    _pendingAlarm = null;
+    _pendingAlarms.remove(id);
     final ids = {...state.activatingIds}..remove(id);
     state = AlarmActivationState(activatingIds: ids, lastEvent: event);
   }

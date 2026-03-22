@@ -18,6 +18,7 @@ import 'package:location_alarm/features/map/widgets/center_on_location_fab.dart'
 import 'package:location_alarm/features/map/widgets/compass_button.dart';
 import 'package:location_alarm/features/map/widgets/current_location_marker.dart';
 import 'package:location_alarm/shared/providers/location_permission_provider.dart';
+import 'package:location_alarm/shared/widgets/permission_dialogs.dart';
 import 'package:location_alarm/shared/providers/location_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -110,13 +111,15 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
     EdgeInsets padding = const EdgeInsets.all(48),
   }) {
     const dist = Distance();
-    final offset = dist.offset(center, radius, 0);
-    final latDiff = (offset.latitude - center.latitude).abs() * 1.5;
+    final northOffset = dist.offset(center, radius, 0);
+    final eastOffset = dist.offset(center, radius, 90);
+    final latDiff = (northOffset.latitude - center.latitude).abs() * 1.5;
+    final lngDiff = (eastOffset.longitude - center.longitude).abs() * 1.5;
 
     return CameraFit.bounds(
       bounds: LatLngBounds(
-        LatLng(center.latitude - latDiff, center.longitude - latDiff),
-        LatLng(center.latitude + latDiff, center.longitude + latDiff),
+        LatLng(center.latitude - latDiff, center.longitude - lngDiff),
+        LatLng(center.latitude + latDiff, center.longitude + lngDiff),
       ),
       padding: padding,
     );
@@ -328,10 +331,10 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
       case AlarmSaveNeedsConfirmation(:final step):
         switch (step) {
           case BackgroundLocationRationale():
-            final confirmed = await _showBackgroundRationaleDialog();
+            final confirmed = await showBackgroundRationaleDialog(context);
             await notifier.confirmStep(confirmed);
           case BatteryOptimizationRationale():
-            final confirmed = await _showBatteryRationaleDialog();
+            final confirmed = await showBatteryRationaleDialog(context);
             await notifier.confirmStep(confirmed);
           case InsideRadiusWarning():
             final confirmed = await _showInsideRadiusDialog();
@@ -379,56 +382,6 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
     ScaffoldMessenger.of(
       context,
     ).showSnackBar(SnackBar(content: Text(message)));
-  }
-
-  Future<bool> _showBackgroundRationaleDialog() async {
-    final result = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Background location needed'),
-        content: const Text(
-          'Location Alarm needs to monitor your location in the background '
-          'to trigger alarms when you arrive.\n\n'
-          'On the next screen, select "Allow all the time".',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Continue'),
-          ),
-        ],
-      ),
-    );
-    return result ?? false;
-  }
-
-  Future<bool> _showBatteryRationaleDialog() async {
-    final result = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Disable battery optimization'),
-        content: const Text(
-          'To reliably monitor your location in the background, '
-          'Location Alarm needs to be excluded from battery optimization.\n\n'
-          'Without this, Android may stop the alarm service to save battery.',
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Skip'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Disable optimization'),
-          ),
-        ],
-      ),
-    );
-    return result ?? false;
   }
 
   Future<bool> _showInsideRadiusDialog() async {

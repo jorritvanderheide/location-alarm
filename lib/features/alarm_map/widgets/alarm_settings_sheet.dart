@@ -56,7 +56,9 @@ class AlarmSettingsSheet extends StatelessWidget {
                   decoration: const InputDecoration(
                     labelText: 'Label',
                     border: OutlineInputBorder(),
+                    counterText: '',
                   ),
+                  maxLength: 100,
                   textCapitalization: TextCapitalization.sentences,
                   controller: labelController,
                   focusNode: labelFocusNode,

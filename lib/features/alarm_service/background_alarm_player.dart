@@ -48,14 +48,16 @@ class BackgroundAlarmPlayer {
   }
 
   /// Stop the currently ringing alarm.
-  Future<void> stop() async {
+  Future<void> stop({int alarmId = -1}) async {
     try {
       await _audioChannel.invokeMethod('stop');
     } on Exception catch (e) {
       await AlarmLog.write('Audio stop failed: $e');
     }
     try {
-      await _notificationChannel.invokeMethod('dismissAlarm');
+      await _notificationChannel.invokeMethod('dismissAlarm', {
+        'alarmId': alarmId,
+      });
     } on Exception catch (e) {
       await AlarmLog.write('Notification dismiss failed: $e');
     }
