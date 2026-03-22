@@ -11,12 +11,14 @@ class AlarmRingScreen extends ConsumerStatefulWidget {
     required this.title,
     required this.body,
     this.onDismissed,
+    this.launchedByIntent = false,
   });
 
   final int alarmId;
   final String title;
   final String body;
   final VoidCallback? onDismissed;
+  final bool launchedByIntent;
 
   @override
   ConsumerState<AlarmRingScreen> createState() => _AlarmRingScreenState();
@@ -66,15 +68,15 @@ class _AlarmRingScreenState extends ConsumerState<AlarmRingScreen> {
     if (mounted) {
       Navigator.of(context).pop();
     }
-    await _moveToBackIfLocked();
+    await _closeIfLaunchedByAlarm();
   }
 
-  Future<void> _moveToBackIfLocked() async {
+  Future<void> _closeIfLaunchedByAlarm() async {
+    if (!widget.launchedByIntent) return;
     try {
-      final isOff = await _channel.invokeMethod<bool>('isScreenOff');
-      if (isOff == true) {
-        await _channel.invokeMethod('moveToBack');
-      }
+      // App was cold-launched by the alarm intent and wasn't in recents.
+      // Remove it from recents entirely so it goes back to being "closed".
+      await _channel.invokeMethod('finishAndRemoveTask');
     } on MissingPluginException {
       // ignore
     }
@@ -89,7 +91,7 @@ class _AlarmRingScreenState extends ConsumerState<AlarmRingScreen> {
         if ((alarm == null || !alarm.active) && !_dismissed) {
           _dismissed = true;
           _clearLockScreenFlags();
-          _moveToBackIfLocked();
+          _closeIfLaunchedByAlarm();
           if (mounted) {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               if (mounted) Navigator.of(context).pop();

@@ -52,11 +52,12 @@ void main() async {
 
   final shownDismissIds = <int>{};
 
-  // Listen for alarm fires from the background isolate via the provider
+  // Listen for alarm fires from the background isolate via the provider.
+  // Only show the ring screen if the screen is off (case D).
+  // When screen is on, the native notification handles it (cases B, C).
   container.listen(alarmServiceProvider, (previous, next) {
     if (next.isEmpty) return;
 
-    // Show dismiss screen for any newly added alarms
     for (final alarm in next) {
       if (shownDismissIds.contains(alarm.id)) continue;
       shownDismissIds.add(alarm.id!);
@@ -69,7 +70,7 @@ void main() async {
     }
   });
 
-  // Check if launched via full-screen alarm intent (screen off case)
+  // Check if launched via full-screen alarm intent (case A: app was closed).
   unawaited(
     _checkLaunchIntent(
       tryAcquire: (alarmId) {
@@ -81,21 +82,27 @@ void main() async {
     ),
   );
 
-  // Listen for alarm intents arriving while the app is already running
+  // Listen for alarm intents arriving while the app is already running.
+  // This fires when the full-screen intent targets an already-running activity.
+  // Only show ring screen if screen is off; otherwise the notification suffices.
   _screenChannel.setMethodCallHandler((call) async {
     if (call.method == 'onAlarmRing') {
       final args = call.arguments as Map<Object?, Object?>;
       final alarmId = args['alarm_id'] as int?;
-      final title = args['title'] as String? ?? '';
-      final body = args['body'] as String? ?? '';
       if (alarmId != null && !shownDismissIds.contains(alarmId)) {
-        shownDismissIds.add(alarmId);
-        _showDismissScreenFromIntent(
-          alarmId: alarmId,
-          title: title,
-          body: body,
-          onDismissed: () => shownDismissIds.remove(alarmId),
-        );
+        final screenOff = await _isScreenOff();
+        if (screenOff) {
+          final title = args['title'] as String? ?? '';
+          final body = args['body'] as String? ?? '';
+          shownDismissIds.add(alarmId);
+          _showDismissScreenFromIntent(
+            alarmId: alarmId,
+            title: title,
+            body: body,
+            launchedByIntent: false, // app was already running
+            onDismissed: () => shownDismissIds.remove(alarmId),
+          );
+        }
       }
     }
   });
@@ -105,11 +112,17 @@ void main() async {
       container: container,
       child: _AppWithServices(
         onScreenLocked: () {
+          // User locked the screen while alarm is ringing — show ring screen
+          // over lock screen so they can dismiss without unlocking.
           final alarms = container.read(alarmServiceProvider);
           for (final alarm in alarms) {
             if (shownDismissIds.contains(alarm.id)) continue;
             shownDismissIds.add(alarm.id!);
-            _showDismissScreen(alarm, () => shownDismissIds.remove(alarm.id));
+            _showDismissScreen(
+              alarm,
+              launchedByIntent: false,
+              onDismissed: () => shownDismissIds.remove(alarm.id),
+            );
           }
         },
       ),
@@ -124,7 +137,11 @@ Future<bool> _showDismissIfScreenOff(
 ) async {
   final screenOff = await _isScreenOff();
   if (screenOff) {
-    _showDismissScreen(alarm, onDismissed);
+    _showDismissScreen(
+      alarm,
+      launchedByIntent: false,
+      onDismissed: onDismissed,
+    );
     return true;
   }
   // Screen on: the native notification handles dismiss via AlarmDismissReceiver
@@ -154,6 +171,7 @@ Future<void> _checkLaunchIntent({
         alarmId: alarmId,
         title: title,
         body: body,
+        launchedByIntent: true, // app was cold-launched by alarm
         onDismissed: () => onDismissed(alarmId),
       );
     });
@@ -166,6 +184,7 @@ void _showDismissScreenFromIntent({
   required int alarmId,
   required String title,
   required String body,
+  required bool launchedByIntent,
   required VoidCallback onDismissed,
 }) {
   navigatorKey.currentState?.push(
@@ -174,13 +193,18 @@ void _showDismissScreenFromIntent({
         alarmId: alarmId,
         title: title,
         body: body,
+        launchedByIntent: launchedByIntent,
         onDismissed: onDismissed,
       ),
     ),
   );
 }
 
-void _showDismissScreen(AlarmData alarm, VoidCallback onDismissed) {
+void _showDismissScreen(
+  AlarmData alarm, {
+  required bool launchedByIntent,
+  required VoidCallback onDismissed,
+}) {
   final label = alarm.name.isNotEmpty ? alarm.name : null;
   final title = label ?? 'Location Alarm';
   final body = 'You are within ${alarm.radius.round()} m of your destination';
@@ -191,6 +215,7 @@ void _showDismissScreen(AlarmData alarm, VoidCallback onDismissed) {
         alarmId: alarm.id!,
         title: title,
         body: body,
+        launchedByIntent: launchedByIntent,
         onDismissed: onDismissed,
       ),
     ),

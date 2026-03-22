@@ -22,6 +22,7 @@ class MainActivity : FlutterActivity() {
     private var pendingAlarmTitle: String? = null
     private var pendingAlarmBody: String? = null
 
+
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
 
@@ -40,8 +41,8 @@ class MainActivity : FlutterActivity() {
                     clearLockScreenFlags()
                     result.success(null)
                 }
-                "moveToBack" -> {
-                    moveTaskToBack(true)
+                "finishAndRemoveTask" -> {
+                    finishAndRemoveTask()
                     result.success(null)
                 }
                 "isScreenOff" -> {

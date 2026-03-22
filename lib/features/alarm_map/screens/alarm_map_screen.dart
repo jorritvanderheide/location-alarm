@@ -45,7 +45,6 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
   bool _isNew = true;
   bool _loaded = false;
   bool _saving = false;
-  bool _wasActive = true;
 
   late TextEditingController _labelController;
   final _labelFocusNode = FocusNode();
@@ -130,7 +129,6 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
       setState(() {
         _labelController.text = alarm.name;
         _selectedLocation = alarm.location;
-        _wasActive = alarm.active;
         _radius = alarm.radius;
         _hasCenteredOnLocation = true;
         _initialLabel = alarm.name;
@@ -394,9 +392,9 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
         ? locationName
         : _labelController.text;
 
-    final active = (!hasLocationLock || (isInsideRadius && !triggerInside))
+    final active = !hasLocationLock || (isInsideRadius && !triggerInside)
         ? false
-        : _wasActive;
+        : true;
     final alarm = AlarmData(
       id: widget.alarmId,
       name: alarmName,
