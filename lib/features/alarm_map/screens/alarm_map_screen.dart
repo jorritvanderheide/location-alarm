@@ -45,16 +45,16 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
   @override
   void initState() {
     super.initState();
-    final formNotifier = ref.read(alarmFormProvider.notifier);
-    if (widget.alarmId != null) {
-      formNotifier.loadAlarm(widget.alarmId!);
-    } else {
-      formNotifier.reset();
-      _labelController.clear();
-    }
+    _labelController.clear();
     _labelController.addListener(_syncNameToProvider);
     _loadLastKnownLocation();
+    // Invalidate forces the provider to rebuild fresh — avoids stale state
+    // from a previous screen and avoids modifying providers during build.
+    ref.invalidate(alarmFormProvider);
     Future.microtask(() {
+      if (widget.alarmId != null) {
+        ref.read(alarmFormProvider.notifier).loadAlarm(widget.alarmId!);
+      }
       ref.read(locationPermissionProvider.notifier).request();
     });
   }

@@ -66,11 +66,6 @@ class AlarmFormNotifier extends Notifier<AlarmFormState> {
   @override
   AlarmFormState build() => const AlarmFormState(isLoaded: true);
 
-  /// Reset to a fresh state for creating a new alarm.
-  void reset() {
-    state = const AlarmFormState(isLoaded: true);
-  }
-
   /// Initialize for editing an existing alarm.
   Future<void> loadAlarm(int id) async {
     state = AlarmFormState(alarmId: id);
