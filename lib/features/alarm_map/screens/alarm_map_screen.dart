@@ -76,14 +76,28 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
     return EdgeInsets.fromLTRB(48, 80 + viewPadding.top, 48, _sheetHeight + 16);
   }
 
-  CameraFit? _initialCameraFit(BuildContext context) {
+  CameraFit? _initialCameraFit(BuildContext context, LatLng? bestPos) {
     final form = ref.read(alarmFormProvider(widget.alarmId));
-    if (form.location == null) return null;
-    return _boundsForCircle(
-      form.location!,
-      form.radius,
-      padding: _mapPadding(context),
-    );
+    if (form.location != null) {
+      return _boundsForCircle(
+        form.location!,
+        form.radius,
+        padding: _mapPadding(context),
+      );
+    }
+    // For new alarms: center on GPS with offset padding.
+    if (bestPos != null) {
+      const delta = 0.005;
+      return CameraFit.bounds(
+        bounds: LatLngBounds(
+          LatLng(bestPos.latitude - delta, bestPos.longitude - delta),
+          LatLng(bestPos.latitude + delta, bestPos.longitude + delta),
+        ),
+        padding: _mapPadding(context),
+        maxZoom: 15,
+      );
+    }
+    return null;
   }
 
   CameraFit _boundsForCircle(
@@ -428,7 +442,7 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
                     : bestPos != null
                     ? 13
                     : 7,
-                initialCameraFit: _initialCameraFit(context),
+                initialCameraFit: _initialCameraFit(context, bestPos),
                 onTap: (_, latLng) {
                   ref
                       .read(alarmFormProvider(widget.alarmId).notifier)
