@@ -263,6 +263,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get themeDark => 'Dark';
 
   @override
+  String get materialYou => 'Material You';
+
+  @override
+  String get materialYouSubtitle => 'Use your wallpaper colors';
+
+  @override
   String get trueBlack => 'True black';
 
   @override

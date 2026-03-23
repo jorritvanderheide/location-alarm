@@ -516,6 +516,18 @@ abstract class AppLocalizations {
   /// **'Dark'**
   String get themeDark;
 
+  /// No description provided for @materialYou.
+  ///
+  /// In en, this message translates to:
+  /// **'Material You'**
+  String get materialYou;
+
+  /// No description provided for @materialYouSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Use your wallpaper colors'**
+  String get materialYouSubtitle;
+
   /// No description provided for @trueBlack.
   ///
   /// In en, this message translates to:

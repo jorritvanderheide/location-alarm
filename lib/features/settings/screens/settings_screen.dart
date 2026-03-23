@@ -11,6 +11,7 @@ class SettingsScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final themeMode = ref.watch(themeModeProvider);
     final amoled = ref.watch(amoledBlackProvider);
+    final materialYou = ref.watch(materialYouProvider);
     final isDark =
         themeMode == ThemeMode.dark ||
         (themeMode == ThemeMode.system &&
@@ -25,6 +26,18 @@ class SettingsScreen extends ConsumerWidget {
             themeMode: themeMode,
             onChanged: (mode) {
               ref.read(themeModeProvider.notifier).set(mode);
+            },
+          ),
+          SwitchListTile(
+            contentPadding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 8,
+            ),
+            title: Text(l10n.materialYou),
+            subtitle: Text(l10n.materialYouSubtitle),
+            value: materialYou,
+            onChanged: (value) {
+              ref.read(materialYouProvider.notifier).set(value);
             },
           ),
           if (isDark)

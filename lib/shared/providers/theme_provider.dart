@@ -4,6 +4,7 @@ import 'package:location_alarm/shared/providers/preferences_provider.dart';
 
 const _themeKey = 'theme_mode';
 const _amoledKey = 'amoled_black';
+const _materialYouKey = 'material_you';
 
 final themeModeProvider = NotifierProvider<ThemeModeNotifier, ThemeMode>(
   ThemeModeNotifier.new,
@@ -11,6 +12,10 @@ final themeModeProvider = NotifierProvider<ThemeModeNotifier, ThemeMode>(
 
 final amoledBlackProvider = NotifierProvider<AmoledBlackNotifier, bool>(
   AmoledBlackNotifier.new,
+);
+
+final materialYouProvider = NotifierProvider<MaterialYouNotifier, bool>(
+  MaterialYouNotifier.new,
 );
 
 class ThemeModeNotifier extends Notifier<ThemeMode> {
@@ -29,6 +34,20 @@ class ThemeModeNotifier extends Notifier<ThemeMode> {
     state = mode;
     final prefs = ref.read(preferencesProvider);
     prefs.setString(_themeKey, mode.name);
+  }
+}
+
+class MaterialYouNotifier extends Notifier<bool> {
+  @override
+  bool build() {
+    final prefs = ref.read(preferencesProvider);
+    return prefs.getBool(_materialYouKey) ?? false;
+  }
+
+  void set(bool enabled) {
+    state = enabled;
+    final prefs = ref.read(preferencesProvider);
+    prefs.setBool(_materialYouKey, enabled);
   }
 }
 

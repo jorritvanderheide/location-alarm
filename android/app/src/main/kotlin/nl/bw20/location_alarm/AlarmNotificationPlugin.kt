@@ -76,21 +76,6 @@ class AlarmNotificationPlugin(private val context: Context) :
                 mediaPlayer = player
             } catch (e: Exception) {
                 player.release()
-                // Fall back to bundled asset
-                val fallback = MediaPlayer()
-                fallback.setAudioAttributes(attrs)
-                try {
-                    val assetFd = context.assets.openFd("flutter_assets/assets/alarm.wav")
-                    fallback.setDataSource(assetFd.fileDescriptor, assetFd.startOffset, assetFd.length)
-                    assetFd.close()
-                    fallback.isLooping = true
-                    fallback.prepare()
-                    fallback.start()
-                    mediaPlayer = fallback
-                } catch (e2: Exception) {
-                    fallback.release()
-                    android.util.Log.e("ALARM", "Failed to play alarm sound: $e2")
-                }
             }
         }
 

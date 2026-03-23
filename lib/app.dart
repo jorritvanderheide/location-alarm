@@ -37,16 +37,18 @@ final _routerProvider = Provider<GoRouter>((ref) {
   );
 });
 
-const _fallbackSeed = Colors.deepPurple;
+// Blue — universally distinguishable (colorblind-safe), reads as navigation.
+const _seedColor = Color(0xFF1976D2);
 
 ThemeData _buildTheme(
-  ColorScheme? dynamic,
+  ColorScheme? dynamicScheme,
   Brightness brightness, {
+  bool useDynamic = false,
   bool amoled = false,
 }) {
   var colorScheme =
-      dynamic?.harmonized() ??
-      ColorScheme.fromSeed(seedColor: _fallbackSeed, brightness: brightness);
+      (useDynamic ? dynamicScheme?.harmonized() : null) ??
+      ColorScheme.fromSeed(seedColor: _seedColor, brightness: brightness);
   if (amoled && brightness == Brightness.dark) {
     colorScheme = colorScheme.copyWith(
       surface: Colors.black,
@@ -61,13 +63,41 @@ ThemeData _buildTheme(
   return ThemeData(
     colorScheme: colorScheme,
 
+    // Rounder shapes globally.
+    cardTheme: CardThemeData(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(color: colorScheme.outlineVariant),
+      ),
+    ),
+    filledButtonTheme: FilledButtonThemeData(
+      style: FilledButton.styleFrom(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+      ),
+    ),
+    textButtonTheme: TextButtonThemeData(
+      style: TextButton.styleFrom(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(28)),
+      ),
+    ),
+    dialogTheme: DialogThemeData(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+    ),
     snackBarTheme: SnackBarThemeData(
       behavior: SnackBarBehavior.floating,
       elevation: 0,
       closeIconColor: colorScheme.onInverseSurface,
       backgroundColor: colorScheme.inverseSurface,
       contentTextStyle: TextStyle(color: colorScheme.onInverseSurface),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+    ),
+    inputDecorationTheme: InputDecorationTheme(
+      border: OutlineInputBorder(borderRadius: BorderRadius.circular(16)),
+    ),
+    bottomSheetTheme: const BottomSheetThemeData(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+      ),
     ),
   );
 }
@@ -79,15 +109,25 @@ class LocationAlarmApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeModeProvider);
     final amoled = ref.watch(amoledBlackProvider);
+    final useDynamic = ref.watch(materialYouProvider);
     final routerConfig = ref.watch(_routerProvider);
 
     return DynamicColorBuilder(
       builder: (lightDynamic, darkDynamic) {
         return MaterialApp.router(
-          title: 'Location Alarm', // OS task switcher — not user-facing l10n
+          title: 'Location Alarm',
           themeMode: themeMode,
-          theme: _buildTheme(lightDynamic, Brightness.light),
-          darkTheme: _buildTheme(darkDynamic, Brightness.dark, amoled: amoled),
+          theme: _buildTheme(
+            lightDynamic,
+            Brightness.light,
+            useDynamic: useDynamic,
+          ),
+          darkTheme: _buildTheme(
+            darkDynamic,
+            Brightness.dark,
+            useDynamic: useDynamic,
+            amoled: amoled,
+          ),
           routerConfig: routerConfig,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,

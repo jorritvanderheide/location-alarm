@@ -263,6 +263,12 @@ class AppLocalizationsNl extends AppLocalizations {
   String get themeDark => 'Donker';
 
   @override
+  String get materialYou => 'Material You';
+
+  @override
+  String get materialYouSubtitle => 'Gebruik je achtergrondkleuren';
+
+  @override
   String get trueBlack => 'Echt zwart';
 
   @override

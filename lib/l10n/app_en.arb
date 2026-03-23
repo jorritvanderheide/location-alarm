@@ -133,6 +133,8 @@
   "themeSystem": "System",
   "themeLight": "Light",
   "themeDark": "Dark",
+  "materialYou": "Material You",
+  "materialYouSubtitle": "Use your wallpaper colors",
   "trueBlack": "True black",
   "trueBlackSubtitle": "Pure black background for AMOLED displays",
 
