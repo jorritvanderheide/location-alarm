@@ -11,6 +11,7 @@ import 'package:location_alarm/features/alarm_service/providers/foreground_servi
 import 'package:location_alarm/features/alarm_service/screens/alarm_ring_screen.dart';
 import 'package:location_alarm/shared/data/database/connection.dart';
 import 'package:location_alarm/shared/data/models/alarm.dart';
+import 'package:location_alarm/shared/providers/connectivity_provider.dart';
 import 'package:location_alarm/shared/providers/database_provider.dart';
 import 'package:location_alarm/shared/providers/location_permission_provider.dart';
 import 'package:location_alarm/shared/providers/preferences_provider.dart';
@@ -253,8 +254,8 @@ class _AppWithServicesState extends ConsumerState<_AppWithServices>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      // Re-check permissions in case they were revoked in system settings.
       ref.read(locationPermissionProvider.notifier).checkAll();
+      ref.read(connectivityProvider.notifier).check();
     }
     if (_previousState == AppLifecycleState.resumed &&
         state == AppLifecycleState.paused) {

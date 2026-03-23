@@ -4,6 +4,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:location_alarm/shared/data/datasources/geocoding_datasource.dart';
 import 'package:location_alarm/shared/data/models/geocoding_result.dart';
 import 'package:location_alarm/shared/data/repositories/geocoding_repository.dart';
+import 'package:location_alarm/shared/providers/connectivity_provider.dart';
 
 sealed class GeocodingState {
   const GeocodingState();
@@ -50,6 +51,11 @@ class GeocodingNotifier extends Notifier<GeocodingState> {
 
     if (query.trim().length < 2) {
       state = const GeocodingIdle();
+      return;
+    }
+
+    if (!ref.read(connectivityProvider)) {
+      state = const GeocodingError('Search unavailable offline');
       return;
     }
 

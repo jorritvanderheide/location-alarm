@@ -7,6 +7,7 @@ import 'package:location_alarm/shared/data/alarm_thumbnail.dart';
 import 'package:location_alarm/shared/data/geo_utils.dart';
 import 'package:location_alarm/shared/data/models/alarm.dart';
 import 'package:location_alarm/shared/providers/alarm_repository_provider.dart';
+import 'package:location_alarm/shared/providers/connectivity_provider.dart';
 import 'package:location_alarm/shared/providers/geocoding_provider.dart';
 import 'package:location_alarm/shared/providers/location_permission_provider.dart';
 import 'package:location_alarm/shared/providers/location_provider.dart';
@@ -70,7 +71,6 @@ final class AlarmSaveFailed extends AlarmSaveState {
 }
 
 class AlarmSaveNotifier extends Notifier<AlarmSaveState> {
-  // Stored between async steps.
   int? _alarmId;
   String _name = '';
   LatLng? _location;
@@ -82,7 +82,6 @@ class AlarmSaveNotifier extends Notifier<AlarmSaveState> {
 
   void reset() => state = const AlarmSaveIdle();
 
-  /// Start the save flow.
   Future<void> save({
     required int? alarmId,
     required String name,
@@ -163,9 +162,7 @@ class AlarmSaveNotifier extends Notifier<AlarmSaveState> {
         .read(locationPermissionProvider.notifier)
         .requestNotification();
     if (!notifGranted) {
-      // Warn but don't block. Emit event and continue.
       state = const AlarmSaveNotificationDenied();
-      // Brief pause so UI can show snackbar before we continue.
       await Future<void>.delayed(const Duration(milliseconds: 100));
     }
 
@@ -221,13 +218,15 @@ class AlarmSaveNotifier extends Notifier<AlarmSaveState> {
     required bool hasLocationLock,
     required bool isInsideRadius,
   }) async {
-    state = const AlarmSaveBusy();
-
     try {
-      // Reverse geocode for location name.
-      final geocodingRepo = ref.read(geocodingRepositoryProvider);
-      final locationName =
-          await geocodingRepo.reverseGeocode(_location!, radius: _radius) ?? '';
+      final isOnline = ref.read(connectivityProvider);
+      var locationName = '';
+      if (isOnline) {
+        final geocodingRepo = ref.read(geocodingRepositoryProvider);
+        locationName =
+            await geocodingRepo.reverseGeocode(_location!, radius: _radius) ??
+            '';
+      }
       final alarmName = _name.isEmpty ? locationName : _name;
 
       final alarm = AlarmData(
@@ -239,7 +238,6 @@ class AlarmSaveNotifier extends Notifier<AlarmSaveState> {
         locationName: locationName,
       );
 
-      // Save thumbnail.
       if (_thumbnail != null && _alarmId != null) {
         try {
           await AlarmThumbnail.save(_alarmId!, _thumbnail!);

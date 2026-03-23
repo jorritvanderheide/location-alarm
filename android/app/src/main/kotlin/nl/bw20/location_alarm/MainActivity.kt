@@ -2,6 +2,8 @@ package nl.bw20.location_alarm
 
 import android.app.KeyguardManager
 import android.content.Intent
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.PowerManager
 import android.view.WindowManager
@@ -45,6 +47,12 @@ class MainActivity : FlutterActivity() {
                 "finishAndRemoveTask" -> {
                     finishAndRemoveTask()
                     result.success(null)
+                }
+                "hasInternet" -> {
+                    val cm = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
+                    val caps = cm.getNetworkCapabilities(cm.activeNetwork)
+                    val has = caps?.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) == true
+                    result.success(has)
                 }
                 "isScreenOff" -> {
                     val powerManager = getSystemService(POWER_SERVICE) as PowerManager

@@ -31,7 +31,9 @@ class GeocodingDataSource {
     }
 
     final uri = Uri.parse('$baseUrl/api').replace(queryParameters: params);
-    final response = await _client.get(uri, headers: _headers);
+    final response = await _client
+        .get(uri, headers: _headers)
+        .timeout(const Duration(seconds: 5));
 
     if (response.statusCode != 200) return [];
 
@@ -50,7 +52,9 @@ class GeocodingDataSource {
         'lon': '${location.longitude}',
       },
     );
-    final response = await _client.get(uri, headers: _headers);
+    final response = await _client
+        .get(uri, headers: _headers)
+        .timeout(const Duration(seconds: 5));
 
     if (response.statusCode != 200) return null;
 
