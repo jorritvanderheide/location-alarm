@@ -1,6 +1,6 @@
 # Location Alarm
 
-<img src="https://img.shields.io/liberapay/receives/BW20.svg?logo=liberapay">
+[![Donate](https://img.shields.io/liberapay/receives/BW20.svg?logo=liberapay)](https://liberapay.com/BW20)
 
 Get alerted when you arrive. Place a pin on the map, set a radius, and the app wakes you up when you enter the area. No accounts, no tracking, no Google Play Services.
 
