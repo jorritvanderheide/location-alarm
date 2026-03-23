@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:location_alarm/features/alarm_map/widgets/radius_slider.dart';
+import 'package:location_alarm/l10n/app_localizations.dart';
 
 class AlarmSettingsSheet extends StatelessWidget {
   const AlarmSettingsSheet({
@@ -27,6 +28,7 @@ class AlarmSettingsSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
     final bottomPadding = MediaQuery.of(context).viewPadding.bottom;
     final keyboardHeight = MediaQuery.of(context).viewInsets.bottom;
@@ -53,9 +55,9 @@ class AlarmSettingsSheet extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 TextField(
-                  decoration: const InputDecoration(
-                    labelText: 'Label',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: l10n.label,
+                    border: const OutlineInputBorder(),
                     counterText: '',
                   ),
                   maxLength: 100,
@@ -90,7 +92,7 @@ class AlarmSettingsSheet extends StatelessWidget {
                             height: 18,
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
-                        : const Text('Save'),
+                        : Text(l10n.save),
                   ),
                 ),
               ],

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:location_alarm/l10n/app_localizations.dart';
 import 'package:location_alarm/shared/data/alarm_thumbnail.dart';
 import 'package:location_alarm/shared/data/geo_utils.dart';
 import 'package:location_alarm/shared/data/models/alarm.dart';
@@ -63,6 +64,7 @@ class _AlarmCardState extends State<AlarmCard> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
 
     final hasLocation = widget.alarm.locationName.isNotEmpty;
@@ -70,7 +72,7 @@ class _AlarmCardState extends State<AlarmCard> {
         ? '${widget.alarm.locationName} · ${formatDistance(widget.alarm.radius)}'
         : '${formatDistance(widget.alarm.radius)} radius';
     final title = widget.alarm.name.isEmpty
-        ? 'Alarm #${widget.alarm.id}'
+        ? l10n.alarmDefaultName(widget.alarm.id!)
         : widget.alarm.name;
 
     final cardWidth = MediaQuery.of(context).size.width - 32;
@@ -158,12 +160,12 @@ class _AlarmCardState extends State<AlarmCard> {
                               )
                             : widget.activating
                             ? Semantics(
-                                label: '$title, getting location',
+                                label: '$title, ${l10n.gettingLocation}',
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     Text(
-                                      'Getting location\u2026',
+                                      l10n.gettingLocation,
                                       style: Theme.of(context)
                                           .textTheme
                                           .labelSmall
@@ -184,7 +186,7 @@ class _AlarmCardState extends State<AlarmCard> {
                               )
                             : Semantics(
                                 label:
-                                    '$title, ${widget.alarm.active ? "active" : "inactive"}',
+                                    '$title, ${widget.alarm.active ? l10n.active : l10n.inactive}',
                                 excludeSemantics: true,
                                 child: Switch(
                                   value: widget.alarm.active,

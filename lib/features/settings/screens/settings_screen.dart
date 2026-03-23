@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:location_alarm/l10n/app_localizations.dart';
 import 'package:location_alarm/shared/providers/theme_provider.dart';
 
 class SettingsScreen extends ConsumerWidget {
@@ -7,6 +8,7 @@ class SettingsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final themeMode = ref.watch(themeModeProvider);
     final amoled = ref.watch(amoledBlackProvider);
     final isDark =
@@ -14,11 +16,11 @@ class SettingsScreen extends ConsumerWidget {
         (themeMode == ThemeMode.system &&
             MediaQuery.platformBrightnessOf(context) == Brightness.dark);
     return Scaffold(
-      appBar: AppBar(title: const Text('Settings')),
+      appBar: AppBar(title: Text(l10n.settings)),
       body: ListView(
         padding: const EdgeInsets.symmetric(vertical: 8),
         children: [
-          const _SectionHeader(label: 'Appearance'),
+          _SectionHeader(label: l10n.appearance),
           _ThemeListTile(
             themeMode: themeMode,
             onChanged: (mode) {
@@ -31,8 +33,8 @@ class SettingsScreen extends ConsumerWidget {
                 horizontal: 16,
                 vertical: 8,
               ),
-              title: const Text('True black'),
-              subtitle: const Text('Pure black background for AMOLED displays'),
+              title: Text(l10n.trueBlack),
+              subtitle: Text(l10n.trueBlackSubtitle),
               value: amoled,
               onChanged: (value) {
                 ref.read(amoledBlackProvider.notifier).set(value);
@@ -71,19 +73,23 @@ class _ThemeListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    String themeLabel(ThemeMode mode) => switch (mode) {
+      ThemeMode.system => l10n.themeSystem,
+      ThemeMode.light => l10n.themeLight,
+      ThemeMode.dark => l10n.themeDark,
+    };
+
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      title: const Text('Theme'),
-      subtitle: Text(switch (themeMode) {
-        ThemeMode.system => 'System',
-        ThemeMode.light => 'Light',
-        ThemeMode.dark => 'Dark',
-      }),
+      title: Text(l10n.theme),
+      subtitle: Text(themeLabel(themeMode)),
       onTap: () async {
         final result = await showDialog<ThemeMode>(
           context: context,
           builder: (context) => SimpleDialog(
-            title: const Text('Theme'),
+            title: Text(l10n.theme),
             children: [
               RadioGroup<ThemeMode>(
                 groupValue: themeMode,
@@ -94,11 +100,7 @@ class _ThemeListTile extends StatelessWidget {
                     for (final mode in ThemeMode.values)
                       RadioListTile<ThemeMode>(
                         value: mode,
-                        title: Text(switch (mode) {
-                          ThemeMode.system => 'System',
-                          ThemeMode.light => 'Light',
-                          ThemeMode.dark => 'Dark',
-                        }),
+                        title: Text(themeLabel(mode)),
                       ),
                   ],
                 ),

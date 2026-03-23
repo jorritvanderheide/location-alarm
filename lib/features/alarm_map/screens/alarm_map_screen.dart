@@ -16,6 +16,7 @@ import 'package:location_alarm/features/map/widgets/alarm_map.dart';
 import 'package:location_alarm/features/map/widgets/center_on_location_fab.dart';
 import 'package:location_alarm/features/map/widgets/compass_button.dart';
 import 'package:location_alarm/features/map/widgets/current_location_marker.dart';
+import 'package:location_alarm/l10n/app_localizations.dart';
 import 'package:location_alarm/shared/providers/location_permission_provider.dart';
 import 'package:location_alarm/shared/widgets/permission_dialogs.dart';
 import 'package:location_alarm/shared/providers/location_provider.dart';
@@ -139,11 +140,12 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
 
   void _centerOnGps() {
     if (!_mapReady) return;
+    final l10n = AppLocalizations.of(context)!;
     final pos = ref.read(bestPositionProvider);
     if (pos == null) {
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Location unavailable')));
+      ).showSnackBar(SnackBar(content: Text(l10n.locationUnavailable)));
       return;
     }
     const delta = 0.005;
@@ -279,6 +281,7 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
   }
 
   Future<void> _onSaveEvent(AlarmSaveState saveState) async {
+    final l10n = AppLocalizations.of(context)!;
     final notifier = ref.read(alarmSaveProvider.notifier);
 
     switch (saveState) {
@@ -316,7 +319,7 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
         await notifier.provideThumbnail(thumbnail);
 
       case AlarmSaveNotificationDenied():
-        _showSnackBar('Notifications disabled — you won\'t hear the alarm');
+        _showSnackBar(l10n.notificationsDisabled);
 
       case AlarmSaved(:final message):
         ref.read(alarmFormProvider(widget.alarmId).notifier).markSaved();
@@ -342,22 +345,20 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
   }
 
   Future<bool> _showInsideRadiusDialog() async {
+    final l10n = AppLocalizations.of(context)!;
     final result = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Inside alarm area'),
-        content: const Text(
-          'You are currently inside this alarm area. The alarm will be '
-          'saved inactive and activate once you leave.',
-        ),
+        title: Text(l10n.insideAlarmArea),
+        content: Text(l10n.insideAlarmAreaBody),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Save inactive'),
+            child: Text(l10n.saveInactive),
           ),
         ],
       ),
@@ -369,6 +370,7 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final form = ref.watch(alarmFormProvider(widget.alarmId));
     final bestPos = ref.watch(bestPositionProvider);
     final saveState = ref.watch(alarmSaveProvider);
@@ -394,9 +396,9 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
       if (form.loadError) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Failed to load alarm')),
-            );
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(l10n.failedToLoadAlarm)));
             context.pop();
           }
         });
@@ -411,16 +413,16 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
         final discard = await showDialog<bool>(
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text('Discard changes?'),
-            content: const Text('Your unsaved changes will be lost.'),
+            title: Text(l10n.discardChanges),
+            content: Text(l10n.unsavedChangesBody),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context, false),
-                child: const Text('Keep editing'),
+                child: Text(l10n.keepEditing),
               ),
               TextButton(
                 onPressed: () => Navigator.pop(context, true),
-                child: const Text('Discard'),
+                child: Text(l10n.discard),
               ),
             ],
           ),
@@ -493,7 +495,7 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
                 left: 16,
                 bottom: _sheetHeight + 16,
                 child: Text(
-                  '\u00a9 OpenStreetMap',
+                  l10n.osmAttribution,
                   style: Theme.of(context).textTheme.labelSmall?.copyWith(
                     color: Theme.of(
                       context,

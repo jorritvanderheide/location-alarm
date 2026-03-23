@@ -1,23 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:location_alarm/l10n/app_localizations.dart';
 
 Future<bool> showBackgroundRationaleDialog(BuildContext context) async {
+  final l10n = AppLocalizations.of(context)!;
   final result = await showDialog<bool>(
     context: context,
     builder: (context) => AlertDialog(
-      title: const Text('Background location needed'),
-      content: const Text(
-        'Location Alarm needs to monitor your location in the background '
-        'to trigger alarms when you arrive.\n\n'
-        'On the next screen, select "Allow all the time".',
-      ),
+      title: Text(l10n.backgroundLocationNeeded),
+      content: Text(l10n.backgroundLocationBody),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context, false),
-          child: const Text('Cancel'),
+          child: Text(l10n.cancel),
         ),
         TextButton(
           onPressed: () => Navigator.pop(context, true),
-          child: const Text('Continue'),
+          child: Text(l10n.continueButton),
         ),
       ],
     ),
@@ -26,23 +24,20 @@ Future<bool> showBackgroundRationaleDialog(BuildContext context) async {
 }
 
 Future<bool> showBatteryRationaleDialog(BuildContext context) async {
+  final l10n = AppLocalizations.of(context)!;
   final result = await showDialog<bool>(
     context: context,
     builder: (context) => AlertDialog(
-      title: const Text('Disable battery optimization'),
-      content: const Text(
-        'To reliably monitor your location in the background, '
-        'Location Alarm needs to be excluded from battery optimization.\n\n'
-        'Without this, Android may stop the alarm service to save battery.',
-      ),
+      title: Text(l10n.disableBatteryOptimization),
+      content: Text(l10n.batteryOptimizationBody),
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context, false),
-          child: const Text('Skip'),
+          child: Text(l10n.skip),
         ),
         TextButton(
           onPressed: () => Navigator.pop(context, true),
-          child: const Text('Disable optimization'),
+          child: Text(l10n.disableOptimization),
         ),
       ],
     ),

@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:location_alarm/l10n/app_localizations.dart';
 
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('About')),
+      appBar: AppBar(title: Text(l10n.aboutTitle)),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
@@ -20,47 +22,47 @@ class AboutScreen extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            'Location Alarm',
+            l10n.locationAlarmDefault,
             style: Theme.of(context).textTheme.headlineMedium,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 8),
           Text(
-            'Get alerted when you arrive',
+            l10n.appTagline,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               color: colorScheme.onSurfaceVariant,
             ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 32),
-          const ListTile(
-            leading: Icon(Icons.info_outline),
-            title: Text('Version'),
-            subtitle: Text('1.0.0'),
+          ListTile(
+            leading: const Icon(Icons.info_outline),
+            title: Text(l10n.version),
+            subtitle: const Text('1.0.0'),
           ),
-          const ListTile(
-            leading: Icon(Icons.gavel),
-            title: Text('License'),
-            subtitle: Text('PolyForm Shield 1.0.0'),
+          ListTile(
+            leading: const Icon(Icons.gavel),
+            title: Text(l10n.license),
+            subtitle: Text(l10n.licenseValue),
           ),
-          const ListTile(
-            leading: Icon(Icons.map),
-            title: Text('Map data'),
-            subtitle: Text('OpenStreetMap contributors · OSM France'),
+          ListTile(
+            leading: const Icon(Icons.map),
+            title: Text(l10n.mapData),
+            subtitle: Text(l10n.mapDataValue),
           ),
-          const ListTile(
-            leading: Icon(Icons.search),
-            title: Text('Geocoding'),
-            subtitle: Text('Photon by Komoot'),
+          ListTile(
+            leading: const Icon(Icons.search),
+            title: Text(l10n.geocoding),
+            subtitle: Text(l10n.geocodingValue),
           ),
           const SizedBox(height: 16),
           FilledButton.tonal(
             onPressed: () => showLicensePage(
               context: context,
-              applicationName: 'Location Alarm',
+              applicationName: l10n.locationAlarmDefault,
               applicationVersion: '1.0.0',
             ),
-            child: const Text('Open source licenses'),
+            child: Text(l10n.openSourceLicenses),
           ),
         ],
       ),

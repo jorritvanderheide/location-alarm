@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:location_alarm/l10n/app_localizations.dart';
 import 'package:location_alarm/shared/providers/location_provider.dart';
 
 class CenterOnLocationButton extends ConsumerWidget {
@@ -9,6 +10,7 @@ class CenterOnLocationButton extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
     final locationAsync = ref.watch(locationProvider);
 
     final icon = locationAsync.when(
@@ -20,7 +22,7 @@ class CenterOnLocationButton extends ConsumerWidget {
     return FloatingActionButton.small(
       heroTag: 'center_location',
       elevation: 6,
-      tooltip: 'Center on my location',
+      tooltip: l10n.centerOnMyLocation,
       onPressed: onPressed,
       child: Icon(icon),
     );

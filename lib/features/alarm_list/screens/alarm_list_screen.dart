@@ -8,19 +8,14 @@ import 'package:location_alarm/features/alarm_list/widgets/alarm_card.dart';
 import 'package:location_alarm/features/alarm_list/widgets/alarm_list_empty_state.dart';
 import 'package:location_alarm/features/alarm_list/widgets/alarm_list_error_state.dart';
 import 'package:location_alarm/features/alarm_list/widgets/service_health_banner.dart';
+import 'package:location_alarm/l10n/app_localizations.dart';
 import 'package:location_alarm/shared/data/geo_utils.dart';
 import 'package:location_alarm/shared/widgets/permission_dialogs.dart';
 import 'package:location_alarm/shared/data/models/alarm.dart';
 import 'package:location_alarm/shared/providers/alarms_provider.dart';
 import 'package:location_alarm/shared/providers/location_provider.dart';
 
-enum AlarmSortMode {
-  created('Date created'),
-  name('Name');
-
-  const AlarmSortMode(this.label);
-  final String label;
-}
+enum AlarmSortMode { created, name }
 
 class AlarmListScreen extends ConsumerStatefulWidget {
   const AlarmListScreen({super.key});
@@ -35,6 +30,14 @@ class _AlarmListScreenState extends ConsumerState<AlarmListScreen> {
   // Multi-select state
   bool _editMode = false;
   final Set<int> _selectedIds = {};
+
+  String _sortLabel(AlarmSortMode mode) {
+    final l10n = AppLocalizations.of(context)!;
+    return switch (mode) {
+      AlarmSortMode.created => l10n.sortDateCreated,
+      AlarmSortMode.name => l10n.sortName,
+    };
+  }
 
   List<AlarmData> _sortAlarms(List<AlarmData> alarms) {
     final sorted = [...alarms];
@@ -59,6 +62,7 @@ class _AlarmListScreenState extends ConsumerState<AlarmListScreen> {
   // -- Sort --
 
   Future<void> _showSortSheet() async {
+    final l10n = AppLocalizations.of(context)!;
     final result = await showModalBottomSheet<AlarmSortMode>(
       context: context,
       showDragHandle: true,
@@ -70,14 +74,14 @@ class _AlarmListScreenState extends ConsumerState<AlarmListScreen> {
             child: Align(
               alignment: Alignment.centerLeft,
               child: Text(
-                'Sort by',
+                l10n.sortBy,
                 style: Theme.of(context).textTheme.titleMedium,
               ),
             ),
           ),
           for (final mode in AlarmSortMode.values)
             ListTile(
-              title: Text(mode.label),
+              title: Text(_sortLabel(mode)),
               leading: mode == _sortMode
                   ? const Icon(Icons.check)
                   : const SizedBox(width: 24),
@@ -120,25 +124,24 @@ class _AlarmListScreenState extends ConsumerState<AlarmListScreen> {
   }
 
   Future<void> _confirmDeleteSelected() async {
+    final l10n = AppLocalizations.of(context)!;
     final count = _selectedIds.length;
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Delete $count alarm${count > 1 ? 's' : ''}?'),
-        content: Text(
-          '$count alarm${count > 1 ? 's' : ''} will be permanently removed.',
-        ),
+        title: Text(l10n.deleteNAlarms(count)),
+        content: Text(l10n.deleteNAlarmsBody(count)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
+            child: Text(l10n.cancel),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
             style: TextButton.styleFrom(
               foregroundColor: Theme.of(context).colorScheme.error,
             ),
-            child: const Text('Delete'),
+            child: Text(l10n.delete),
           ),
         ],
       ),
@@ -151,6 +154,7 @@ class _AlarmListScreenState extends ConsumerState<AlarmListScreen> {
   // -- Activation event handling --
 
   Future<void> _onActivationEvent(AlarmActivationEvent event) async {
+    final l10n = AppLocalizations.of(context)!;
     final notifier = ref.read(alarmActivationProvider.notifier);
 
     switch (event) {
@@ -158,17 +162,15 @@ class _AlarmListScreenState extends ConsumerState<AlarmListScreen> {
         break;
 
       case AlarmDeactivated(:final alarmName):
-        _showSnackBar('$alarmName deactivated');
+        _showSnackBar(l10n.alarmDeactivated(alarmName));
         notifier.consumeEvent();
 
       case AlarmActivated(:final alarmName, :final distance):
-        _showSnackBar(
-          '$alarmName activated — ${formatDistance(distance)} away',
-        );
+        _showSnackBar(l10n.alarmActivated(alarmName, formatDistance(distance)));
         notifier.consumeEvent();
 
       case AlarmActivationNeedsForeground():
-        _showSnackBar('Location permission required');
+        _showSnackBar(l10n.locationPermissionRequired);
         notifier.consumeEvent();
 
       case AlarmActivationNeedsBackgroundRationale(:final alarmId):
@@ -184,7 +186,7 @@ class _AlarmListScreenState extends ConsumerState<AlarmListScreen> {
         await notifier.continueWithBattery(alarmId, confirmed);
 
       case AlarmActivationNotificationDenied():
-        _showSnackBar('Notifications disabled — you won\'t hear the alarm');
+        _showSnackBar(l10n.notificationsDisabled);
         notifier.consumeEvent();
 
       case AlarmActivationInsideRadius(
@@ -197,15 +199,18 @@ class _AlarmListScreenState extends ConsumerState<AlarmListScreen> {
         await showDialog<void>(
           context: context,
           builder: (context) => AlertDialog(
-            title: const Text('Already inside alarm area'),
+            title: Text(l10n.alreadyInsideAlarmArea),
             content: Text(
-              'You are ${formatDistance(distance)} from "$alarmName". '
-              'Move outside the ${formatDistance(radius)} radius to activate.',
+              l10n.alreadyInsideAlarmAreaBody(
+                formatDistance(distance),
+                alarmName,
+                formatDistance(radius),
+              ),
             ),
             actions: [
               TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: const Text('OK'),
+                child: Text(l10n.ok),
               ),
             ],
           ),
@@ -215,13 +220,13 @@ class _AlarmListScreenState extends ConsumerState<AlarmListScreen> {
         notifier.consumeEvent();
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('GPS is disabled'),
+          SnackBar(
+            content: Text(l10n.gpsDisabled),
             action: SnackBarAction(
-              label: 'Open Settings',
+              label: l10n.openSettings,
               onPressed: Geolocator.openLocationSettings,
             ),
-            duration: Duration(seconds: 6),
+            duration: const Duration(seconds: 6),
           ),
         );
 
@@ -242,6 +247,7 @@ class _AlarmListScreenState extends ConsumerState<AlarmListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final alarmsAsync = ref.watch(alarmsProvider);
     final activationState = ref.watch(alarmActivationProvider);
     final colorScheme = Theme.of(context).colorScheme;
@@ -261,10 +267,10 @@ class _AlarmListScreenState extends ConsumerState<AlarmListScreen> {
       switch (next) {
         case AlarmDeleteSuccess(:final count):
           _exitEditMode();
-          _showSnackBar('$count alarm${count > 1 ? 's' : ''} deleted');
+          _showSnackBar(l10n.nAlarmsDeleted(count));
           ref.read(alarmDeleteProvider.notifier).reset();
         case AlarmDeleteError(:final message):
-          _showSnackBar('Delete failed: $message');
+          _showSnackBar(l10n.deleteFailed(message));
           ref.read(alarmDeleteProvider.notifier).reset();
         case AlarmDeleteIdle():
           break;
@@ -283,11 +289,11 @@ class _AlarmListScreenState extends ConsumerState<AlarmListScreen> {
                   icon: const Icon(Icons.close),
                   onPressed: _exitEditMode,
                 ),
-                title: Text('${_selectedIds.length} selected'),
+                title: Text(l10n.nSelected(_selectedIds.length)),
                 actions: [
                   IconButton(
                     icon: const Icon(Icons.delete_outline),
-                    tooltip: 'Delete selected',
+                    tooltip: l10n.deleteSelected,
                     onPressed: _selectedIds.isNotEmpty
                         ? _confirmDeleteSelected
                         : null,
@@ -295,13 +301,13 @@ class _AlarmListScreenState extends ConsumerState<AlarmListScreen> {
                 ],
               )
             : AppBar(
-                title: const Text('Alarms'),
+                title: Text(l10n.alarmsTitle),
                 actions: [
                   IconButton(
                     icon: _sortMode != AlarmSortMode.created
                         ? Icon(Icons.sort, color: colorScheme.primary)
                         : const Icon(Icons.sort),
-                    tooltip: 'Sort alarms',
+                    tooltip: l10n.sortAlarms,
                     onPressed: _showSortSheet,
                   ),
                   PopupMenuButton<String>(
@@ -313,12 +319,12 @@ class _AlarmListScreenState extends ConsumerState<AlarmListScreen> {
                           context.push('/about');
                       }
                     },
-                    itemBuilder: (context) => const [
+                    itemBuilder: (context) => [
                       PopupMenuItem(
                         value: 'settings',
                         child: ListTile(
-                          leading: Icon(Icons.settings),
-                          title: Text('Settings'),
+                          leading: const Icon(Icons.settings),
+                          title: Text(l10n.settings),
                           dense: true,
                           contentPadding: EdgeInsets.zero,
                         ),
@@ -326,8 +332,8 @@ class _AlarmListScreenState extends ConsumerState<AlarmListScreen> {
                       PopupMenuItem(
                         value: 'about',
                         child: ListTile(
-                          leading: Icon(Icons.info_outline),
-                          title: Text('About'),
+                          leading: const Icon(Icons.info_outline),
+                          title: Text(l10n.about),
                           dense: true,
                           contentPadding: EdgeInsets.zero,
                         ),
@@ -388,7 +394,7 @@ class _AlarmListScreenState extends ConsumerState<AlarmListScreen> {
             ? null
             : FloatingActionButton(
                 heroTag: 'create_alarm',
-                tooltip: 'Create alarm',
+                tooltip: l10n.createAlarm,
                 onPressed: () => context.push('/create'),
                 child: const Icon(Icons.add),
               ),

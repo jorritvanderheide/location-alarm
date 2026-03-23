@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:location_alarm/features/alarm_service/providers/foreground_service_provider.dart';
+import 'package:location_alarm/l10n/app_localizations.dart';
 import 'package:location_alarm/shared/providers/location_permission_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -28,6 +29,7 @@ class ServiceHealthBanner extends ConsumerWidget {
     // the banner during the brief async startup window.
     if (bgPerm) return const SizedBox.shrink();
 
+    final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
 
     return Card(
@@ -36,13 +38,11 @@ class ServiceHealthBanner extends ConsumerWidget {
       child: ListTile(
         leading: Icon(Icons.warning_amber, color: colorScheme.onErrorContainer),
         title: Text(
-          'Alarms are not being monitored',
+          l10n.alarmsNotMonitored,
           style: TextStyle(color: colorScheme.onErrorContainer),
         ),
         subtitle: Text(
-          bgPerm
-              ? 'Tap to check permissions'
-              : 'Background location permission required',
+          bgPerm ? l10n.tapToCheckPermissions : l10n.backgroundLocationRequired,
           style: TextStyle(color: colorScheme.onErrorContainer),
         ),
         onTap: openAppSettings,

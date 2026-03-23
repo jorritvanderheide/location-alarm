@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:location_alarm/l10n/app_localizations.dart';
 
 class AlarmListEmptyState extends StatelessWidget {
   const AlarmListEmptyState({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
 
     return Center(
@@ -18,14 +20,14 @@ class AlarmListEmptyState extends StatelessWidget {
           ),
           const SizedBox(height: 16),
           Text(
-            'No alarms yet',
+            l10n.noAlarmsYet,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
               color: colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 8),
           Text(
-            'Tap + to create your first alarm',
+            l10n.tapToCreateFirst,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
               color: colorScheme.onSurfaceVariant,
             ),

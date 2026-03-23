@@ -1,0 +1,174 @@
+{
+  "@@locale": "en",
+
+  "appTitle": "Location Alarm",
+
+  "alarmsTitle": "Alarms",
+  "noAlarmsYet": "No alarms yet",
+  "tapToCreateFirst": "Tap + to create your first alarm",
+  "failedToLoadAlarms": "Failed to load alarms",
+  "retry": "Retry",
+  "sortBy": "Sort by",
+  "sortAlarms": "Sort alarms",
+  "sortDateCreated": "Date created",
+  "sortName": "Name",
+  "settings": "Settings",
+  "about": "About",
+
+  "nSelected": "{count} selected",
+  "@nSelected": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "deleteSelected": "Delete selected",
+  "deleteNAlarms": "Delete {count, plural, =1{1 alarm} other{{count} alarms}}?",
+  "@deleteNAlarms": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "deleteNAlarmsBody": "{count, plural, =1{1 alarm} other{{count} alarms}} will be permanently removed.",
+  "@deleteNAlarmsBody": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "ok": "OK",
+
+  "alarmDeactivated": "{name} deactivated",
+  "@alarmDeactivated": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "alarmActivated": "{name} activated — {distance} away",
+  "@alarmActivated": {
+    "placeholders": {
+      "name": {"type": "String"},
+      "distance": {"type": "String"}
+    }
+  },
+  "locationPermissionRequired": "Location permission required",
+  "notificationsDisabled": "Notifications disabled — you won't hear the alarm",
+  "alreadyInsideAlarmArea": "Already inside alarm area",
+  "alreadyInsideAlarmAreaBody": "You are {distance} from \"{name}\". Move outside the {radius} radius to activate.",
+  "@alreadyInsideAlarmAreaBody": {
+    "placeholders": {
+      "distance": {"type": "String"},
+      "name": {"type": "String"},
+      "radius": {"type": "String"}
+    }
+  },
+  "gpsDisabled": "GPS is disabled",
+  "openSettings": "Open Settings",
+  "couldNotAcquireLocation": "Could not acquire location",
+  "nAlarmsDeleted": "{count, plural, =1{1 alarm} other{{count} alarms}} deleted",
+  "@nAlarmsDeleted": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "deleteFailed": "Delete failed: {message}",
+  "@deleteFailed": {
+    "placeholders": {
+      "message": {"type": "String"}
+    }
+  },
+
+  "alarmsNotMonitored": "Alarms are not being monitored",
+  "tapToCheckPermissions": "Tap to check permissions",
+  "backgroundLocationRequired": "Background location permission required",
+
+  "gettingLocation": "Getting location\u2026",
+  "alarmDefaultName": "Alarm #{id}",
+  "@alarmDefaultName": {
+    "placeholders": {
+      "id": {"type": "int"}
+    }
+  },
+  "active": "active",
+  "inactive": "inactive",
+
+  "backgroundLocationNeeded": "Background location needed",
+  "backgroundLocationBody": "Location Alarm needs to monitor your location in the background to trigger alarms when you arrive.\n\nOn the next screen, select \"Allow all the time\".",
+  "continueButton": "Continue",
+  "disableBatteryOptimization": "Disable battery optimization",
+  "batteryOptimizationBody": "To reliably monitor your location in the background, Location Alarm needs to be excluded from battery optimization.\n\nWithout this, Android may stop the alarm service to save battery.",
+  "skip": "Skip",
+  "disableOptimization": "Disable optimization",
+
+  "insideAlarmArea": "Inside alarm area",
+  "insideAlarmAreaBody": "You are currently inside this alarm area. The alarm will be saved inactive and activate once you leave.",
+  "saveInactive": "Save inactive",
+  "discardChanges": "Discard changes?",
+  "unsavedChangesBody": "Your unsaved changes will be lost.",
+  "keepEditing": "Keep editing",
+  "discard": "Discard",
+  "locationUnavailable": "Location unavailable",
+  "failedToLoadAlarm": "Failed to load alarm",
+  "osmAttribution": "\u00a9 OpenStreetMap",
+
+  "searchLocation": "Search location",
+  "noResultsFound": "No results found",
+  "label": "Label",
+  "save": "Save",
+  "centerOnMyLocation": "Center on my location",
+  "resetNorth": "Reset north",
+
+  "createAlarm": "Create alarm",
+  "dismiss": "Dismiss",
+  "locationAlarmDefault": "Location Alarm",
+  "alarmBodyWithinRadius": "You are within {radius} m of your destination",
+  "@alarmBodyWithinRadius": {
+    "placeholders": {
+      "radius": {"type": "int"}
+    }
+  },
+
+  "appearance": "Appearance",
+  "theme": "Theme",
+  "themeSystem": "System",
+  "themeLight": "Light",
+  "themeDark": "Dark",
+  "trueBlack": "True black",
+  "trueBlackSubtitle": "Pure black background for AMOLED displays",
+
+  "aboutTitle": "About",
+  "appTagline": "Get alerted when you arrive",
+  "version": "Version",
+  "license": "License",
+  "licenseValue": "PolyForm Shield 1.0.0",
+  "mapData": "Map data",
+  "mapDataValue": "OpenStreetMap contributors · OSM France",
+  "geocoding": "Geocoding",
+  "geocodingValue": "Photon by Komoot",
+  "openSourceLicenses": "Open source licenses",
+
+  "alarmSaved": "{name} saved",
+  "@alarmSaved": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "alarmSavedNoGps": "{name} saved (inactive — no GPS lock)",
+  "@alarmSavedNoGps": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "alarmSavedInside": "{name} saved (inactive)",
+  "@alarmSavedInside": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "alarmSavedNoPermission": "{name} saved — enable background location to monitor",
+  "@alarmSavedNoPermission": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  }
+}

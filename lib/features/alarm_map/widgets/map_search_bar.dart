@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:location_alarm/l10n/app_localizations.dart';
 import 'package:location_alarm/shared/data/models/geocoding_result.dart';
 import 'package:location_alarm/shared/providers/geocoding_provider.dart';
 
@@ -56,6 +57,7 @@ class _MapSearchBarState extends ConsumerState<MapSearchBar> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
     final geocodingState = ref.watch(geocodingProvider);
     final showResults = _focusNode.hasFocus && geocodingState is! GeocodingIdle;
@@ -77,7 +79,7 @@ class _MapSearchBarState extends ConsumerState<MapSearchBar> {
               onChanged: _onChanged,
               textCapitalization: TextCapitalization.sentences,
               decoration: InputDecoration(
-                hintText: 'Search location',
+                hintText: l10n.searchLocation,
                 prefixIcon: IconButton(
                   icon: const Icon(Icons.arrow_back),
                   onPressed: widget.onBack,
@@ -113,9 +115,9 @@ class _MapSearchBarState extends ConsumerState<MapSearchBar> {
                   ),
                   GeocodingResults(:final results) =>
                     results.isEmpty
-                        ? const Padding(
-                            padding: EdgeInsets.all(16),
-                            child: Text('No results found'),
+                        ? Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Text(l10n.noResultsFound),
                           )
                         : ClipRRect(
                             borderRadius: BorderRadius.circular(12),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:location_alarm/features/alarm_service/providers/alarm_service_provider.dart';
+import 'package:location_alarm/l10n/app_localizations.dart';
 import 'package:location_alarm/shared/providers/alarms_provider.dart';
 
 class AlarmRingScreen extends ConsumerStatefulWidget {
@@ -84,6 +85,8 @@ class _AlarmRingScreenState extends ConsumerState<AlarmRingScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     // Auto-pop if alarm is deactivated externally
     ref.listen(alarmsProvider, (_, next) {
       next.whenData((alarms) {
@@ -138,7 +141,7 @@ class _AlarmRingScreenState extends ConsumerState<AlarmRingScreen> {
                   autofocus: true,
                   onPressed: _dismiss,
                   icon: const Icon(Icons.alarm_off, size: 28),
-                  label: const Text('Dismiss'),
+                  label: Text(l10n.dismiss),
                   style: FilledButton.styleFrom(
                     minimumSize: const Size.fromHeight(72),
                     textStyle: Theme.of(context).textTheme.titleLarge,

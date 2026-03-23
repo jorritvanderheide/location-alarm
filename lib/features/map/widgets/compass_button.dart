@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:location_alarm/l10n/app_localizations.dart';
 
 class CompassButton extends StatefulWidget {
   const CompassButton({super.key, required this.mapController});
@@ -79,6 +80,7 @@ class _CompassButtonState extends State<CompassButton>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final rotation = widget.mapController.camera.rotation;
 
     return IgnorePointer(
@@ -89,7 +91,7 @@ class _CompassButtonState extends State<CompassButton>
         child: FloatingActionButton.small(
           heroTag: 'compass',
           elevation: 2,
-          tooltip: 'Reset north',
+          tooltip: l10n.resetNorth,
           onPressed: _animateToNorth,
           child: Transform.rotate(
             angle: rotation.abs() < 0.5 ? 0 : rotation * pi / 180,

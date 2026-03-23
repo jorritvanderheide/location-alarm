@@ -6,6 +6,7 @@ import 'package:location_alarm/features/alarm_map/screens/alarm_map_screen.dart'
 import 'package:location_alarm/features/alarm_list/screens/alarm_list_screen.dart';
 import 'package:location_alarm/features/settings/screens/about_screen.dart';
 import 'package:location_alarm/features/settings/screens/settings_screen.dart';
+import 'package:location_alarm/l10n/app_localizations.dart';
 import 'package:location_alarm/shared/providers/theme_provider.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
@@ -83,11 +84,13 @@ class LocationAlarmApp extends ConsumerWidget {
     return DynamicColorBuilder(
       builder: (lightDynamic, darkDynamic) {
         return MaterialApp.router(
-          title: 'Location Alarm',
+          title: 'Location Alarm', // OS task switcher — not user-facing l10n
           themeMode: themeMode,
           theme: _buildTheme(lightDynamic, Brightness.light),
           darkTheme: _buildTheme(darkDynamic, Brightness.dark, amoled: amoled),
           routerConfig: routerConfig,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
         );
       },
     );
