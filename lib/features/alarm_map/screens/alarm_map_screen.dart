@@ -70,8 +70,6 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
         .setName(_labelController.text);
   }
 
-  // -- Map helpers --
-
   EdgeInsets _mapPadding(BuildContext context) {
     final viewPadding = MediaQuery.of(context).viewPadding;
     // Search bar: viewPadding.top + 8 (margin) + 56 (TextField) = 64 below viewPadding.
@@ -169,7 +167,6 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
   }) {
     if (!_mapReady) return Future.value();
 
-    // Cancel any in-progress animation.
     _cameraAnimController?.stop();
     _cameraAnimController?.dispose();
 
@@ -264,8 +261,6 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
       return null;
     }
   }
-
-  // -- Save --
 
   void _save() {
     final form = ref.read(alarmFormProvider(widget.alarmId));
@@ -366,8 +361,6 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
     return result ?? false;
   }
 
-  // -- Build --
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -387,7 +380,6 @@ class _AlarmMapScreenState extends ConsumerState<AlarmMapScreen>
       }
     });
 
-    // React to save state changes.
     ref.listen(alarmSaveProvider, (_, next) {
       _onSaveEvent(next);
     });

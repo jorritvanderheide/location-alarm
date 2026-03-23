@@ -13,8 +13,6 @@ final alarmActivationProvider =
       AlarmActivationNotifier.new,
     );
 
-// -- State --
-
 final class AlarmActivationState {
   const AlarmActivationState({
     this.activatingIds = const {},
@@ -32,8 +30,6 @@ final class AlarmActivationState {
     lastEvent: lastEvent ?? this.lastEvent,
   );
 }
-
-// -- Events --
 
 sealed class AlarmActivationEvent {
   const AlarmActivationEvent();
@@ -93,8 +89,6 @@ final class AlarmActivationError extends AlarmActivationEvent {
   final String message;
 }
 
-// -- Notifier --
-
 class AlarmActivationNotifier extends Notifier<AlarmActivationState> {
   // Stored between async steps for multi-step flows, keyed by alarm ID.
   final Map<int, AlarmData> _pendingAlarms = {};
@@ -108,13 +102,10 @@ class AlarmActivationNotifier extends Notifier<AlarmActivationState> {
 
   bool isActivating(int id) => state.activatingIds.contains(id);
 
-  // -- Deactivate --
-
   Future<void> deactivate(AlarmData alarm) async {
     final id = alarm.id!;
     final name = alarm.name.isEmpty ? 'Alarm #$id' : alarm.name;
 
-    // Cancel any pending activation.
     final ids = {...state.activatingIds}..remove(id);
     state = AlarmActivationState(
       activatingIds: ids,
@@ -124,8 +115,6 @@ class AlarmActivationNotifier extends Notifier<AlarmActivationState> {
     await ref.read(alarmRepositoryProvider).toggleActive(id, active: false);
   }
 
-  // -- Activate (multi-step) --
-
   Future<void> activate(AlarmData alarm) async {
     final id = alarm.id!;
     if (state.activatingIds.contains(id)) return;
@@ -133,7 +122,6 @@ class AlarmActivationNotifier extends Notifier<AlarmActivationState> {
     _pendingAlarms[id] = alarm;
     state = state.copyWith(activatingIds: {...state.activatingIds, id});
 
-    // Step 1: Foreground location.
     final fgStatus = await Permission.locationWhenInUse.status;
     if (!fgStatus.isGranted) {
       await ref.read(locationPermissionProvider.notifier).request();
@@ -143,7 +131,6 @@ class AlarmActivationNotifier extends Notifier<AlarmActivationState> {
       }
     }
 
-    // Step 2: Background location (needs rationale dialog).
     if (!(await Permission.locationAlways.status).isGranted) {
       state = state.copyWith(
         lastEvent: AlarmActivationNeedsBackgroundRationale(id),
@@ -186,7 +173,6 @@ class AlarmActivationNotifier extends Notifier<AlarmActivationState> {
     final id = alarm.id!;
     if (!state.activatingIds.contains(id)) return;
 
-    // Step 3: Notification permission (warn but continue).
     final notifGranted = await ref
         .read(locationPermissionProvider.notifier)
         .requestNotification();
@@ -197,7 +183,6 @@ class AlarmActivationNotifier extends Notifier<AlarmActivationState> {
       // Don't return; continue activation.
     }
 
-    // Step 4: Battery optimization (needs rationale dialog).
     if (!(await Permission.ignoreBatteryOptimizations.isGranted)) {
       state = state.copyWith(
         lastEvent: AlarmActivationNeedsBatteryRationale(id),
@@ -227,7 +212,6 @@ class AlarmActivationNotifier extends Notifier<AlarmActivationState> {
     final id = alarm.id!;
     if (!state.activatingIds.contains(id)) return;
 
-    // Step 5: GPS position.
     try {
       final position = await Geolocator.getCurrentPosition(
         locationSettings: const LocationSettings(
@@ -241,13 +225,11 @@ class AlarmActivationNotifier extends Notifier<AlarmActivationState> {
       final currentLatLng = LatLng(position.latitude, position.longitude);
       final distance = distanceInMeters(currentLatLng, alarm.location);
       final name = alarm.name.isEmpty ? 'Alarm #$id' : alarm.name;
-      // Step 6: Inside radius check.
       if (distance <= alarm.radius) {
         _finish(id, AlarmActivationInsideRadius(name, distance, alarm.radius));
         return;
       }
 
-      // Step 7: Activate.
       await ref.read(alarmRepositoryProvider).toggleActive(id, active: true);
       AlarmServiceNotifier.refresh();
 

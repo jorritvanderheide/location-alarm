@@ -27,7 +27,6 @@ class AlarmListScreen extends ConsumerStatefulWidget {
 class _AlarmListScreenState extends ConsumerState<AlarmListScreen> {
   AlarmSortMode _sortMode = AlarmSortMode.created;
 
-  // Multi-select state
   bool _editMode = false;
   final Set<int> _selectedIds = {};
 
@@ -58,8 +57,6 @@ class _AlarmListScreenState extends ConsumerState<AlarmListScreen> {
     }
     return sorted;
   }
-
-  // -- Sort --
 
   Future<void> _showSortSheet() async {
     final l10n = AppLocalizations.of(context)!;
@@ -95,8 +92,6 @@ class _AlarmListScreenState extends ConsumerState<AlarmListScreen> {
       setState(() => _sortMode = result);
     }
   }
-
-  // -- Multi-select --
 
   void _enterEditMode(int alarmId) {
     setState(() {
@@ -150,8 +145,6 @@ class _AlarmListScreenState extends ConsumerState<AlarmListScreen> {
 
     await ref.read(alarmDeleteProvider.notifier).deleteAlarms(_selectedIds);
   }
-
-  // -- Activation event handling --
 
   Future<void> _onActivationEvent(AlarmActivationEvent event) async {
     final l10n = AppLocalizations.of(context)!;
@@ -243,8 +236,6 @@ class _AlarmListScreenState extends ConsumerState<AlarmListScreen> {
     ).showSnackBar(SnackBar(content: Text(message)));
   }
 
-  // -- Build --
-
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -255,14 +246,12 @@ class _AlarmListScreenState extends ConsumerState<AlarmListScreen> {
     // Pre-warm GPS so the map opens fast.
     ref.watch(bestPositionProvider);
 
-    // React to activation events.
     ref.listen(alarmActivationProvider, (_, next) {
       if (next.lastEvent is! AlarmActivationIdle) {
         _onActivationEvent(next.lastEvent);
       }
     });
 
-    // React to delete events.
     ref.listen(alarmDeleteProvider, (_, next) {
       switch (next) {
         case AlarmDeleteSuccess(:final count):

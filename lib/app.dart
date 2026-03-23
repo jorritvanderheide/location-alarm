@@ -63,7 +63,6 @@ ThemeData _buildTheme(
   return ThemeData(
     colorScheme: colorScheme,
 
-    // Rounder shapes globally.
     cardTheme: CardThemeData(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),

@@ -16,8 +16,6 @@ final alarmSaveProvider = NotifierProvider<AlarmSaveNotifier, AlarmSaveState>(
   AlarmSaveNotifier.new,
 );
 
-// -- State --
-
 sealed class AlarmSaveState {
   const AlarmSaveState();
 }
@@ -71,8 +69,6 @@ final class AlarmSaveFailed extends AlarmSaveState {
   final String message;
 }
 
-// -- Notifier --
-
 class AlarmSaveNotifier extends Notifier<AlarmSaveState> {
   // Stored between async steps.
   int? _alarmId;
@@ -102,7 +98,6 @@ class AlarmSaveNotifier extends Notifier<AlarmSaveState> {
 
     state = const AlarmSaveBusy();
 
-    // Step 1: Foreground location.
     final fgStatus = await Permission.locationWhenInUse.status;
     if (!fgStatus.isGranted) {
       await ref.read(locationPermissionProvider.notifier).request();
@@ -112,7 +107,6 @@ class AlarmSaveNotifier extends Notifier<AlarmSaveState> {
       }
     }
 
-    // Step 2: Background location (needs rationale dialog).
     if (!(await Permission.locationAlways.status).isGranted) {
       state = const AlarmSaveNeedsConfirmation(BackgroundLocationRationale());
       return;
@@ -165,7 +159,6 @@ class AlarmSaveNotifier extends Notifier<AlarmSaveState> {
   }
 
   Future<void> _continueAfterBackground() async {
-    // Step 3: Notification permission.
     final notifGranted = await ref
         .read(locationPermissionProvider.notifier)
         .requestNotification();
@@ -176,7 +169,6 @@ class AlarmSaveNotifier extends Notifier<AlarmSaveState> {
       await Future<void>.delayed(const Duration(milliseconds: 100));
     }
 
-    // Step 4: Battery optimization.
     if (!(await Permission.ignoreBatteryOptimizations.isGranted)) {
       state = const AlarmSaveNeedsConfirmation(BatteryOptimizationRationale());
       return;
@@ -186,7 +178,6 @@ class AlarmSaveNotifier extends Notifier<AlarmSaveState> {
   }
 
   Future<void> _continueAfterBattery() async {
-    // Step 5: Request thumbnail from UI.
     state = const AlarmSaveNeedsThumbnail();
   }
 
@@ -195,7 +186,6 @@ class AlarmSaveNotifier extends Notifier<AlarmSaveState> {
     _thumbnail = thumbnail;
     state = const AlarmSaveBusy();
 
-    // Step 6: Check if inside radius.
     final position = ref.read(locationProvider).whenData((p) => p).value;
     final hasLocationLock = position != null;
     final isInsideRadius =

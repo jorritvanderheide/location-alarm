@@ -27,7 +27,6 @@ class CurrentLocationMarker extends ConsumerWidget {
             child: Stack(
               alignment: Alignment.center,
               children: [
-                // Accuracy ring
                 Container(
                   width: 24,
                   height: 24,
@@ -36,7 +35,6 @@ class CurrentLocationMarker extends ConsumerWidget {
                     shape: BoxShape.circle,
                   ),
                 ),
-                // Center dot
                 Container(
                   width: 14,
                   height: 14,

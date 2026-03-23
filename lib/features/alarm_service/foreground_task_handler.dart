@@ -41,7 +41,6 @@ class LocationTaskHandler extends TaskHandler {
   DateTime? _previousPositionTime;
   double _speedMps = 0; // meters per second
 
-  // Adaptive poll timer.
   Timer? _adaptivePollTimer;
 
   @override
