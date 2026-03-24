@@ -1,0 +1,177 @@
+{
+  "@@locale": "ja",
+
+  "appTitle": "There Yet",
+
+  "alarmsTitle": "アラーム",
+  "noAlarmsYet": "アラームはまだありません",
+  "tapToCreateFirst": "＋をタップして最初のアラームを作成",
+  "failedToLoadAlarms": "アラームの読み込みに失敗しました",
+  "retry": "再試行",
+  "sortBy": "並べ替え",
+  "sortAlarms": "アラームを並べ替え",
+  "sortDateCreated": "作成日",
+  "sortName": "名前",
+  "settings": "設定",
+  "about": "このアプリについて",
+
+  "nSelected": "{count}件選択中",
+  "@nSelected": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "deleteSelected": "選択したアラームを削除",
+  "deleteNAlarms": "{count, plural, other{{count}件のアラームを削除しますか？}}",
+  "@deleteNAlarms": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "deleteNAlarmsBody": "{count, plural, other{{count}件のアラームが完全に削除されます。}}",
+  "@deleteNAlarmsBody": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "cancel": "キャンセル",
+  "delete": "削除",
+  "ok": "OK",
+
+  "alarmDeactivated": "{name}を無効にしました",
+  "@alarmDeactivated": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "alarmActivated": "{name}を有効にしました — 目的地まで{distance}",
+  "@alarmActivated": {
+    "placeholders": {
+      "name": {"type": "String"},
+      "distance": {"type": "String"}
+    }
+  },
+  "locationPermissionRequired": "位置情報の許可が必要です",
+  "notificationsDisabled": "通知が無効です — アラーム音が鳴りません",
+  "alreadyInsideAlarmArea": "すでにアラーム範囲内にいます",
+  "alreadyInsideAlarmAreaBody": "「{name}」から{distance}の位置にいます。アラームを有効にするには、{radius}の範囲外に移動してください。",
+  "@alreadyInsideAlarmAreaBody": {
+    "placeholders": {
+      "distance": {"type": "String"},
+      "name": {"type": "String"},
+      "radius": {"type": "String"}
+    }
+  },
+  "gpsDisabled": "GPSが無効です",
+  "openSettings": "設定を開く",
+  "couldNotAcquireLocation": "位置情報を取得できませんでした",
+  "nAlarmsDeleted": "{count, plural, other{{count}件のアラームを削除しました}}",
+  "@nAlarmsDeleted": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "deleteFailed": "削除に失敗しました: {message}",
+  "@deleteFailed": {
+    "placeholders": {
+      "message": {"type": "String"}
+    }
+  },
+
+  "alarmsNotMonitored": "アラームは監視されていません",
+  "tapToCheckPermissions": "タップして権限を確認",
+  "backgroundLocationRequired": "バックグラウンド位置情報の許可が必要です",
+
+  "gettingLocation": "位置情報を取得中\u2026",
+  "alarmDefaultName": "アラーム #{id}",
+  "@alarmDefaultName": {
+    "placeholders": {
+      "id": {"type": "int"}
+    }
+  },
+  "active": "有効",
+  "inactive": "無効",
+
+  "backgroundLocationNeeded": "バックグラウンド位置情報が必要です",
+  "backgroundLocationBody": "到着時にアラームを鳴らすために、There Yetはバックグラウンドで位置情報を監視する必要があります。\n\n次の画面で「常に許可」を選択してください。",
+  "continueButton": "続行",
+  "disableBatteryOptimization": "バッテリー最適化を無効にする",
+  "batteryOptimizationBody": "バックグラウンドで位置情報を確実に監視するために、There Yetをバッテリー最適化の対象から除外する必要があります。\n\nこの設定がないと、Androidがバッテリー節約のためにアラームサービスを停止する場合があります。",
+  "skip": "スキップ",
+  "disableOptimization": "無効にする",
+
+  "insideAlarmArea": "アラーム範囲内にいます",
+  "insideAlarmAreaBody": "現在アラーム範囲内にいます。アラームは無効の状態で保存され、範囲外に出ると有効になります。",
+  "saveInactive": "無効のまま保存",
+  "discardChanges": "変更を破棄しますか？",
+  "unsavedChangesBody": "保存されていない変更は失われます。",
+  "keepEditing": "編集を続ける",
+  "discard": "破棄",
+  "locationUnavailable": "位置情報を利用できません",
+  "failedToLoadAlarm": "アラームの読み込みに失敗しました",
+  "osmAttribution": "\u00a9 OpenStreetMap",
+
+  "searchLocation": "場所を検索",
+  "searchLocationOffline": "検索を利用できません（オフライン）",
+  "noResultsFound": "見つかりませんでした",
+  "label": "ラベル",
+  "save": "保存",
+  "centerOnMyLocation": "現在地を中心に表示",
+  "resetNorth": "北を上に戻す",
+
+  "createAlarm": "アラームを作成",
+  "dismiss": "閉じる",
+  "locationAlarmDefault": "There Yet",
+  "alarmBodyWithinRadius": "目的地まで{radius} m以内です",
+  "@alarmBodyWithinRadius": {
+    "placeholders": {
+      "radius": {"type": "int"}
+    }
+  },
+
+  "appearance": "外観",
+  "theme": "テーマ",
+  "themeSystem": "システム",
+  "themeLight": "ライト",
+  "themeDark": "ダーク",
+  "materialYou": "Material You",
+  "materialYouSubtitle": "壁紙の色を使用",
+  "trueBlack": "トゥルーブラック",
+  "trueBlackSubtitle": "AMOLED向けの純粋な黒背景",
+
+  "aboutTitle": "このアプリについて",
+  "appTagline": "到着したらお知らせ",
+  "version": "バージョン",
+  "license": "ライセンス",
+  "licenseValue": "EUPL 1.2",
+  "mapData": "地図データ",
+  "mapDataValue": "OpenStreetMap contributors · OSM France",
+  "geocoding": "ジオコーディング",
+  "geocodingValue": "Photon by Komoot",
+  "openSourceLicenses": "オープンソースライセンス",
+
+  "alarmSaved": "{name}を保存しました",
+  "@alarmSaved": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "alarmSavedNoGps": "{name}を保存しました（無効 — GPS信号なし）",
+  "@alarmSavedNoGps": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "alarmSavedInside": "{name}を保存しました（無効）",
+  "@alarmSavedInside": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "alarmSavedNoPermission": "{name}を保存しました — 監視するにはバックグラウンド位置情報を有効にしてください",
+  "@alarmSavedNoPermission": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  }
+}

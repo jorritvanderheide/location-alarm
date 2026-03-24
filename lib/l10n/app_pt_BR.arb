@@ -1,0 +1,177 @@
+{
+  "@@locale": "pt_BR",
+
+  "appTitle": "There Yet",
+
+  "alarmsTitle": "Alarmes",
+  "noAlarmsYet": "Nenhum alarme ainda",
+  "tapToCreateFirst": "Toque em + para criar seu primeiro alarme",
+  "failedToLoadAlarms": "Falha ao carregar alarmes",
+  "retry": "Tentar novamente",
+  "sortBy": "Ordenar por",
+  "sortAlarms": "Ordenar alarmes",
+  "sortDateCreated": "Data de criação",
+  "sortName": "Nome",
+  "settings": "Configurações",
+  "about": "Sobre",
+
+  "nSelected": "{count} selecionado(s)",
+  "@nSelected": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "deleteSelected": "Excluir selecionados",
+  "deleteNAlarms": "Excluir {count, plural, =1{1 alarme} other{{count} alarmes}}?",
+  "@deleteNAlarms": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "deleteNAlarmsBody": "{count, plural, =1{1 alarme será removido} other{{count} alarmes serão removidos}} permanentemente.",
+  "@deleteNAlarmsBody": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "cancel": "Cancelar",
+  "delete": "Excluir",
+  "ok": "OK",
+
+  "alarmDeactivated": "{name} desativado",
+  "@alarmDeactivated": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "alarmActivated": "{name} ativado — a {distance} de distância",
+  "@alarmActivated": {
+    "placeholders": {
+      "name": {"type": "String"},
+      "distance": {"type": "String"}
+    }
+  },
+  "locationPermissionRequired": "Permissão de localização necessária",
+  "notificationsDisabled": "Notificações desativadas — você não ouvirá o alarme",
+  "alreadyInsideAlarmArea": "Você já está na área do alarme",
+  "alreadyInsideAlarmAreaBody": "Você está a {distance} de \"{name}\". Saia do raio de {radius} para ativar.",
+  "@alreadyInsideAlarmAreaBody": {
+    "placeholders": {
+      "distance": {"type": "String"},
+      "name": {"type": "String"},
+      "radius": {"type": "String"}
+    }
+  },
+  "gpsDisabled": "GPS desativado",
+  "openSettings": "Abrir configurações",
+  "couldNotAcquireLocation": "Não foi possível obter a localização",
+  "nAlarmsDeleted": "{count, plural, =1{1 alarme excluído} other{{count} alarmes excluídos}}",
+  "@nAlarmsDeleted": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "deleteFailed": "Falha ao excluir: {message}",
+  "@deleteFailed": {
+    "placeholders": {
+      "message": {"type": "String"}
+    }
+  },
+
+  "alarmsNotMonitored": "Os alarmes não estão sendo monitorados",
+  "tapToCheckPermissions": "Toque para verificar as permissões",
+  "backgroundLocationRequired": "Localização em segundo plano necessária",
+
+  "gettingLocation": "Obtendo localização\u2026",
+  "alarmDefaultName": "Alarme #{id}",
+  "@alarmDefaultName": {
+    "placeholders": {
+      "id": {"type": "int"}
+    }
+  },
+  "active": "ativo",
+  "inactive": "inativo",
+
+  "backgroundLocationNeeded": "Localização em segundo plano necessária",
+  "backgroundLocationBody": "O There Yet precisa monitorar sua localização em segundo plano para acionar os alarmes quando você chegar.\n\nNa próxima tela, selecione \"Permitir o tempo todo\".",
+  "continueButton": "Continuar",
+  "disableBatteryOptimization": "Desativar otimização de bateria",
+  "batteryOptimizationBody": "Para monitorar sua localização de forma confiável em segundo plano, o There Yet precisa estar excluído da otimização de bateria.\n\nSem isso, o Android pode encerrar o serviço de alarme para economizar bateria.",
+  "skip": "Pular",
+  "disableOptimization": "Desativar otimização",
+
+  "insideAlarmArea": "Dentro da área do alarme",
+  "insideAlarmAreaBody": "Você está dentro da área do alarme. O alarme será salvo como inativo e ativará quando você sair.",
+  "saveInactive": "Salvar inativo",
+  "discardChanges": "Descartar alterações?",
+  "unsavedChangesBody": "As alterações não salvas serão perdidas.",
+  "keepEditing": "Continuar editando",
+  "discard": "Descartar",
+  "locationUnavailable": "Localização indisponível",
+  "failedToLoadAlarm": "Falha ao carregar alarme",
+  "osmAttribution": "\u00a9 OpenStreetMap",
+
+  "searchLocation": "Pesquisar local",
+  "searchLocationOffline": "Pesquisa indisponível (offline)",
+  "noResultsFound": "Nenhum resultado encontrado",
+  "label": "Rótulo",
+  "save": "Salvar",
+  "centerOnMyLocation": "Centralizar na minha localização",
+  "resetNorth": "Apontar para o norte",
+
+  "createAlarm": "Criar alarme",
+  "dismiss": "Dispensar",
+  "locationAlarmDefault": "There Yet",
+  "alarmBodyWithinRadius": "Você está a menos de {radius} m do seu destino",
+  "@alarmBodyWithinRadius": {
+    "placeholders": {
+      "radius": {"type": "int"}
+    }
+  },
+
+  "appearance": "Aparência",
+  "theme": "Tema",
+  "themeSystem": "Sistema",
+  "themeLight": "Claro",
+  "themeDark": "Escuro",
+  "materialYou": "Material You",
+  "materialYouSubtitle": "Usar as cores do seu papel de parede",
+  "trueBlack": "Preto absoluto",
+  "trueBlackSubtitle": "Fundo preto puro para telas AMOLED",
+
+  "aboutTitle": "Sobre",
+  "appTagline": "Seja alertado ao chegar",
+  "version": "Versão",
+  "license": "Licença",
+  "licenseValue": "EUPL 1.2",
+  "mapData": "Dados do mapa",
+  "mapDataValue": "Colaboradores do OpenStreetMap · OSM France",
+  "geocoding": "Geocodificação",
+  "geocodingValue": "Photon by Komoot",
+  "openSourceLicenses": "Licenças de código aberto",
+
+  "alarmSaved": "{name} salvo",
+  "@alarmSaved": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "alarmSavedNoGps": "{name} salvo (inativo — sem sinal GPS)",
+  "@alarmSavedNoGps": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "alarmSavedInside": "{name} salvo (inativo)",
+  "@alarmSavedInside": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "alarmSavedNoPermission": "{name} salvo — ative a localização em segundo plano para monitorar",
+  "@alarmSavedNoPermission": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  }
+}

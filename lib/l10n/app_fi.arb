@@ -1,0 +1,177 @@
+{
+  "@@locale": "fi",
+
+  "appTitle": "There Yet",
+
+  "alarmsTitle": "Herätykset",
+  "noAlarmsYet": "Ei herätyksiä",
+  "tapToCreateFirst": "Luo ensimmäinen herätys painamalla +",
+  "failedToLoadAlarms": "Herätysten lataaminen epäonnistui",
+  "retry": "Yritä uudelleen",
+  "sortBy": "Järjestä",
+  "sortAlarms": "Järjestä herätykset",
+  "sortDateCreated": "Luontipäivä",
+  "sortName": "Nimi",
+  "settings": "Asetukset",
+  "about": "Tietoja",
+
+  "nSelected": "{count} valittu",
+  "@nSelected": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "deleteSelected": "Poista valitut",
+  "deleteNAlarms": "Poistetaanko {count, plural, =1{1 herätys} other{{count} herätystä}}?",
+  "@deleteNAlarms": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "deleteNAlarmsBody": "{count, plural, =1{1 herätys} other{{count} herätystä}} poistetaan pysyvästi.",
+  "@deleteNAlarmsBody": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "cancel": "Peruuta",
+  "delete": "Poista",
+  "ok": "OK",
+
+  "alarmDeactivated": "{name} poistettu käytöstä",
+  "@alarmDeactivated": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "alarmActivated": "{name} käytössä — {distance} päässä",
+  "@alarmActivated": {
+    "placeholders": {
+      "name": {"type": "String"},
+      "distance": {"type": "String"}
+    }
+  },
+  "locationPermissionRequired": "Sijaintilupa vaaditaan",
+  "notificationsDisabled": "Ilmoitukset pois käytöstä — et kuule herätystä",
+  "alreadyInsideAlarmArea": "Olet jo herätysalueella",
+  "alreadyInsideAlarmAreaBody": "Olet {distance} päässä kohteesta \"{name}\". Poistu {radius} säteeltä aktivoidaksesi herätyksen.",
+  "@alreadyInsideAlarmAreaBody": {
+    "placeholders": {
+      "distance": {"type": "String"},
+      "name": {"type": "String"},
+      "radius": {"type": "String"}
+    }
+  },
+  "gpsDisabled": "GPS ei ole käytössä",
+  "openSettings": "Avaa asetukset",
+  "couldNotAcquireLocation": "Sijaintia ei saatu selville",
+  "nAlarmsDeleted": "{count, plural, =1{1 herätys} other{{count} herätystä}} poistettu",
+  "@nAlarmsDeleted": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "deleteFailed": "Poistaminen epäonnistui: {message}",
+  "@deleteFailed": {
+    "placeholders": {
+      "message": {"type": "String"}
+    }
+  },
+
+  "alarmsNotMonitored": "Herätyksiä ei seurata",
+  "tapToCheckPermissions": "Tarkista luvat napauttamalla",
+  "backgroundLocationRequired": "Taustasijainti vaaditaan",
+
+  "gettingLocation": "Haetaan sijaintia\u2026",
+  "alarmDefaultName": "Herätys #{id}",
+  "@alarmDefaultName": {
+    "placeholders": {
+      "id": {"type": "int"}
+    }
+  },
+  "active": "käytössä",
+  "inactive": "pois käytöstä",
+
+  "backgroundLocationNeeded": "Taustasijainti tarvitaan",
+  "backgroundLocationBody": "There Yet tarvitsee taustasijaintia herättääkseen sinut perille saapuessasi.\n\nValitse seuraavalla näytöllä \"Salli aina\".",
+  "continueButton": "Jatka",
+  "disableBatteryOptimization": "Poista akun optimointi käytöstä",
+  "batteryOptimizationBody": "Luotettavan taustaseurannan varmistamiseksi There Yet on vapautettava akun optimoinnista.\n\nMuuten Android saattaa pysäyttää herätyspalvelun säästääkseen akkua.",
+  "skip": "Ohita",
+  "disableOptimization": "Poista optimointi",
+
+  "insideAlarmArea": "Herätysalueella",
+  "insideAlarmAreaBody": "Olet tällä hetkellä herätysalueella. Herätys tallennetaan pois käytöstä ja aktivoituu, kun poistut alueelta.",
+  "saveInactive": "Tallenna pois käytöstä",
+  "discardChanges": "Hylätäänkö muutokset?",
+  "unsavedChangesBody": "Tallentamattomat muutokset menetetään.",
+  "keepEditing": "Jatka muokkaamista",
+  "discard": "Hylkää",
+  "locationUnavailable": "Sijainti ei saatavilla",
+  "failedToLoadAlarm": "Herätyksen lataaminen epäonnistui",
+  "osmAttribution": "\u00a9 OpenStreetMap",
+
+  "searchLocation": "Hae sijaintia",
+  "searchLocationOffline": "Haku ei käytettävissä (ei verkkoyhteyttä)",
+  "noResultsFound": "Ei tuloksia",
+  "label": "Nimi",
+  "save": "Tallenna",
+  "centerOnMyLocation": "Keskitä sijaintiini",
+  "resetNorth": "Osoita pohjoiseen",
+
+  "createAlarm": "Luo herätys",
+  "dismiss": "Hiljennä",
+  "locationAlarmDefault": "There Yet",
+  "alarmBodyWithinRadius": "Olet alle {radius} m päässä määränpäästäsi",
+  "@alarmBodyWithinRadius": {
+    "placeholders": {
+      "radius": {"type": "int"}
+    }
+  },
+
+  "appearance": "Ulkoasu",
+  "theme": "Teema",
+  "themeSystem": "Järjestelmä",
+  "themeLight": "Vaalea",
+  "themeDark": "Tumma",
+  "materialYou": "Material You",
+  "materialYouSubtitle": "Käytä taustakuvan värejä",
+  "trueBlack": "Täysmusta",
+  "trueBlackSubtitle": "Puhdas musta tausta AMOLED-näytöille",
+
+  "aboutTitle": "Tietoja",
+  "appTagline": "Herätys perille saapuessa",
+  "version": "Versio",
+  "license": "Lisenssi",
+  "licenseValue": "EUPL 1.2",
+  "mapData": "Karttatiedot",
+  "mapDataValue": "OpenStreetMap-tekijät · OSM France",
+  "geocoding": "Geokoodaus",
+  "geocodingValue": "Photon by Komoot",
+  "openSourceLicenses": "Avoimen lähdekoodin lisenssit",
+
+  "alarmSaved": "{name} tallennettu",
+  "@alarmSaved": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "alarmSavedNoGps": "{name} tallennettu (pois käytöstä — ei GPS-signaalia)",
+  "@alarmSavedNoGps": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "alarmSavedInside": "{name} tallennettu (pois käytöstä)",
+  "@alarmSavedInside": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "alarmSavedNoPermission": "{name} tallennettu — ota taustasijainti käyttöön seurantaa varten",
+  "@alarmSavedNoPermission": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  }
+}

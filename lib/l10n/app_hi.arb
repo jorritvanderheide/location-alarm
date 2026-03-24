@@ -1,0 +1,177 @@
+{
+  "@@locale": "hi",
+
+  "appTitle": "There Yet",
+
+  "alarmsTitle": "अलार्म",
+  "noAlarmsYet": "अभी कोई अलार्म नहीं",
+  "tapToCreateFirst": "पहला अलार्म बनाने के लिए + दबाएँ",
+  "failedToLoadAlarms": "अलार्म लोड नहीं हो सके",
+  "retry": "फिर कोशिश करें",
+  "sortBy": "क्रम",
+  "sortAlarms": "अलार्म क्रमित करें",
+  "sortDateCreated": "बनाने की तारीख़",
+  "sortName": "नाम",
+  "settings": "सेटिंग्स",
+  "about": "जानकारी",
+
+  "nSelected": "{count} चयनित",
+  "@nSelected": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "deleteSelected": "चयनित हटाएँ",
+  "deleteNAlarms": "{count, plural, =1{1 अलार्म} other{{count} अलार्म}} हटाएँ?",
+  "@deleteNAlarms": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "deleteNAlarmsBody": "{count, plural, =1{1 अलार्म} other{{count} अलार्म}} स्थायी रूप से हटा दिए जाएँगे।",
+  "@deleteNAlarmsBody": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "cancel": "रद्द करें",
+  "delete": "हटाएँ",
+  "ok": "ठीक है",
+
+  "alarmDeactivated": "{name} निष्क्रिय",
+  "@alarmDeactivated": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "alarmActivated": "{name} सक्रिय — {distance} दूर",
+  "@alarmActivated": {
+    "placeholders": {
+      "name": {"type": "String"},
+      "distance": {"type": "String"}
+    }
+  },
+  "locationPermissionRequired": "स्थान की अनुमति ज़रूरी है",
+  "notificationsDisabled": "सूचनाएँ बंद हैं — अलार्म सुनाई नहीं देगा",
+  "alreadyInsideAlarmArea": "आप पहले से अलार्म क्षेत्र में हैं",
+  "alreadyInsideAlarmAreaBody": "आप \"{name}\" से {distance} दूर हैं। सक्रिय करने के लिए {radius} दायरे से बाहर जाएँ।",
+  "@alreadyInsideAlarmAreaBody": {
+    "placeholders": {
+      "distance": {"type": "String"},
+      "name": {"type": "String"},
+      "radius": {"type": "String"}
+    }
+  },
+  "gpsDisabled": "GPS बंद है",
+  "openSettings": "सेटिंग्स खोलें",
+  "couldNotAcquireLocation": "स्थान प्राप्त नहीं हो सका",
+  "nAlarmsDeleted": "{count, plural, =1{1 अलार्म} other{{count} अलार्म}} हटाए गए",
+  "@nAlarmsDeleted": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "deleteFailed": "हटाना विफल: {message}",
+  "@deleteFailed": {
+    "placeholders": {
+      "message": {"type": "String"}
+    }
+  },
+
+  "alarmsNotMonitored": "अलार्म की निगरानी नहीं हो रही",
+  "tapToCheckPermissions": "अनुमतियाँ जाँचने के लिए दबाएँ",
+  "backgroundLocationRequired": "बैकग्राउंड स्थान अनुमति ज़रूरी है",
+
+  "gettingLocation": "स्थान ढूँढ रहे हैं\u2026",
+  "alarmDefaultName": "अलार्म #{id}",
+  "@alarmDefaultName": {
+    "placeholders": {
+      "id": {"type": "int"}
+    }
+  },
+  "active": "सक्रिय",
+  "inactive": "निष्क्रिय",
+
+  "backgroundLocationNeeded": "बैकग्राउंड स्थान ज़रूरी है",
+  "backgroundLocationBody": "There Yet को आपके पहुँचने पर अलार्म बजाने के लिए बैकग्राउंड में आपकी स्थिति की निगरानी करनी होगी।\n\nअगली स्क्रीन पर \"हमेशा अनुमति दें\" चुनें।",
+  "continueButton": "जारी रखें",
+  "disableBatteryOptimization": "बैटरी ऑप्टिमाइज़ेशन बंद करें",
+  "batteryOptimizationBody": "बैकग्राउंड में स्थान की विश्वसनीय निगरानी के लिए There Yet को बैटरी ऑप्टिमाइज़ेशन से बाहर रखना होगा।\n\nइसके बिना Android बैटरी बचाने के लिए अलार्म सेवा बंद कर सकता है।",
+  "skip": "छोड़ें",
+  "disableOptimization": "ऑप्टिमाइज़ेशन बंद करें",
+
+  "insideAlarmArea": "अलार्म क्षेत्र में",
+  "insideAlarmAreaBody": "आप अभी अलार्म क्षेत्र में हैं। अलार्म निष्क्रिय सहेजा जाएगा और क्षेत्र छोड़ने पर सक्रिय हो जाएगा।",
+  "saveInactive": "निष्क्रिय सहेजें",
+  "discardChanges": "बदलाव छोड़ें?",
+  "unsavedChangesBody": "सहेजे न गए बदलाव खो जाएँगे।",
+  "keepEditing": "संपादन जारी रखें",
+  "discard": "छोड़ें",
+  "locationUnavailable": "स्थान उपलब्ध नहीं",
+  "failedToLoadAlarm": "अलार्म लोड नहीं हो सका",
+  "osmAttribution": "\u00a9 OpenStreetMap",
+
+  "searchLocation": "स्थान खोजें",
+  "searchLocationOffline": "खोज उपलब्ध नहीं (ऑफ़लाइन)",
+  "noResultsFound": "कोई परिणाम नहीं मिला",
+  "label": "लेबल",
+  "save": "सहेजें",
+  "centerOnMyLocation": "मेरे स्थान पर केंद्रित करें",
+  "resetNorth": "उत्तर दिशा सेट करें",
+
+  "createAlarm": "अलार्म बनाएँ",
+  "dismiss": "बंद करें",
+  "locationAlarmDefault": "There Yet",
+  "alarmBodyWithinRadius": "आप अपने गंतव्य से {radius} मी. के दायरे में हैं",
+  "@alarmBodyWithinRadius": {
+    "placeholders": {
+      "radius": {"type": "int"}
+    }
+  },
+
+  "appearance": "रंगरूप",
+  "theme": "थीम",
+  "themeSystem": "सिस्टम",
+  "themeLight": "लाइट",
+  "themeDark": "डार्क",
+  "materialYou": "Material You",
+  "materialYouSubtitle": "वॉलपेपर के रंग इस्तेमाल करें",
+  "trueBlack": "गहरा काला",
+  "trueBlackSubtitle": "AMOLED स्क्रीन के लिए शुद्ध काला बैकग्राउंड",
+
+  "aboutTitle": "जानकारी",
+  "appTagline": "पहुँचने पर सूचना पाएँ",
+  "version": "संस्करण",
+  "license": "लाइसेंस",
+  "licenseValue": "EUPL 1.2",
+  "mapData": "मानचित्र डेटा",
+  "mapDataValue": "OpenStreetMap योगदानकर्ता · OSM France",
+  "geocoding": "जियोकोडिंग",
+  "geocodingValue": "Photon by Komoot",
+  "openSourceLicenses": "ओपन सोर्स लाइसेंस",
+
+  "alarmSaved": "{name} सहेजा गया",
+  "@alarmSaved": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "alarmSavedNoGps": "{name} सहेजा गया (निष्क्रिय — GPS सिग्नल नहीं)",
+  "@alarmSavedNoGps": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "alarmSavedInside": "{name} सहेजा गया (निष्क्रिय)",
+  "@alarmSavedInside": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "alarmSavedNoPermission": "{name} सहेजा गया — निगरानी के लिए बैकग्राउंड स्थान चालू करें",
+  "@alarmSavedNoPermission": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  }
+}

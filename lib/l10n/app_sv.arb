@@ -1,0 +1,177 @@
+{
+  "@@locale": "sv",
+
+  "appTitle": "There Yet",
+
+  "alarmsTitle": "Larm",
+  "noAlarmsYet": "Inga larm ännu",
+  "tapToCreateFirst": "Tryck på + för att skapa ditt första larm",
+  "failedToLoadAlarms": "Kunde inte läsa in larmen",
+  "retry": "Försök igen",
+  "sortBy": "Sortera efter",
+  "sortAlarms": "Sortera larm",
+  "sortDateCreated": "Skapad",
+  "sortName": "Namn",
+  "settings": "Inställningar",
+  "about": "Om",
+
+  "nSelected": "{count} markerade",
+  "@nSelected": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "deleteSelected": "Ta bort markerade",
+  "deleteNAlarms": "Ta bort {count, plural, =1{1 larm} other{{count} larm}}?",
+  "@deleteNAlarms": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "deleteNAlarmsBody": "{count, plural, =1{1 larm} other{{count} larm}} tas bort permanent.",
+  "@deleteNAlarmsBody": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "cancel": "Avbryt",
+  "delete": "Ta bort",
+  "ok": "OK",
+
+  "alarmDeactivated": "{name} inaktiverat",
+  "@alarmDeactivated": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "alarmActivated": "{name} aktiverat — {distance} bort",
+  "@alarmActivated": {
+    "placeholders": {
+      "name": {"type": "String"},
+      "distance": {"type": "String"}
+    }
+  },
+  "locationPermissionRequired": "Platsbehörighet krävs",
+  "notificationsDisabled": "Aviseringar avstängda — du kommer inte höra larmet",
+  "alreadyInsideAlarmArea": "Redan inom larmområdet",
+  "alreadyInsideAlarmAreaBody": "Du är {distance} från \"{name}\". Förflytta dig utanför {radius}-radien för att aktivera.",
+  "@alreadyInsideAlarmAreaBody": {
+    "placeholders": {
+      "distance": {"type": "String"},
+      "name": {"type": "String"},
+      "radius": {"type": "String"}
+    }
+  },
+  "gpsDisabled": "GPS är avstängt",
+  "openSettings": "Öppna inställningar",
+  "couldNotAcquireLocation": "Kunde inte fastställa platsen",
+  "nAlarmsDeleted": "{count, plural, =1{1 larm} other{{count} larm}} borttaget",
+  "@nAlarmsDeleted": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "deleteFailed": "Borttagning misslyckades: {message}",
+  "@deleteFailed": {
+    "placeholders": {
+      "message": {"type": "String"}
+    }
+  },
+
+  "alarmsNotMonitored": "Larmen övervakas inte",
+  "tapToCheckPermissions": "Tryck för att kontrollera behörigheter",
+  "backgroundLocationRequired": "Platsåtkomst i bakgrunden krävs",
+
+  "gettingLocation": "Hämtar plats\u2026",
+  "alarmDefaultName": "Larm #{id}",
+  "@alarmDefaultName": {
+    "placeholders": {
+      "id": {"type": "int"}
+    }
+  },
+  "active": "aktivt",
+  "inactive": "inaktivt",
+
+  "backgroundLocationNeeded": "Platsåtkomst i bakgrunden behövs",
+  "backgroundLocationBody": "There Yet behöver komma åt din plats i bakgrunden för att utlösa larm när du anländer.\n\nVälj \"Tillåt alltid\" på nästa skärm.",
+  "continueButton": "Fortsätt",
+  "disableBatteryOptimization": "Stäng av batterioptimering",
+  "batteryOptimizationBody": "För att övervaka din plats tillförlitligt i bakgrunden behöver There Yet undantas från batterioptimering.\n\nUtan detta kan Android stoppa larmtjänsten för att spara batteri.",
+  "skip": "Hoppa över",
+  "disableOptimization": "Stäng av optimering",
+
+  "insideAlarmArea": "Inom larmområdet",
+  "insideAlarmAreaBody": "Du befinner dig inom larmområdet. Larmet sparas som inaktivt och aktiveras när du lämnar området.",
+  "saveInactive": "Spara som inaktivt",
+  "discardChanges": "Kasta ändringar?",
+  "unsavedChangesBody": "Dina osparade ändringar kommer att gå förlorade.",
+  "keepEditing": "Fortsätt redigera",
+  "discard": "Kasta",
+  "locationUnavailable": "Plats inte tillgänglig",
+  "failedToLoadAlarm": "Kunde inte läsa in larmet",
+  "osmAttribution": "\u00a9 OpenStreetMap",
+
+  "searchLocation": "Sök plats",
+  "searchLocationOffline": "Sökning otillgänglig (offline)",
+  "noResultsFound": "Inga resultat hittades",
+  "label": "Etikett",
+  "save": "Spara",
+  "centerOnMyLocation": "Centrera på min plats",
+  "resetNorth": "Återställ norr",
+
+  "createAlarm": "Skapa larm",
+  "dismiss": "Avfärda",
+  "locationAlarmDefault": "There Yet",
+  "alarmBodyWithinRadius": "Du är inom {radius} m från din destination",
+  "@alarmBodyWithinRadius": {
+    "placeholders": {
+      "radius": {"type": "int"}
+    }
+  },
+
+  "appearance": "Utseende",
+  "theme": "Tema",
+  "themeSystem": "System",
+  "themeLight": "Ljust",
+  "themeDark": "Mörkt",
+  "materialYou": "Material You",
+  "materialYouSubtitle": "Använd dina bakgrundsfärger",
+  "trueBlack": "Helsvart",
+  "trueBlackSubtitle": "Helt svart bakgrund för AMOLED-skärmar",
+
+  "aboutTitle": "Om",
+  "appTagline": "Få en påminnelse när du anländer",
+  "version": "Version",
+  "license": "Licens",
+  "licenseValue": "EUPL 1.2",
+  "mapData": "Kartdata",
+  "mapDataValue": "OpenStreetMap-bidragsgivare · OSM France",
+  "geocoding": "Geokodning",
+  "geocodingValue": "Photon by Komoot",
+  "openSourceLicenses": "Öppen källkod-licenser",
+
+  "alarmSaved": "{name} sparat",
+  "@alarmSaved": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "alarmSavedNoGps": "{name} sparat (inaktivt — ingen GPS-signal)",
+  "@alarmSavedNoGps": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "alarmSavedInside": "{name} sparat (inaktivt)",
+  "@alarmSavedInside": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "alarmSavedNoPermission": "{name} sparat — aktivera platsåtkomst i bakgrunden",
+  "@alarmSavedNoPermission": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  }
+}

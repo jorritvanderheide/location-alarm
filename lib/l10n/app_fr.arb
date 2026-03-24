@@ -1,0 +1,177 @@
+{
+  "@@locale": "fr",
+
+  "appTitle": "There Yet",
+
+  "alarmsTitle": "Alarmes",
+  "noAlarmsYet": "Aucune alarme",
+  "tapToCreateFirst": "Appuyez sur + pour créer votre première alarme",
+  "failedToLoadAlarms": "Impossible de charger les alarmes",
+  "retry": "Réessayer",
+  "sortBy": "Trier par",
+  "sortAlarms": "Trier les alarmes",
+  "sortDateCreated": "Date de création",
+  "sortName": "Nom",
+  "settings": "Paramètres",
+  "about": "À propos",
+
+  "nSelected": "{count} sélectionné(s)",
+  "@nSelected": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "deleteSelected": "Supprimer la sélection",
+  "deleteNAlarms": "Supprimer {count, plural, =1{1 alarme} other{{count} alarmes}}\u00a0?",
+  "@deleteNAlarms": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "deleteNAlarmsBody": "{count, plural, =1{1 alarme sera supprimée} other{{count} alarmes seront supprimées}} définitivement.",
+  "@deleteNAlarmsBody": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "cancel": "Annuler",
+  "delete": "Supprimer",
+  "ok": "OK",
+
+  "alarmDeactivated": "{name} désactivée",
+  "@alarmDeactivated": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "alarmActivated": "{name} activée — à {distance}",
+  "@alarmActivated": {
+    "placeholders": {
+      "name": {"type": "String"},
+      "distance": {"type": "String"}
+    }
+  },
+  "locationPermissionRequired": "Autorisation de localisation requise",
+  "notificationsDisabled": "Notifications désactivées — vous n'entendrez pas l'alarme",
+  "alreadyInsideAlarmArea": "Déjà dans la zone d'alarme",
+  "alreadyInsideAlarmAreaBody": "Vous êtes à {distance} de « {name} ». Sortez du rayon de {radius} pour activer l'alarme.",
+  "@alreadyInsideAlarmAreaBody": {
+    "placeholders": {
+      "distance": {"type": "String"},
+      "name": {"type": "String"},
+      "radius": {"type": "String"}
+    }
+  },
+  "gpsDisabled": "Le GPS est désactivé",
+  "openSettings": "Ouvrir les paramètres",
+  "couldNotAcquireLocation": "Impossible d'obtenir la position",
+  "nAlarmsDeleted": "{count, plural, =1{1 alarme supprimée} other{{count} alarmes supprimées}}",
+  "@nAlarmsDeleted": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "deleteFailed": "Échec de la suppression\u00a0: {message}",
+  "@deleteFailed": {
+    "placeholders": {
+      "message": {"type": "String"}
+    }
+  },
+
+  "alarmsNotMonitored": "Les alarmes ne sont pas surveillées",
+  "tapToCheckPermissions": "Appuyez pour vérifier les autorisations",
+  "backgroundLocationRequired": "Localisation en arrière-plan requise",
+
+  "gettingLocation": "Localisation en cours\u2026",
+  "alarmDefaultName": "Alarme nº\u00a0{id}",
+  "@alarmDefaultName": {
+    "placeholders": {
+      "id": {"type": "int"}
+    }
+  },
+  "active": "active",
+  "inactive": "inactive",
+
+  "backgroundLocationNeeded": "Localisation en arrière-plan nécessaire",
+  "backgroundLocationBody": "There Yet doit accéder à votre position en arrière-plan pour déclencher les alarmes à votre arrivée.\n\nSur l'écran suivant, sélectionnez « Autoriser en permanence ».",
+  "continueButton": "Continuer",
+  "disableBatteryOptimization": "Désactiver l'optimisation de la batterie",
+  "batteryOptimizationBody": "Pour surveiller votre position de manière fiable en arrière-plan, There Yet doit être exclu de l'optimisation de la batterie.\n\nSans cela, Android peut arrêter le service d'alarme pour économiser la batterie.",
+  "skip": "Ignorer",
+  "disableOptimization": "Désactiver l'optimisation",
+
+  "insideAlarmArea": "Dans la zone d'alarme",
+  "insideAlarmAreaBody": "Vous êtes actuellement dans la zone d'alarme. L'alarme sera enregistrée en tant qu'inactive et s'activera lorsque vous quitterez la zone.",
+  "saveInactive": "Enregistrer inactive",
+  "discardChanges": "Abandonner les modifications\u00a0?",
+  "unsavedChangesBody": "Vos modifications non enregistrées seront perdues.",
+  "keepEditing": "Continuer la modification",
+  "discard": "Abandonner",
+  "locationUnavailable": "Position indisponible",
+  "failedToLoadAlarm": "Impossible de charger l'alarme",
+  "osmAttribution": "\u00a9 OpenStreetMap",
+
+  "searchLocation": "Rechercher un lieu",
+  "searchLocationOffline": "Recherche indisponible (hors ligne)",
+  "noResultsFound": "Aucun résultat",
+  "label": "Libellé",
+  "save": "Enregistrer",
+  "centerOnMyLocation": "Centrer sur ma position",
+  "resetNorth": "Orienter vers le nord",
+
+  "createAlarm": "Créer une alarme",
+  "dismiss": "Arrêter",
+  "locationAlarmDefault": "There Yet",
+  "alarmBodyWithinRadius": "Vous êtes à moins de {radius} m de votre destination",
+  "@alarmBodyWithinRadius": {
+    "placeholders": {
+      "radius": {"type": "int"}
+    }
+  },
+
+  "appearance": "Apparence",
+  "theme": "Thème",
+  "themeSystem": "Système",
+  "themeLight": "Clair",
+  "themeDark": "Sombre",
+  "materialYou": "Material You",
+  "materialYouSubtitle": "Utiliser les couleurs de votre fond d'écran",
+  "trueBlack": "Noir profond",
+  "trueBlackSubtitle": "Fond noir pur pour écrans AMOLED",
+
+  "aboutTitle": "À propos",
+  "appTagline": "Soyez alerté à votre arrivée",
+  "version": "Version",
+  "license": "Licence",
+  "licenseValue": "EUPL 1.2",
+  "mapData": "Données cartographiques",
+  "mapDataValue": "Contributeurs OpenStreetMap · OSM France",
+  "geocoding": "Géocodage",
+  "geocodingValue": "Photon by Komoot",
+  "openSourceLicenses": "Licences open source",
+
+  "alarmSaved": "{name} enregistrée",
+  "@alarmSaved": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "alarmSavedNoGps": "{name} enregistrée (inactive — pas de signal GPS)",
+  "@alarmSavedNoGps": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "alarmSavedInside": "{name} enregistrée (inactive)",
+  "@alarmSavedInside": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "alarmSavedNoPermission": "{name} enregistrée — activez la localisation en arrière-plan",
+  "@alarmSavedNoPermission": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  }
+}

@@ -1,0 +1,177 @@
+{
+  "@@locale": "ko",
+
+  "appTitle": "There Yet",
+
+  "alarmsTitle": "알람",
+  "noAlarmsYet": "알람이 없습니다",
+  "tapToCreateFirst": "+를 눌러 첫 번째 알람을 만드세요",
+  "failedToLoadAlarms": "알람을 불러오지 못했습니다",
+  "retry": "다시 시도",
+  "sortBy": "정렬 기준",
+  "sortAlarms": "알람 정렬",
+  "sortDateCreated": "생성일",
+  "sortName": "이름",
+  "settings": "설정",
+  "about": "정보",
+
+  "nSelected": "{count}개 선택됨",
+  "@nSelected": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "deleteSelected": "선택 항목 삭제",
+  "deleteNAlarms": "{count, plural, other{알람 {count}개를 삭제할까요?}}",
+  "@deleteNAlarms": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "deleteNAlarmsBody": "{count, plural, other{알람 {count}개가 영구적으로 삭제됩니다.}}",
+  "@deleteNAlarmsBody": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "cancel": "취소",
+  "delete": "삭제",
+  "ok": "확인",
+
+  "alarmDeactivated": "{name} 비활성화됨",
+  "@alarmDeactivated": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "alarmActivated": "{name} 활성화됨 — {distance} 남음",
+  "@alarmActivated": {
+    "placeholders": {
+      "name": {"type": "String"},
+      "distance": {"type": "String"}
+    }
+  },
+  "locationPermissionRequired": "위치 권한이 필요합니다",
+  "notificationsDisabled": "알림이 꺼져 있어 알람 소리를 들을 수 없습니다",
+  "alreadyInsideAlarmArea": "이미 알람 범위 안에 있습니다",
+  "alreadyInsideAlarmAreaBody": "현재 \"{name}\"에서 {distance} 떨어져 있습니다. 알람을 활성화하려면 {radius} 범위 밖으로 이동하세요.",
+  "@alreadyInsideAlarmAreaBody": {
+    "placeholders": {
+      "distance": {"type": "String"},
+      "name": {"type": "String"},
+      "radius": {"type": "String"}
+    }
+  },
+  "gpsDisabled": "GPS가 꺼져 있습니다",
+  "openSettings": "설정 열기",
+  "couldNotAcquireLocation": "위치를 확인할 수 없습니다",
+  "nAlarmsDeleted": "{count, plural, other{알람 {count}개 삭제됨}}",
+  "@nAlarmsDeleted": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "deleteFailed": "삭제 실패: {message}",
+  "@deleteFailed": {
+    "placeholders": {
+      "message": {"type": "String"}
+    }
+  },
+
+  "alarmsNotMonitored": "알람이 모니터링되고 있지 않습니다",
+  "tapToCheckPermissions": "눌러서 권한 확인",
+  "backgroundLocationRequired": "백그라운드 위치 권한이 필요합니다",
+
+  "gettingLocation": "위치 확인 중\u2026",
+  "alarmDefaultName": "알람 #{id}",
+  "@alarmDefaultName": {
+    "placeholders": {
+      "id": {"type": "int"}
+    }
+  },
+  "active": "활성",
+  "inactive": "비활성",
+
+  "backgroundLocationNeeded": "백그라운드 위치 정보가 필요합니다",
+  "backgroundLocationBody": "도착 시 알람을 울리려면 There Yet이 백그라운드에서 위치를 모니터링해야 합니다.\n\n다음 화면에서 \"항상 허용\"을 선택하세요.",
+  "continueButton": "계속",
+  "disableBatteryOptimization": "배터리 최적화 해제",
+  "batteryOptimizationBody": "백그라운드에서 위치를 안정적으로 모니터링하려면 There Yet을 배터리 최적화에서 제외해야 합니다.\n\n이 설정이 없으면 Android가 배터리 절약을 위해 알람 서비스를 중지할 수 있습니다.",
+  "skip": "건너뛰기",
+  "disableOptimization": "최적화 해제",
+
+  "insideAlarmArea": "알람 범위 안에 있습니다",
+  "insideAlarmAreaBody": "현재 알람 범위 안에 있습니다. 알람은 비활성 상태로 저장되며, 범위를 벗어나면 활성화됩니다.",
+  "saveInactive": "비활성으로 저장",
+  "discardChanges": "변경 사항을 버릴까요?",
+  "unsavedChangesBody": "저장하지 않은 변경 사항이 사라집니다.",
+  "keepEditing": "계속 편집",
+  "discard": "버리기",
+  "locationUnavailable": "위치를 사용할 수 없습니다",
+  "failedToLoadAlarm": "알람을 불러오지 못했습니다",
+  "osmAttribution": "\u00a9 OpenStreetMap",
+
+  "searchLocation": "장소 검색",
+  "searchLocationOffline": "검색을 사용할 수 없습니다 (오프라인)",
+  "noResultsFound": "검색 결과가 없습니다",
+  "label": "라벨",
+  "save": "저장",
+  "centerOnMyLocation": "내 위치로 이동",
+  "resetNorth": "북쪽으로 정렬",
+
+  "createAlarm": "알람 만들기",
+  "dismiss": "닫기",
+  "locationAlarmDefault": "There Yet",
+  "alarmBodyWithinRadius": "목적지까지 {radius} m 이내입니다",
+  "@alarmBodyWithinRadius": {
+    "placeholders": {
+      "radius": {"type": "int"}
+    }
+  },
+
+  "appearance": "화면",
+  "theme": "테마",
+  "themeSystem": "시스템",
+  "themeLight": "라이트",
+  "themeDark": "다크",
+  "materialYou": "Material You",
+  "materialYouSubtitle": "배경화면 색상 사용",
+  "trueBlack": "트루 블랙",
+  "trueBlackSubtitle": "AMOLED 디스플레이용 순수 검정 배경",
+
+  "aboutTitle": "정보",
+  "appTagline": "도착하면 알려드립니다",
+  "version": "버전",
+  "license": "라이선스",
+  "licenseValue": "EUPL 1.2",
+  "mapData": "지도 데이터",
+  "mapDataValue": "OpenStreetMap contributors · OSM France",
+  "geocoding": "지오코딩",
+  "geocodingValue": "Photon by Komoot",
+  "openSourceLicenses": "오픈소스 라이선스",
+
+  "alarmSaved": "{name} 저장됨",
+  "@alarmSaved": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "alarmSavedNoGps": "{name} 저장됨 (비활성 — GPS 신호 없음)",
+  "@alarmSavedNoGps": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "alarmSavedInside": "{name} 저장됨 (비활성)",
+  "@alarmSavedInside": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "alarmSavedNoPermission": "{name} 저장됨 — 모니터링하려면 백그라운드 위치를 활성화하세요",
+  "@alarmSavedNoPermission": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  }
+}

@@ -1,0 +1,177 @@
+{
+  "@@locale": "zh_TW",
+
+  "appTitle": "There Yet",
+
+  "alarmsTitle": "鬧鐘",
+  "noAlarmsYet": "尚無鬧鐘",
+  "tapToCreateFirst": "點按 + 建立第一個鬧鐘",
+  "failedToLoadAlarms": "無法載入鬧鐘",
+  "retry": "重試",
+  "sortBy": "排序方式",
+  "sortAlarms": "鬧鐘排序",
+  "sortDateCreated": "建立日期",
+  "sortName": "名稱",
+  "settings": "設定",
+  "about": "關於",
+
+  "nSelected": "已選取 {count} 個",
+  "@nSelected": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "deleteSelected": "刪除所選項目",
+  "deleteNAlarms": "確定刪除 {count, plural, other{{count} 個鬧鐘}}？",
+  "@deleteNAlarms": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "deleteNAlarmsBody": "將永久移除 {count, plural, other{{count} 個鬧鐘}}。",
+  "@deleteNAlarmsBody": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "cancel": "取消",
+  "delete": "刪除",
+  "ok": "確定",
+
+  "alarmDeactivated": "已停用 {name}",
+  "@alarmDeactivated": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "alarmActivated": "已啟用 {name} — 距離 {distance}",
+  "@alarmActivated": {
+    "placeholders": {
+      "name": {"type": "String"},
+      "distance": {"type": "String"}
+    }
+  },
+  "locationPermissionRequired": "需要位置權限",
+  "notificationsDisabled": "通知已關閉 — 你將聽不到鬧鐘",
+  "alreadyInsideAlarmArea": "已在鬧鐘區域內",
+  "alreadyInsideAlarmAreaBody": "你目前距離「{name}」{distance}。請離開 {radius} 半徑範圍後再啟用。",
+  "@alreadyInsideAlarmAreaBody": {
+    "placeholders": {
+      "distance": {"type": "String"},
+      "name": {"type": "String"},
+      "radius": {"type": "String"}
+    }
+  },
+  "gpsDisabled": "GPS 已關閉",
+  "openSettings": "開啟設定",
+  "couldNotAcquireLocation": "無法取得位置",
+  "nAlarmsDeleted": "已刪除 {count, plural, other{{count} 個鬧鐘}}",
+  "@nAlarmsDeleted": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "deleteFailed": "刪除失敗：{message}",
+  "@deleteFailed": {
+    "placeholders": {
+      "message": {"type": "String"}
+    }
+  },
+
+  "alarmsNotMonitored": "鬧鐘未在監控中",
+  "tapToCheckPermissions": "點按以檢查權限",
+  "backgroundLocationRequired": "需要背景位置權限",
+
+  "gettingLocation": "正在取得位置\u2026",
+  "alarmDefaultName": "鬧鐘 #{id}",
+  "@alarmDefaultName": {
+    "placeholders": {
+      "id": {"type": "int"}
+    }
+  },
+  "active": "已啟用",
+  "inactive": "未啟用",
+
+  "backgroundLocationNeeded": "需要背景位置存取",
+  "backgroundLocationBody": "There Yet 需要在背景存取你的位置，才能在你抵達時觸發鬧鐘。\n\n請在下一個畫面選擇「一律允許」。",
+  "continueButton": "繼續",
+  "disableBatteryOptimization": "關閉電池最佳化",
+  "batteryOptimizationBody": "為了在背景中穩定監控你的位置，There Yet 需要排除在電池最佳化之外。\n\n否則 Android 可能會為了省電而停止鬧鐘服務。",
+  "skip": "略過",
+  "disableOptimization": "關閉最佳化",
+
+  "insideAlarmArea": "位於鬧鐘區域內",
+  "insideAlarmAreaBody": "你目前在鬧鐘區域內。鬧鐘將以未啟用狀態儲存，待你離開後自動啟用。",
+  "saveInactive": "儲存為未啟用",
+  "discardChanges": "捨棄變更？",
+  "unsavedChangesBody": "未儲存的變更將會遺失。",
+  "keepEditing": "繼續編輯",
+  "discard": "捨棄",
+  "locationUnavailable": "無法取得位置",
+  "failedToLoadAlarm": "無法載入鬧鐘",
+  "osmAttribution": "\u00a9 OpenStreetMap",
+
+  "searchLocation": "搜尋地點",
+  "searchLocationOffline": "搜尋無法使用（離線中）",
+  "noResultsFound": "找不到結果",
+  "label": "標籤",
+  "save": "儲存",
+  "centerOnMyLocation": "移至我的位置",
+  "resetNorth": "朝北對齊",
+
+  "createAlarm": "建立鬧鐘",
+  "dismiss": "關閉",
+  "locationAlarmDefault": "There Yet",
+  "alarmBodyWithinRadius": "你已在目的地 {radius} 公尺範圍內",
+  "@alarmBodyWithinRadius": {
+    "placeholders": {
+      "radius": {"type": "int"}
+    }
+  },
+
+  "appearance": "外觀",
+  "theme": "主題",
+  "themeSystem": "跟隨系統",
+  "themeLight": "淺色",
+  "themeDark": "深色",
+  "materialYou": "Material You",
+  "materialYouSubtitle": "使用桌布配色",
+  "trueBlack": "純黑",
+  "trueBlackSubtitle": "適用於 AMOLED 螢幕的純黑背景",
+
+  "aboutTitle": "關於",
+  "appTagline": "抵達時提醒你",
+  "version": "版本",
+  "license": "授權條款",
+  "licenseValue": "EUPL 1.2",
+  "mapData": "地圖資料",
+  "mapDataValue": "OpenStreetMap 貢獻者 · OSM France",
+  "geocoding": "地理編碼",
+  "geocodingValue": "Photon by Komoot",
+  "openSourceLicenses": "開放原始碼授權",
+
+  "alarmSaved": "已儲存 {name}",
+  "@alarmSaved": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "alarmSavedNoGps": "已儲存 {name}（未啟用 — 無 GPS 訊號）",
+  "@alarmSavedNoGps": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "alarmSavedInside": "已儲存 {name}（未啟用）",
+  "@alarmSavedInside": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "alarmSavedNoPermission": "已儲存 {name} — 請啟用背景位置權限以進行監控",
+  "@alarmSavedNoPermission": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  }
+}

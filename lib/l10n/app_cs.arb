@@ -1,0 +1,177 @@
+{
+  "@@locale": "cs",
+
+  "appTitle": "There Yet",
+
+  "alarmsTitle": "Budíky",
+  "noAlarmsYet": "Zatím žádné budíky",
+  "tapToCreateFirst": "Klepněte na + a vytvořte první budík",
+  "failedToLoadAlarms": "Nepodařilo se načíst budíky",
+  "retry": "Zkusit znovu",
+  "sortBy": "Řadit podle",
+  "sortAlarms": "Řadit budíky",
+  "sortDateCreated": "Datum vytvoření",
+  "sortName": "Název",
+  "settings": "Nastavení",
+  "about": "O aplikaci",
+
+  "nSelected": "{count} vybráno",
+  "@nSelected": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "deleteSelected": "Smazat vybrané",
+  "deleteNAlarms": "Smazat {count, plural, =1{1 budík} few{{count} budíky} many{{count} budíků} other{{count} budíků}}?",
+  "@deleteNAlarms": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "deleteNAlarmsBody": "{count, plural, =1{1 budík bude} few{{count} budíky budou} many{{count} budíků bude} other{{count} budíků bude}} trvale odstraněno.",
+  "@deleteNAlarmsBody": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "cancel": "Zrušit",
+  "delete": "Smazat",
+  "ok": "OK",
+
+  "alarmDeactivated": "{name} deaktivován",
+  "@alarmDeactivated": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "alarmActivated": "{name} aktivován — {distance} daleko",
+  "@alarmActivated": {
+    "placeholders": {
+      "name": {"type": "String"},
+      "distance": {"type": "String"}
+    }
+  },
+  "locationPermissionRequired": "Vyžadováno oprávnění k poloze",
+  "notificationsDisabled": "Oznámení vypnuta — budík neuslyšíte",
+  "alreadyInsideAlarmArea": "Už jste v oblasti budíku",
+  "alreadyInsideAlarmAreaBody": "Nacházíte se {distance} od „{name}". Opusťte okruh {radius}, aby se budík aktivoval.",
+  "@alreadyInsideAlarmAreaBody": {
+    "placeholders": {
+      "distance": {"type": "String"},
+      "name": {"type": "String"},
+      "radius": {"type": "String"}
+    }
+  },
+  "gpsDisabled": "GPS je vypnutý",
+  "openSettings": "Otevřít nastavení",
+  "couldNotAcquireLocation": "Nepodařilo se zjistit polohu",
+  "nAlarmsDeleted": "Smazáno {count, plural, =1{1 budík} few{{count} budíky} many{{count} budíků} other{{count} budíků}}",
+  "@nAlarmsDeleted": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "deleteFailed": "Smazání selhalo: {message}",
+  "@deleteFailed": {
+    "placeholders": {
+      "message": {"type": "String"}
+    }
+  },
+
+  "alarmsNotMonitored": "Budíky nejsou monitorovány",
+  "tapToCheckPermissions": "Klepněte pro kontrolu oprávnění",
+  "backgroundLocationRequired": "Vyžadována poloha na pozadí",
+
+  "gettingLocation": "Zjišťování polohy\u2026",
+  "alarmDefaultName": "Budík #{id}",
+  "@alarmDefaultName": {
+    "placeholders": {
+      "id": {"type": "int"}
+    }
+  },
+  "active": "aktivní",
+  "inactive": "neaktivní",
+
+  "backgroundLocationNeeded": "Potřeba polohy na pozadí",
+  "backgroundLocationBody": "There Yet potřebuje sledovat vaši polohu na pozadí, aby mohl spustit budík po příjezdu.\n\nNa další obrazovce vyberte „Povolit vždy".",
+  "continueButton": "Pokračovat",
+  "disableBatteryOptimization": "Vypnout optimalizaci baterie",
+  "batteryOptimizationBody": "Pro spolehlivé sledování polohy na pozadí musí být There Yet vyloučen z optimalizace baterie.\n\nBez toho může Android zastavit službu budíků kvůli úspoře baterie.",
+  "skip": "Přeskočit",
+  "disableOptimization": "Vypnout optimalizaci",
+
+  "insideAlarmArea": "V oblasti budíku",
+  "insideAlarmAreaBody": "Právě se nacházíte v oblasti budíku. Budík bude uložen jako neaktivní a aktivuje se, až oblast opustíte.",
+  "saveInactive": "Uložit neaktivní",
+  "discardChanges": "Zahodit změny?",
+  "unsavedChangesBody": "Neuložené změny budou ztraceny.",
+  "keepEditing": "Pokračovat v úpravách",
+  "discard": "Zahodit",
+  "locationUnavailable": "Poloha nedostupná",
+  "failedToLoadAlarm": "Nepodařilo se načíst budík",
+  "osmAttribution": "\u00a9 OpenStreetMap",
+
+  "searchLocation": "Hledat místo",
+  "searchLocationOffline": "Hledání nedostupné (offline)",
+  "noResultsFound": "Žádné výsledky",
+  "label": "Štítek",
+  "save": "Uložit",
+  "centerOnMyLocation": "Vycentrovat na mou polohu",
+  "resetNorth": "Nasměrovat na sever",
+
+  "createAlarm": "Vytvořit budík",
+  "dismiss": "Zavřít",
+  "locationAlarmDefault": "There Yet",
+  "alarmBodyWithinRadius": "Nacházíte se do {radius} m od cíle",
+  "@alarmBodyWithinRadius": {
+    "placeholders": {
+      "radius": {"type": "int"}
+    }
+  },
+
+  "appearance": "Vzhled",
+  "theme": "Motiv",
+  "themeSystem": "Systémový",
+  "themeLight": "Světlý",
+  "themeDark": "Tmavý",
+  "materialYou": "Material You",
+  "materialYouSubtitle": "Použít barvy z tapety",
+  "trueBlack": "Čistě černá",
+  "trueBlackSubtitle": "Černé pozadí pro AMOLED displeje",
+
+  "aboutTitle": "O aplikaci",
+  "appTagline": "Upozornění při příjezdu na místo",
+  "version": "Verze",
+  "license": "Licence",
+  "licenseValue": "EUPL 1.2",
+  "mapData": "Mapová data",
+  "mapDataValue": "Přispěvatelé OpenStreetMap · OSM France",
+  "geocoding": "Geokódování",
+  "geocodingValue": "Photon by Komoot",
+  "openSourceLicenses": "Open source licence",
+
+  "alarmSaved": "{name} uložen",
+  "@alarmSaved": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "alarmSavedNoGps": "{name} uložen (neaktivní — chybí GPS signál)",
+  "@alarmSavedNoGps": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "alarmSavedInside": "{name} uložen (neaktivní)",
+  "@alarmSavedInside": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "alarmSavedNoPermission": "{name} uložen — povolte polohu na pozadí pro sledování",
+  "@alarmSavedNoPermission": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  }
+}

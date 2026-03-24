@@ -1,0 +1,177 @@
+{
+  "@@locale": "de",
+
+  "appTitle": "There Yet",
+
+  "alarmsTitle": "Wecker",
+  "noAlarmsYet": "Noch keine Wecker",
+  "tapToCreateFirst": "Tippe auf +, um deinen ersten Wecker zu erstellen",
+  "failedToLoadAlarms": "Wecker konnten nicht geladen werden",
+  "retry": "Erneut versuchen",
+  "sortBy": "Sortieren nach",
+  "sortAlarms": "Wecker sortieren",
+  "sortDateCreated": "Erstellungsdatum",
+  "sortName": "Name",
+  "settings": "Einstellungen",
+  "about": "Über",
+
+  "nSelected": "{count} ausgewählt",
+  "@nSelected": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "deleteSelected": "Auswahl löschen",
+  "deleteNAlarms": "{count, plural, =1{1 Wecker} other{{count} Wecker}} löschen?",
+  "@deleteNAlarms": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "deleteNAlarmsBody": "{count, plural, =1{1 Wecker wird} other{{count} Wecker werden}} dauerhaft entfernt.",
+  "@deleteNAlarmsBody": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "cancel": "Abbrechen",
+  "delete": "Löschen",
+  "ok": "OK",
+
+  "alarmDeactivated": "{name} deaktiviert",
+  "@alarmDeactivated": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "alarmActivated": "{name} aktiviert — {distance} entfernt",
+  "@alarmActivated": {
+    "placeholders": {
+      "name": {"type": "String"},
+      "distance": {"type": "String"}
+    }
+  },
+  "locationPermissionRequired": "Standortberechtigung erforderlich",
+  "notificationsDisabled": "Benachrichtigungen deaktiviert — du wirst den Wecker nicht hören",
+  "alreadyInsideAlarmArea": "Bereits im Weckerbereich",
+  "alreadyInsideAlarmAreaBody": "Du bist {distance} von „{name}" entfernt. Verlasse den {radius}-Radius, um den Wecker zu aktivieren.",
+  "@alreadyInsideAlarmAreaBody": {
+    "placeholders": {
+      "distance": {"type": "String"},
+      "name": {"type": "String"},
+      "radius": {"type": "String"}
+    }
+  },
+  "gpsDisabled": "GPS ist deaktiviert",
+  "openSettings": "Einstellungen öffnen",
+  "couldNotAcquireLocation": "Standort konnte nicht ermittelt werden",
+  "nAlarmsDeleted": "{count, plural, =1{1 Wecker} other{{count} Wecker}} gelöscht",
+  "@nAlarmsDeleted": {
+    "placeholders": {
+      "count": {"type": "int"}
+    }
+  },
+  "deleteFailed": "Löschen fehlgeschlagen: {message}",
+  "@deleteFailed": {
+    "placeholders": {
+      "message": {"type": "String"}
+    }
+  },
+
+  "alarmsNotMonitored": "Wecker werden nicht überwacht",
+  "tapToCheckPermissions": "Tippe, um Berechtigungen zu prüfen",
+  "backgroundLocationRequired": "Standortzugriff im Hintergrund erforderlich",
+
+  "gettingLocation": "Standort wird ermittelt\u2026",
+  "alarmDefaultName": "Wecker #{id}",
+  "@alarmDefaultName": {
+    "placeholders": {
+      "id": {"type": "int"}
+    }
+  },
+  "active": "aktiv",
+  "inactive": "inaktiv",
+
+  "backgroundLocationNeeded": "Hintergrundstandort benötigt",
+  "backgroundLocationBody": "There Yet muss deinen Standort im Hintergrund überwachen, um Wecker auszulösen, wenn du ankommst.\n\nWähle auf dem nächsten Bildschirm „Immer erlauben".",
+  "continueButton": "Weiter",
+  "disableBatteryOptimization": "Akkuoptimierung deaktivieren",
+  "batteryOptimizationBody": "Um deinen Standort zuverlässig im Hintergrund zu überwachen, muss There Yet von der Akkuoptimierung ausgenommen werden.\n\nOhne diese Ausnahme kann Android den Weckerdienst beenden, um Akku zu sparen.",
+  "skip": "Überspringen",
+  "disableOptimization": "Deaktivieren",
+
+  "insideAlarmArea": "Im Weckerbereich",
+  "insideAlarmAreaBody": "Du befindest dich momentan im Weckerbereich. Der Wecker wird inaktiv gespeichert und aktiviert sich, sobald du den Bereich verlässt.",
+  "saveInactive": "Inaktiv speichern",
+  "discardChanges": "Änderungen verwerfen?",
+  "unsavedChangesBody": "Deine nicht gespeicherten Änderungen gehen verloren.",
+  "keepEditing": "Weiter bearbeiten",
+  "discard": "Verwerfen",
+  "locationUnavailable": "Standort nicht verfügbar",
+  "failedToLoadAlarm": "Wecker konnte nicht geladen werden",
+  "osmAttribution": "\u00a9 OpenStreetMap",
+
+  "searchLocation": "Ort suchen",
+  "searchLocationOffline": "Suche nicht verfügbar (offline)",
+  "noResultsFound": "Keine Ergebnisse gefunden",
+  "label": "Bezeichnung",
+  "save": "Speichern",
+  "centerOnMyLocation": "Auf meinen Standort zentrieren",
+  "resetNorth": "Norden zurücksetzen",
+
+  "createAlarm": "Wecker erstellen",
+  "dismiss": "Schließen",
+  "locationAlarmDefault": "There Yet",
+  "alarmBodyWithinRadius": "Du bist weniger als {radius} m von deinem Ziel entfernt",
+  "@alarmBodyWithinRadius": {
+    "placeholders": {
+      "radius": {"type": "int"}
+    }
+  },
+
+  "appearance": "Darstellung",
+  "theme": "Design",
+  "themeSystem": "System",
+  "themeLight": "Hell",
+  "themeDark": "Dunkel",
+  "materialYou": "Material You",
+  "materialYouSubtitle": "Hintergrundfarben verwenden",
+  "trueBlack": "Reines Schwarz",
+  "trueBlackSubtitle": "Tiefschwarzer Hintergrund für AMOLED-Displays",
+
+  "aboutTitle": "Über",
+  "appTagline": "Weckt dich, wenn du ankommst",
+  "version": "Version",
+  "license": "Lizenz",
+  "licenseValue": "EUPL 1.2",
+  "mapData": "Kartendaten",
+  "mapDataValue": "OpenStreetMap-Mitwirkende · OSM France",
+  "geocoding": "Geokodierung",
+  "geocodingValue": "Photon by Komoot",
+  "openSourceLicenses": "Open-Source-Lizenzen",
+
+  "alarmSaved": "{name} gespeichert",
+  "@alarmSaved": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "alarmSavedNoGps": "{name} gespeichert (inaktiv — kein GPS-Signal)",
+  "@alarmSavedNoGps": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "alarmSavedInside": "{name} gespeichert (inaktiv)",
+  "@alarmSavedInside": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  },
+  "alarmSavedNoPermission": "{name} gespeichert — aktiviere den Hintergrundstandort zur Überwachung",
+  "@alarmSavedNoPermission": {
+    "placeholders": {
+      "name": {"type": "String"}
+    }
+  }
+}
