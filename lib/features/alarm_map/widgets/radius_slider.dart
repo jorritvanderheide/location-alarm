@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:location_alarm/shared/data/geo_utils.dart';
+import 'package:there_yet/shared/data/geo_utils.dart';
 
 // Fixed radius steps: 25m increments up to 500m, 50m to 1000m,
 // 100m to 2000m, 250m to 5000m. ~40 values total.

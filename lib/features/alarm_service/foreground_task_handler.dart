@@ -6,13 +6,13 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:location_alarm/features/alarm_service/alarm_checker.dart';
-import 'package:location_alarm/features/alarm_service/background_alarm_player.dart';
-import 'package:location_alarm/features/alarm_service/proximity_alert_service.dart';
-import 'package:location_alarm/shared/data/database/app_database.dart';
-import 'package:location_alarm/shared/data/geo_utils.dart';
-import 'package:location_alarm/shared/data/database/connection.dart';
-import 'package:location_alarm/shared/data/repositories/alarm_repository.dart';
+import 'package:there_yet/features/alarm_service/alarm_checker.dart';
+import 'package:there_yet/features/alarm_service/background_alarm_player.dart';
+import 'package:there_yet/features/alarm_service/proximity_alert_service.dart';
+import 'package:there_yet/shared/data/database/app_database.dart';
+import 'package:there_yet/shared/data/geo_utils.dart';
+import 'package:there_yet/shared/data/database/connection.dart';
+import 'package:there_yet/shared/data/repositories/alarm_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 @pragma('vm:entry-point')

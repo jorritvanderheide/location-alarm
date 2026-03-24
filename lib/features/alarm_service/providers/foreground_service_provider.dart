@@ -1,9 +1,9 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:location_alarm/features/alarm_service/foreground_service_manager.dart';
-import 'package:location_alarm/features/alarm_service/proximity_alert_service.dart';
-import 'package:location_alarm/shared/data/models/alarm.dart';
-import 'package:location_alarm/shared/providers/alarms_provider.dart';
-import 'package:location_alarm/shared/providers/location_permission_provider.dart';
+import 'package:there_yet/features/alarm_service/foreground_service_manager.dart';
+import 'package:there_yet/features/alarm_service/proximity_alert_service.dart';
+import 'package:there_yet/shared/data/models/alarm.dart';
+import 'package:there_yet/shared/providers/alarms_provider.dart';
+import 'package:there_yet/shared/providers/location_permission_provider.dart';
 
 final foregroundServiceProvider =
     NotifierProvider<ForegroundServiceNotifier, bool>(

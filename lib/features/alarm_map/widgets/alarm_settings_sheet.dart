@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:location_alarm/features/alarm_map/widgets/radius_slider.dart';
-import 'package:location_alarm/l10n/app_localizations.dart';
+import 'package:there_yet/features/alarm_map/widgets/radius_slider.dart';
+import 'package:there_yet/l10n/app_localizations.dart';
 
 class AlarmSettingsSheet extends StatelessWidget {
   const AlarmSettingsSheet({

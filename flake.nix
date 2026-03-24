@@ -1,5 +1,5 @@
 {
-  description = "Location Alarm";
+  description = "There Yet";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
@@ -63,7 +63,7 @@
         ];
 
         shellHook = ''
-          echo "Location Alarm dev shell"
+          echo "There Yet dev shell"
         '';
       };
     };

@@ -1,10 +1,10 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:location_alarm/shared/data/datasources/geocoding_datasource.dart';
-import 'package:location_alarm/shared/data/models/geocoding_result.dart';
-import 'package:location_alarm/shared/data/repositories/geocoding_repository.dart';
-import 'package:location_alarm/shared/providers/connectivity_provider.dart';
+import 'package:there_yet/shared/data/datasources/geocoding_datasource.dart';
+import 'package:there_yet/shared/data/models/geocoding_result.dart';
+import 'package:there_yet/shared/data/repositories/geocoding_repository.dart';
+import 'package:there_yet/shared/providers/connectivity_provider.dart';
 
 sealed class GeocodingState {
   const GeocodingState();

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:location_alarm/features/alarm_service/providers/alarm_service_provider.dart';
-import 'package:location_alarm/l10n/app_localizations.dart';
-import 'package:location_alarm/shared/providers/alarms_provider.dart';
+import 'package:there_yet/features/alarm_service/providers/alarm_service_provider.dart';
+import 'package:there_yet/l10n/app_localizations.dart';
+import 'package:there_yet/shared/providers/alarms_provider.dart';
 
 class AlarmRingScreen extends ConsumerStatefulWidget {
   const AlarmRingScreen({
@@ -26,7 +26,7 @@ class AlarmRingScreen extends ConsumerStatefulWidget {
 }
 
 class _AlarmRingScreenState extends ConsumerState<AlarmRingScreen> {
-  static const _channel = MethodChannel('nl.bw20.location_alarm/screen');
+  static const _channel = MethodChannel('nl.bw20.there_yet/screen');
   bool _dismissed = false;
 
   @override

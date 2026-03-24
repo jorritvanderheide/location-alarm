@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:location_alarm/features/alarm_service/alarm_checker.dart';
-import 'package:location_alarm/shared/data/models/alarm.dart';
+import 'package:there_yet/features/alarm_service/alarm_checker.dart';
+import 'package:there_yet/shared/data/models/alarm.dart';
 
 void main() {
   late AlarmChecker checker;

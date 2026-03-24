@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:location_alarm/shared/providers/location_permission_provider.dart';
+import 'package:there_yet/shared/providers/location_permission_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 /// Live GPS stream. Requires foreground location permission.

@@ -3,11 +3,11 @@ import 'package:drift/native.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:location_alarm/features/alarm_map/providers/alarm_form_provider.dart';
-import 'package:location_alarm/shared/data/database/app_database.dart';
-import 'package:location_alarm/shared/data/models/alarm.dart';
-import 'package:location_alarm/shared/providers/alarm_repository_provider.dart';
-import 'package:location_alarm/shared/providers/database_provider.dart';
+import 'package:there_yet/features/alarm_map/providers/alarm_form_provider.dart';
+import 'package:there_yet/shared/data/database/app_database.dart';
+import 'package:there_yet/shared/data/models/alarm.dart';
+import 'package:there_yet/shared/providers/alarm_repository_provider.dart';
+import 'package:there_yet/shared/providers/database_provider.dart';
 
 void main() {
   late AppDatabase db;

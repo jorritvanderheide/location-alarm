@@ -1,12 +1,12 @@
-# Privacy Policy — Location Alarm
+# Privacy Policy — There Yet
 
 **Last updated:** 2026-03-24
 
-Welcome to Location Alarm for Android!
+Welcome to There Yet for Android!
 
 This is an open-source app developed by BW20, published under the EUPL 1.2 licence. The source code is available on GitHub.
 
-As an Android user myself, I take privacy very seriously. I know how frustrating it is when apps collect your data without your knowledge. Location Alarm was built with one principle: your data belongs on your device, nowhere else.
+As an Android user myself, I take privacy very seriously. I know how frustrating it is when apps collect your data without your knowledge. There Yet was built with one principle: your data belongs on your device, nowhere else.
 
 I hereby state, to the best of my knowledge and belief, that I have not programmed this app to collect any personally identifiable information. All data created by you (the user) is stored locally on your device only, and can be erased by clearing the app's data or uninstalling it. No analytics or tracking software is present in the app.
 
@@ -23,7 +23,7 @@ The app makes a small number of network requests. No personal data or device ide
 
 ### Map tiles
 
-When you open the map, tile images are loaded from **OpenStreetMap France** (`tile.openstreetmap.fr`). Only tile coordinates and a User-Agent header (`nl.bw20.location_alarm`) are sent. Tiles are cached locally, so repeat views do not require network access.
+When you open the map, tile images are loaded from **OpenStreetMap France** (`tile.openstreetmap.fr`). Only tile coordinates and a User-Agent header (`nl.bw20.there_yet`) are sent. Tiles are cached locally, so repeat views do not require network access.
 
 ### Location search (user-initiated)
 
@@ -79,7 +79,7 @@ The app does not knowingly collect any data from anyone, including children unde
 
 ## Data sharing
 
-Location Alarm does not share any data with third parties. There is no data to share — nothing is collected.
+There Yet does not share any data with third parties. There is no data to share — nothing is collected.
 
 ## Data retention
 

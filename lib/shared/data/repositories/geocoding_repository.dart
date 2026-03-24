@@ -1,6 +1,6 @@
 import 'package:latlong2/latlong.dart';
-import 'package:location_alarm/shared/data/datasources/geocoding_datasource.dart';
-import 'package:location_alarm/shared/data/models/geocoding_result.dart';
+import 'package:there_yet/shared/data/datasources/geocoding_datasource.dart';
+import 'package:there_yet/shared/data/models/geocoding_result.dart';
 
 class GeocodingRepository {
   GeocodingRepository(this._dataSource);

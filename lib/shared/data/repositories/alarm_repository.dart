@@ -1,7 +1,7 @@
 import 'package:drift/drift.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:location_alarm/shared/data/database/app_database.dart' as db;
-import 'package:location_alarm/shared/data/models/alarm.dart';
+import 'package:there_yet/shared/data/database/app_database.dart' as db;
+import 'package:there_yet/shared/data/models/alarm.dart';
 
 class AlarmRepository {
   AlarmRepository(this._db);

@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:location_alarm/l10n/app_localizations.dart';
+import 'package:there_yet/l10n/app_localizations.dart';
 
 class CompassButton extends StatefulWidget {
   const CompassButton({super.key, required this.mapController});

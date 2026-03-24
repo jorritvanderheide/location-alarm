@@ -1,4 +1,4 @@
-# Location Alarm
+# There Yet - Location Alarm
 
 [![Donate](https://liberapay.com/assets/widgets/donate.svg)](https://liberapay.com/BW20)
 
@@ -15,7 +15,7 @@ Get alerted when you arrive. Place a pin on the map, set a radius, and the app w
 
 ## Privacy
 
-Location Alarm is designed to minimize data leaving your device. See [PRIVACY.md](PRIVACY.md) for full details.
+There Yet is designed to minimize data leaving your device. See [PRIVACY.md](PRIVACY.md) for full details.
 
 - All alarm data stays on your device (SQLite + local files)
 - No accounts, no analytics, no telemetry, no ads

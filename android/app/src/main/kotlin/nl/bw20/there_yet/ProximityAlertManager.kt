@@ -1,4 +1,4 @@
-package nl.bw20.location_alarm
+package nl.bw20.there_yet
 
 import android.app.PendingIntent
 import android.content.Context
@@ -11,7 +11,7 @@ import kotlin.math.max
 
 object ProximityAlertManager {
     private const val TAG = "ProximityAlert"
-    private const val CHANNEL = "nl.bw20.location_alarm/proximity_alert"
+    private const val CHANNEL = "nl.bw20.there_yet/proximity_alert"
     private const val PREFS_NAME = "proximity_alert_ids"
     private const val KEY_IDS = "registered_ids"
     // Offset to avoid PendingIntent collision with notification intents.
@@ -118,7 +118,7 @@ object ProximityAlertManager {
 
     private fun createPendingIntent(context: Context, alarmId: Int): PendingIntent {
         val intent = Intent(context, ProximityAlertReceiver::class.java).apply {
-            action = "nl.bw20.location_alarm.PROXIMITY_ALERT"
+            action = "nl.bw20.there_yet.PROXIMITY_ALERT"
             putExtra("alarm_id", alarmId)
         }
         return PendingIntent.getBroadcast(

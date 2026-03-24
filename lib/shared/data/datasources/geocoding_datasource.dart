@@ -13,7 +13,7 @@ class GeocodingDataSource {
   final String baseUrl;
   final http.Client _client;
 
-  static const _headers = {'User-Agent': 'LocationAlarm/1.0 (Android)'};
+  static const _headers = {'User-Agent': 'ThereYet/1.0 (Android)'};
 
   Future<List<Map<String, dynamic>>> search(
     String query, {

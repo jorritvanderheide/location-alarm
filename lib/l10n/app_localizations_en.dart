@@ -9,7 +9,7 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
-  String get appTitle => 'Location Alarm';
+  String get appTitle => 'There Yet';
 
   @override
   String get alarmsTitle => 'Alarms';
@@ -166,7 +166,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get backgroundLocationBody =>
-      'Location Alarm needs to monitor your location in the background to trigger alarms when you arrive.\n\nOn the next screen, select \"Allow all the time\".';
+      'There Yet needs to monitor your location in the background to trigger alarms when you arrive.\n\nOn the next screen, select \"Allow all the time\".';
 
   @override
   String get continueButton => 'Continue';
@@ -176,7 +176,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get batteryOptimizationBody =>
-      'To reliably monitor your location in the background, Location Alarm needs to be excluded from battery optimization.\n\nWithout this, Android may stop the alarm service to save battery.';
+      'To reliably monitor your location in the background, There Yet needs to be excluded from battery optimization.\n\nWithout this, Android may stop the alarm service to save battery.';
 
   @override
   String get skip => 'Skip';
@@ -243,7 +243,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get dismiss => 'Dismiss';
 
   @override
-  String get locationAlarmDefault => 'Location Alarm';
+  String get locationAlarmDefault => 'There Yet';
 
   @override
   String alarmBodyWithinRadius(int radius) {

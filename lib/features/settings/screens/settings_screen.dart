@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:location_alarm/l10n/app_localizations.dart';
-import 'package:location_alarm/shared/providers/theme_provider.dart';
+import 'package:there_yet/l10n/app_localizations.dart';
+import 'package:there_yet/shared/providers/theme_provider.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});

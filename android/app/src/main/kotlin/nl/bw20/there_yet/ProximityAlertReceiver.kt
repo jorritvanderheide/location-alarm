@@ -1,4 +1,4 @@
-package nl.bw20.location_alarm
+package nl.bw20.there_yet
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -35,7 +35,7 @@ class ProximityAlertReceiver : BroadcastReceiver() {
             Log.w(TAG, "FGS unavailable, triggering alarm natively: $e")
             AlarmNotificationPlugin.playAlarmSound(context)
             AlarmNotificationHelper.show(
-                context, alarmId, "Location Alarm", "You are near your destination"
+                context, alarmId, "There Yet", "You are near your destination"
             )
         }
     }

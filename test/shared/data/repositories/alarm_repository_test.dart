@@ -2,9 +2,9 @@ import 'package:drift/drift.dart' hide isNull, isNotNull;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:location_alarm/shared/data/database/app_database.dart';
-import 'package:location_alarm/shared/data/models/alarm.dart';
-import 'package:location_alarm/shared/data/repositories/alarm_repository.dart';
+import 'package:there_yet/shared/data/database/app_database.dart';
+import 'package:there_yet/shared/data/models/alarm.dart';
+import 'package:there_yet/shared/data/repositories/alarm_repository.dart';
 
 AppDatabase _openTestDb() =>
     AppDatabase(DatabaseConnection(NativeDatabase.memory()));

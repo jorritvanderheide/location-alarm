@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:location_alarm/shared/providers/alarm_repository_provider.dart';
+import 'package:there_yet/shared/providers/alarm_repository_provider.dart';
 
 final alarmFormProvider =
     NotifierProvider.family<AlarmFormNotifier, AlarmFormState, int?>(

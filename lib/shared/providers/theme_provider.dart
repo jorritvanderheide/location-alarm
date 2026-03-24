@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:location_alarm/shared/providers/preferences_provider.dart';
+import 'package:there_yet/shared/providers/preferences_provider.dart';
 
 const _themeKey = 'theme_mode';
 const _amoledKey = 'amoled_black';

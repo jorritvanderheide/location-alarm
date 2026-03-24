@@ -1,7 +1,7 @@
 {
   "@@locale": "en",
 
-  "appTitle": "Location Alarm",
+  "appTitle": "There Yet",
 
   "alarmsTitle": "Alarms",
   "noAlarmsYet": "No alarms yet",
@@ -93,10 +93,10 @@
   "inactive": "inactive",
 
   "backgroundLocationNeeded": "Background location needed",
-  "backgroundLocationBody": "Location Alarm needs to monitor your location in the background to trigger alarms when you arrive.\n\nOn the next screen, select \"Allow all the time\".",
+  "backgroundLocationBody": "There Yet needs to monitor your location in the background to trigger alarms when you arrive.\n\nOn the next screen, select \"Allow all the time\".",
   "continueButton": "Continue",
   "disableBatteryOptimization": "Disable battery optimization",
-  "batteryOptimizationBody": "To reliably monitor your location in the background, Location Alarm needs to be excluded from battery optimization.\n\nWithout this, Android may stop the alarm service to save battery.",
+  "batteryOptimizationBody": "To reliably monitor your location in the background, There Yet needs to be excluded from battery optimization.\n\nWithout this, Android may stop the alarm service to save battery.",
   "skip": "Skip",
   "disableOptimization": "Disable optimization",
 
@@ -121,7 +121,7 @@
 
   "createAlarm": "Create alarm",
   "dismiss": "Dismiss",
-  "locationAlarmDefault": "Location Alarm",
+  "locationAlarmDefault": "There Yet",
   "alarmBodyWithinRadius": "You are within {radius} m of your destination",
   "@alarmBodyWithinRadius": {
     "placeholders": {

@@ -1,5 +1,5 @@
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
-import 'package:location_alarm/features/alarm_service/foreground_task_handler.dart';
+import 'package:there_yet/features/alarm_service/foreground_task_handler.dart';
 
 class ForegroundServiceManager {
   ForegroundServiceManager._();

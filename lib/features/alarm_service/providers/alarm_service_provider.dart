@@ -3,11 +3,11 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:location_alarm/shared/data/models/alarm.dart';
-import 'package:location_alarm/shared/providers/alarms_provider.dart';
+import 'package:there_yet/shared/data/models/alarm.dart';
+import 'package:there_yet/shared/providers/alarms_provider.dart';
 
 const _notificationChannel = MethodChannel(
-  'nl.bw20.location_alarm/alarm_notification',
+  'nl.bw20.there_yet/alarm_notification',
 );
 
 final alarmServiceProvider =

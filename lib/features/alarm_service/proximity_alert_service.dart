@@ -1,5 +1,5 @@
 import 'package:flutter/services.dart';
-import 'package:location_alarm/shared/data/models/alarm.dart';
+import 'package:there_yet/shared/data/models/alarm.dart';
 
 /// Manages native Android proximity alerts via LocationManager.
 ///
@@ -9,9 +9,7 @@ import 'package:location_alarm/shared/data/models/alarm.dart';
 class ProximityAlertService {
   ProximityAlertService._();
 
-  static const _channel = MethodChannel(
-    'nl.bw20.location_alarm/proximity_alert',
-  );
+  static const _channel = MethodChannel('nl.bw20.there_yet/proximity_alert');
 
   static Future<void> register(AlarmData alarm) async {
     if (alarm.id == null) return;

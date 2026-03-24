@@ -2,12 +2,12 @@ import 'package:dynamic_color/dynamic_color.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:location_alarm/features/alarm_map/screens/alarm_map_screen.dart';
-import 'package:location_alarm/features/alarm_list/screens/alarm_list_screen.dart';
-import 'package:location_alarm/features/settings/screens/about_screen.dart';
-import 'package:location_alarm/features/settings/screens/settings_screen.dart';
-import 'package:location_alarm/l10n/app_localizations.dart';
-import 'package:location_alarm/shared/providers/theme_provider.dart';
+import 'package:there_yet/features/alarm_map/screens/alarm_map_screen.dart';
+import 'package:there_yet/features/alarm_list/screens/alarm_list_screen.dart';
+import 'package:there_yet/features/settings/screens/about_screen.dart';
+import 'package:there_yet/features/settings/screens/settings_screen.dart';
+import 'package:there_yet/l10n/app_localizations.dart';
+import 'package:there_yet/shared/providers/theme_provider.dart';
 
 final navigatorKey = GlobalKey<NavigatorState>();
 
@@ -101,8 +101,8 @@ ThemeData _buildTheme(
   );
 }
 
-class LocationAlarmApp extends ConsumerWidget {
-  const LocationAlarmApp({super.key});
+class ThereYetApp extends ConsumerWidget {
+  const ThereYetApp({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -114,7 +114,7 @@ class LocationAlarmApp extends ConsumerWidget {
     return DynamicColorBuilder(
       builder: (lightDynamic, darkDynamic) {
         return MaterialApp.router(
-          title: 'Location Alarm',
+          title: 'There Yet',
           themeMode: themeMode,
           theme: _buildTheme(
             lightDynamic,

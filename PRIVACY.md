@@ -1,6 +1,6 @@
 # Privacy Policy
 
-Location Alarm is designed to be privacy-respecting and works fully offline for its core functionality.
+There Yet is designed to be privacy-respecting and works fully offline for its core functionality.
 
 ## Data that stays on your device
 
@@ -16,7 +16,7 @@ Location Alarm is designed to be privacy-respecting and works fully offline for 
 When viewing the map, tile images are requested from OpenStreetMap's tile servers.
 
 - **Server:** `tile.openstreetmap.fr` (OSM France)
-- **Data sent:** tile coordinates (zoom/x/y), User-Agent header (`nl.bw20.location_alarm`)
+- **Data sent:** tile coordinates (zoom/x/y), User-Agent header (`nl.bw20.there_yet`)
 - **When:** only while the map is visible; tiles are cached locally for 30 days
 - **No personal data** is included in tile requests
 
@@ -26,7 +26,7 @@ When you search for a location by name, the query is sent to the Photon geocodin
 - **Server:** `photon.komoot.io` (open-source project by Komoot)
 - **Data sent:** search query text, approximate location (for result ranking)
 - **When:** only when you explicitly type a search query
-- **User-Agent:** `LocationAlarm/<version> (Android)`
+- **User-Agent:** `ThereYet/<version> (Android)`
 
 ### Reverse geocoding (optional)
 When saving an alarm, the location is reverse-geocoded to show a place name on the alarm card.
@@ -34,7 +34,7 @@ When saving an alarm, the location is reverse-geocoded to show a place name on t
 - **Server:** `photon.komoot.io`
 - **Data sent:** alarm coordinates (latitude, longitude)
 - **When:** only when saving a new alarm or editing an alarm's location
-- **User-Agent:** `LocationAlarm/<version> (Android)`
+- **User-Agent:** `ThereYet/<version> (Android)`
 
 ## What we do NOT do
 
@@ -59,4 +59,4 @@ All permissions are requested at the point they are needed, with an explanation 
 
 ## Open source
 
-Location Alarm is open source under the EUPL 1.2 (European Union Public Licence).
+There Yet is open source under the EUPL 1.2 (European Union Public Licence).

@@ -2,18 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
-import 'package:location_alarm/features/alarm_list/providers/alarm_activation_provider.dart';
-import 'package:location_alarm/features/alarm_list/providers/alarm_delete_provider.dart';
-import 'package:location_alarm/features/alarm_list/widgets/alarm_card.dart';
-import 'package:location_alarm/features/alarm_list/widgets/alarm_list_empty_state.dart';
-import 'package:location_alarm/features/alarm_list/widgets/alarm_list_error_state.dart';
-import 'package:location_alarm/features/alarm_list/widgets/service_health_banner.dart';
-import 'package:location_alarm/l10n/app_localizations.dart';
-import 'package:location_alarm/shared/data/geo_utils.dart';
-import 'package:location_alarm/shared/widgets/permission_dialogs.dart';
-import 'package:location_alarm/shared/data/models/alarm.dart';
-import 'package:location_alarm/shared/providers/alarms_provider.dart';
-import 'package:location_alarm/shared/providers/location_provider.dart';
+import 'package:there_yet/features/alarm_list/providers/alarm_activation_provider.dart';
+import 'package:there_yet/features/alarm_list/providers/alarm_delete_provider.dart';
+import 'package:there_yet/features/alarm_list/widgets/alarm_card.dart';
+import 'package:there_yet/features/alarm_list/widgets/alarm_list_empty_state.dart';
+import 'package:there_yet/features/alarm_list/widgets/alarm_list_error_state.dart';
+import 'package:there_yet/features/alarm_list/widgets/service_health_banner.dart';
+import 'package:there_yet/l10n/app_localizations.dart';
+import 'package:there_yet/shared/data/geo_utils.dart';
+import 'package:there_yet/shared/widgets/permission_dialogs.dart';
+import 'package:there_yet/shared/data/models/alarm.dart';
+import 'package:there_yet/shared/providers/alarms_provider.dart';
+import 'package:there_yet/shared/providers/location_provider.dart';
 
 enum AlarmSortMode { created, name }
 

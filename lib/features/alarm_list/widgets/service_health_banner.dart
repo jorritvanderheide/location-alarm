@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:location_alarm/features/alarm_service/providers/foreground_service_provider.dart';
-import 'package:location_alarm/l10n/app_localizations.dart';
-import 'package:location_alarm/shared/providers/location_permission_provider.dart';
+import 'package:there_yet/features/alarm_service/providers/foreground_service_provider.dart';
+import 'package:there_yet/l10n/app_localizations.dart';
+import 'package:there_yet/shared/providers/location_permission_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 /// Shows a warning when active alarms exist but the monitoring service

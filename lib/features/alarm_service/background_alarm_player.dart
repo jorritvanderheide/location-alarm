@@ -1,12 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter/services.dart';
-import 'package:location_alarm/shared/data/models/alarm.dart';
+import 'package:there_yet/shared/data/models/alarm.dart';
 
 const _notificationChannel = MethodChannel(
-  'nl.bw20.location_alarm/alarm_notification',
+  'nl.bw20.there_yet/alarm_notification',
 );
-const _audioChannel = MethodChannel('nl.bw20.location_alarm/alarm_audio');
+const _audioChannel = MethodChannel('nl.bw20.there_yet/alarm_audio');
 
 /// Isolate-safe alarm player. Works from the foreground service's background
 /// isolate as well as the main isolate.
@@ -19,7 +19,7 @@ class BackgroundAlarmPlayer {
     unawaited(_playLoop());
 
     final label = alarm.name.isNotEmpty ? alarm.name : null;
-    final title = label ?? 'Location Alarm';
+    final title = label ?? 'There Yet';
     final body = 'You are within ${alarm.radius.round()} m of your destination';
 
     try {

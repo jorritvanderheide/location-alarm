@@ -1,4 +1,4 @@
-package nl.bw20.location_alarm
+package nl.bw20.there_yet
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -37,7 +37,7 @@ object AlarmNotificationHelper {
 
         // Dismiss action → BroadcastReceiver (no app launch)
         val dismissIntent = Intent(context, AlarmDismissReceiver::class.java).apply {
-            action = "nl.bw20.location_alarm.DISMISS_ALARM"
+            action = "nl.bw20.there_yet.DISMISS_ALARM"
             putExtra("alarm_id", alarmId)
         }
         val dismissPending = PendingIntent.getBroadcast(

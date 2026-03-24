@@ -1,12 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:location_alarm/features/alarm_service/providers/alarm_service_provider.dart';
-import 'package:location_alarm/shared/data/geo_utils.dart';
-import 'package:location_alarm/shared/data/models/alarm.dart';
-import 'package:location_alarm/shared/providers/alarm_repository_provider.dart';
-import 'package:location_alarm/shared/providers/location_permission_provider.dart';
-import 'package:location_alarm/shared/providers/location_provider.dart';
+import 'package:there_yet/features/alarm_service/providers/alarm_service_provider.dart';
+import 'package:there_yet/shared/data/geo_utils.dart';
+import 'package:there_yet/shared/data/models/alarm.dart';
+import 'package:there_yet/shared/providers/alarm_repository_provider.dart';
+import 'package:there_yet/shared/providers/location_permission_provider.dart';
+import 'package:there_yet/shared/providers/location_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 final alarmActivationProvider =

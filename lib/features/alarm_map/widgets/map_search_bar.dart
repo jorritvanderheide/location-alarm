@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:location_alarm/l10n/app_localizations.dart';
-import 'package:location_alarm/shared/data/models/geocoding_result.dart';
-import 'package:location_alarm/shared/providers/connectivity_provider.dart';
-import 'package:location_alarm/shared/providers/geocoding_provider.dart';
+import 'package:there_yet/l10n/app_localizations.dart';
+import 'package:there_yet/shared/data/models/geocoding_result.dart';
+import 'package:there_yet/shared/providers/connectivity_provider.dart';
+import 'package:there_yet/shared/providers/geocoding_provider.dart';
 
 class MapSearchBar extends ConsumerStatefulWidget {
   const MapSearchBar({

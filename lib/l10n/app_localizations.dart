@@ -101,7 +101,7 @@ abstract class AppLocalizations {
   /// No description provided for @appTitle.
   ///
   /// In en, this message translates to:
-  /// **'Location Alarm'**
+  /// **'There Yet'**
   String get appTitle;
 
   /// No description provided for @alarmsTitle.
@@ -333,7 +333,7 @@ abstract class AppLocalizations {
   /// No description provided for @backgroundLocationBody.
   ///
   /// In en, this message translates to:
-  /// **'Location Alarm needs to monitor your location in the background to trigger alarms when you arrive.\n\nOn the next screen, select \"Allow all the time\".'**
+  /// **'There Yet needs to monitor your location in the background to trigger alarms when you arrive.\n\nOn the next screen, select \"Allow all the time\".'**
   String get backgroundLocationBody;
 
   /// No description provided for @continueButton.
@@ -351,7 +351,7 @@ abstract class AppLocalizations {
   /// No description provided for @batteryOptimizationBody.
   ///
   /// In en, this message translates to:
-  /// **'To reliably monitor your location in the background, Location Alarm needs to be excluded from battery optimization.\n\nWithout this, Android may stop the alarm service to save battery.'**
+  /// **'To reliably monitor your location in the background, There Yet needs to be excluded from battery optimization.\n\nWithout this, Android may stop the alarm service to save battery.'**
   String get batteryOptimizationBody;
 
   /// No description provided for @skip.
@@ -483,7 +483,7 @@ abstract class AppLocalizations {
   /// No description provided for @locationAlarmDefault.
   ///
   /// In en, this message translates to:
-  /// **'Location Alarm'**
+  /// **'There Yet'**
   String get locationAlarmDefault;
 
   /// No description provided for @alarmBodyWithinRadius.

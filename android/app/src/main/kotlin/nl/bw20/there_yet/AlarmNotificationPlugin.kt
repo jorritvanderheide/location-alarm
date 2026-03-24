@@ -1,4 +1,4 @@
-package nl.bw20.location_alarm
+package nl.bw20.there_yet
 
 import android.content.Context
 import android.media.AudioAttributes
@@ -13,8 +13,8 @@ class AlarmNotificationPlugin(private val context: Context) :
     FlutterForegroundTaskLifecycleListener {
 
     companion object {
-        const val CHANNEL = "nl.bw20.location_alarm/alarm_notification"
-        const val AUDIO_CHANNEL = "nl.bw20.location_alarm/alarm_audio"
+        const val CHANNEL = "nl.bw20.there_yet/alarm_notification"
+        const val AUDIO_CHANNEL = "nl.bw20.there_yet/alarm_audio"
 
         private var mediaPlayer: MediaPlayer? = null
 

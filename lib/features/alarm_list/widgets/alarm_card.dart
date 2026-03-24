@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:location_alarm/l10n/app_localizations.dart';
-import 'package:location_alarm/shared/data/alarm_thumbnail.dart';
-import 'package:location_alarm/shared/data/geo_utils.dart';
-import 'package:location_alarm/shared/data/models/alarm.dart';
+import 'package:there_yet/l10n/app_localizations.dart';
+import 'package:there_yet/shared/data/alarm_thumbnail.dart';
+import 'package:there_yet/shared/data/geo_utils.dart';
+import 'package:there_yet/shared/data/models/alarm.dart';
 
 class AlarmCard extends StatefulWidget {
   const AlarmCard({

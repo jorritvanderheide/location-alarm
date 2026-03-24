@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:location_alarm/l10n/app_localizations.dart';
+import 'package:there_yet/l10n/app_localizations.dart';
 
 Future<bool> showBackgroundRationaleDialog(BuildContext context) async {
   final l10n = AppLocalizations.of(context)!;

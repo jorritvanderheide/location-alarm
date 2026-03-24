@@ -1,4 +1,4 @@
-package nl.bw20.location_alarm
+package nl.bw20.there_yet
 
 import android.app.KeyguardManager
 import android.content.Intent
@@ -10,7 +10,7 @@ import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 
 class MainActivity : FlutterActivity() {
-    private val SCREEN_CHANNEL = "nl.bw20.location_alarm/screen"
+    private val SCREEN_CHANNEL = "nl.bw20.there_yet/screen"
     private var wakeLock: PowerManager.WakeLock? = null
     private var screenChannel: MethodChannel? = null
 
@@ -118,7 +118,7 @@ class MainActivity : FlutterActivity() {
                 PowerManager.FULL_WAKE_LOCK or
                 PowerManager.ACQUIRE_CAUSES_WAKEUP or
                 PowerManager.ON_AFTER_RELEASE,
-                "LocationAlarm:AlarmWakeLock"
+                "ThereYet:AlarmWakeLock"
             )
             wakeLock?.acquire(10 * 60 * 1000L)
         }

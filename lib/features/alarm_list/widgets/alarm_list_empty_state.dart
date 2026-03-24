@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:location_alarm/l10n/app_localizations.dart';
+import 'package:there_yet/l10n/app_localizations.dart';
 
 class AlarmListEmptyState extends StatelessWidget {
   const AlarmListEmptyState({super.key});

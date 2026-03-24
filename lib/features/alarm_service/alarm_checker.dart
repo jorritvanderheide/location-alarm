@@ -1,8 +1,8 @@
 import 'dart:math';
 
 import 'package:latlong2/latlong.dart';
-import 'package:location_alarm/shared/data/geo_utils.dart';
-import 'package:location_alarm/shared/data/models/alarm.dart';
+import 'package:there_yet/shared/data/geo_utils.dart';
+import 'package:there_yet/shared/data/models/alarm.dart';
 
 /// Pure logic: checks if alarm trigger conditions are met.
 /// Does not track state; the caller decides which alarms to check.

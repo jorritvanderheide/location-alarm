@@ -4,20 +4,20 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_foreground_task/flutter_foreground_task.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:location_alarm/app.dart';
-import 'package:location_alarm/features/alarm_service/foreground_service_manager.dart';
-import 'package:location_alarm/features/alarm_service/providers/alarm_service_provider.dart';
-import 'package:location_alarm/features/alarm_service/providers/foreground_service_provider.dart';
-import 'package:location_alarm/features/alarm_service/screens/alarm_ring_screen.dart';
-import 'package:location_alarm/shared/data/database/connection.dart';
-import 'package:location_alarm/shared/data/models/alarm.dart';
-import 'package:location_alarm/shared/providers/connectivity_provider.dart';
-import 'package:location_alarm/shared/providers/database_provider.dart';
-import 'package:location_alarm/shared/providers/location_permission_provider.dart';
-import 'package:location_alarm/shared/providers/preferences_provider.dart';
+import 'package:there_yet/app.dart';
+import 'package:there_yet/features/alarm_service/foreground_service_manager.dart';
+import 'package:there_yet/features/alarm_service/providers/alarm_service_provider.dart';
+import 'package:there_yet/features/alarm_service/providers/foreground_service_provider.dart';
+import 'package:there_yet/features/alarm_service/screens/alarm_ring_screen.dart';
+import 'package:there_yet/shared/data/database/connection.dart';
+import 'package:there_yet/shared/data/models/alarm.dart';
+import 'package:there_yet/shared/providers/connectivity_provider.dart';
+import 'package:there_yet/shared/providers/database_provider.dart';
+import 'package:there_yet/shared/providers/location_permission_provider.dart';
+import 'package:there_yet/shared/providers/preferences_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-const _screenChannel = MethodChannel('nl.bw20.location_alarm/screen');
+const _screenChannel = MethodChannel('nl.bw20.there_yet/screen');
 
 Future<bool> _isScreenOff() async {
   try {
@@ -210,7 +210,7 @@ void _showDismissScreen(
 }) {
   if (alarm.id == null) return;
   final label = alarm.name.isNotEmpty ? alarm.name : null;
-  final title = label ?? 'Location Alarm';
+  final title = label ?? 'There Yet';
   final body = 'You are within ${alarm.radius.round()} m of your destination';
 
   navigatorKey.currentState?.push(
@@ -272,6 +272,6 @@ class _AppWithServicesState extends ConsumerState<_AppWithServices>
   Widget build(BuildContext context) {
     ref.watch(alarmServiceProvider);
     ref.watch(foregroundServiceProvider);
-    return const LocationAlarmApp();
+    return const ThereYetApp();
   }
 }

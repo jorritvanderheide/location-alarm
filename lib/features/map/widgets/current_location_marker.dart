@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
-import 'package:location_alarm/shared/providers/location_provider.dart';
+import 'package:there_yet/shared/providers/location_provider.dart';
 
 class CurrentLocationMarker extends ConsumerWidget {
   const CurrentLocationMarker({super.key});
