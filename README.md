@@ -2,7 +2,7 @@
 
 [![Donate](https://liberapay.com/assets/widgets/donate.svg)](https://liberapay.com/BW20)
 
-Get alerted when you arrive. Place a pin on the map, set a radius, and the app wakes you up when you enter the area. No accounts, no tracking, no Google Play Services.
+Not there yet? There Yet will tell you when you are.
 
 ## Features
 
